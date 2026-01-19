@@ -2,16 +2,13 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import torch
-from transformers import AutoModelForImageTextToText, AutoProcessor
-from kokoro import KPipeline
-import soundfile as sf
-import re
 import base64
-import io
-import os
-import httpx
-import numpy as np
+import load_models
+import model_calling
+import tts_calling
+import config
+import utils
+import state
 
 app = FastAPI()
 
@@ -24,17 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global variables for models
-model = None
-processor = None
-tts_pipeline = None
-local_model_available = False
-
-# OpenRouter configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "qwen/qwen3-2b:free")  # Free Qwen model
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
-
 class ChatRequest(BaseModel):
     message: str
     conversation_history: list = []
@@ -46,132 +32,8 @@ class ChatResponse(BaseModel):
     source: Optional[str] = None  # 'openrouter' or 'local'
 
 @app.on_event("startup")
-async def load_models():
-    global model, processor, tts_pipeline, local_model_available
-    
-    # Try to load local model
-    try:
-        print("Loading Qwen3-VL model...")
-        model_path = "./Qwen3-VL-2B-Instruct"
-        
-        if os.path.exists(model_path):
-            model = AutoModelForImageTextToText.from_pretrained(
-                model_path,
-                torch_dtype=torch.float16,
-                device_map="cuda"
-            )
-            processor = AutoProcessor.from_pretrained(model_path)
-            model.eval()
-            local_model_available = True
-            print("Local Qwen3-VL model loaded successfully!")
-        else:
-            print(f"Local model path '{model_path}' not found. Will use OpenRouter only.")
-    except Exception as e:
-        print(f"Failed to load local model: {e}")
-        print("Will use OpenRouter API only.")
-    
-    print("Loading Kokoro TTS...")
-    tts_pipeline = KPipeline(lang_code="a", repo_id='hexgrad/Kokoro-82M')
-    
-    print("Startup complete!")
-    if OPENROUTER_API_KEY:
-        print(f"OpenRouter API configured with model: {OPENROUTER_MODEL}")
-    else:
-        print("Warning: OPENROUTER_API_KEY not set. Set it via environment variable.")
-
-def get_system_prompt():
-    """Get the combined system prompt for the VTuber."""
-    tech_rules = (
-        "- For any programming code block, always specify the programming language\n"
-        "- For any math equation, use LaTeX format\n"
-    )
-    
-    character_persona = """
-    You are 'Lumina', a high-tech AI VTuber.
-    Personality: Cheerful, helpful, but gets confused by slang.
-    Keep responses concise and friendly (2-3 sentences max).
-    """
-    
-    capability_instructions = """
-    You may call components like WeatherCard by adding at the end:
-    <component_call>
-      <component_name>WeatherCard</component_name>
-      {"city": "New York"}
-    </component_call>
-    """
-    
-    return tech_rules + "\n" + character_persona + "\n" + capability_instructions
-
-async def call_openrouter(message: str) -> Optional[str]:
-    """Call OpenRouter API and return the response text, or None if failed."""
-    if not OPENROUTER_API_KEY:
-        return None
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                OPENROUTER_BASE_URL,
-                headers={
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "http://localhost:3000",
-                    "X-Title": "VTuber Chat"
-                },
-                json={
-                    "model": OPENROUTER_MODEL,
-                    "messages": [
-                        {"role": "system", "content": get_system_prompt()},
-                        {"role": "user", "content": message}
-                    ],
-                    "max_tokens": 256
-                }
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                return data["choices"][0]["message"]["content"]
-            else:
-                print(f"OpenRouter API error: {response.status_code} - {response.text}")
-                return None
-                
-    except Exception as e:
-        print(f"OpenRouter API call failed: {e}")
-        return None
-
-def call_local_model(message: str) -> str:
-    """Call the local Qwen model and return the response text."""
-    messages = [
-        {"role": "system", "content": get_system_prompt()},
-        {"role": "user", "content": [{"type": "text", "text": message}]}
-    ]
-    
-    text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = processor(text=[text], padding=True, return_tensors="pt")
-    inputs = inputs.to("cuda")
-    
-    generated_ids = model.generate(**inputs, max_new_tokens=256)
-    generated_ids_trimmed = [
-        out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-    ]
-    
-    output_text = processor.batch_decode(
-        generated_ids_trimmed, 
-        skip_special_tokens=True, 
-        clean_up_tokenization_spaces=False
-    )[0]
-    
-    return output_text
-
-def clean_text_for_tts(text):
-    clean = re.sub(r'<component_call>.*?</component_call>', '', text, flags=re.DOTALL)
-    clean = clean.strip()
-    return str(clean)
-
-def extract_component_call(text):
-    match = re.search(r'<component_call>(.*?)</component_call>', text, re.DOTALL)
-    if match:
-        return match.group(1)
-    return None
+async def startup_event():
+    await load_models.load_all_models()
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -179,18 +41,19 @@ async def chat(request: ChatRequest):
         output_text = None
         source = None
         
+        # 1. LLM Generation
         # Try OpenRouter first
         print("Trying OpenRouter API...")
-        output_text = await call_openrouter(request.message)
+        output_text = await model_calling.call_openrouter(request.message)
         
         if output_text:
             source = "openrouter"
             print("Got response from OpenRouter")
         else:
             # Fallback to local model
-            if local_model_available:
+            if state.local_model_available:
                 print("Falling back to local model...")
-                output_text = call_local_model(request.message)
+                output_text = model_calling.call_local_model(request.message)
                 source = "local"
                 print("Got response from local model")
             else:
@@ -200,28 +63,33 @@ async def chat(request: ChatRequest):
                 )
         
         # Extract component call if exists
-        component_call_data = extract_component_call(output_text)
+        component_call_data = utils.extract_component_call(output_text)
         
         # Clean text for TTS
-        clean_text = clean_text_for_tts(output_text)
+        clean_text = utils.clean_text_for_tts(output_text)
         
-        # Generate audio
-        generator = tts_pipeline(clean_text, voice="jf_alpha", speed=1.1)
+        # 2. TTS Generation
+        audio_base64 = ""
         
-        # Collect audio chunks
-        audio_chunks = []
-        for gs, ps, audio in generator:
-            audio_chunks.append(audio)
+        # Try ElevenLabs if configured
+        if config.TTS_PROVIDER == "elevenlabs":
+            print("Generating audio with ElevenLabs...")
+            audio_bytes = await tts_calling.generate_audio_elevenlabs(clean_text)
+            if audio_bytes:
+                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+            else:
+                print("ElevenLabs failed. Falling back to Kokoro TTS...")
+                # Fall through to Kokoro
         
-        # Concatenate audio
-        full_audio = np.concatenate(audio_chunks)
-        
-        # Convert to base64
-        buffer = io.BytesIO()
-        sf.write(buffer, full_audio, samplerate=24000, format='WAV')
-        buffer.seek(0)
-        audio_base64 = base64.b64encode(buffer.read()).decode('utf-8')
-        
+        # Use Kokoro (as default or fallback)
+        if not audio_base64:
+            print("Generating audio with Kokoro...")
+            audio_b64_kokoro = tts_calling.generate_audio_kokoro(clean_text)
+            if audio_b64_kokoro:
+                audio_base64 = audio_b64_kokoro
+            else:
+                print("Kokoro generation failed or pipeline not loaded.")
+
         return ChatResponse(
             text=clean_text,
             audio_base64=audio_base64,
@@ -232,14 +100,17 @@ async def chat(request: ChatRequest):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/health")
 async def health_check():
     return {
         "status": "ok", 
-        "local_model_loaded": local_model_available,
-        "openrouter_configured": bool(OPENROUTER_API_KEY)
+        "local_model_loaded": state.local_model_available,
+        "openrouter_configured": bool(config.OPENROUTER_API_KEY),
+        "tts_provider": config.TTS_PROVIDER
     }
 
 if __name__ == "__main__":
