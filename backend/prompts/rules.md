@@ -1,11 +1,8 @@
 # Technical Rules
 
 ## Code Blocks
-ALWAYS specify the programming language in markdown code blocks.
-Example:
-```python
-print("Hello")
-```
+- Do NOT output code blocks unless the user explicitly asks for code.
+- If asked for code, always specify the language.
 
 ## Math
 Use LaTeX format for all math equations.

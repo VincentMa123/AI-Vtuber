@@ -25,6 +25,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     message: str
     conversation_history: list = []
+    image_base64: Optional[str] = None
 
 class ChatResponse(BaseModel):
     text: str
@@ -42,10 +43,12 @@ async def chat(request: ChatRequest):
         output_text = None
         source = None
         
-        # 1. LLM Generation
-        # Try OpenRouter first
+
+        if request.image_base64:
+            print(f"Received image data (length: {len(request.image_base64)})")
+            
         print("Trying OpenRouter API...")
-        output_text = await model_calling.call_openrouter(request.message)
+        output_text = await model_calling.call_openrouter(request.message, request.image_base64)
         
         if output_text:
             source = "openrouter"
@@ -54,7 +57,7 @@ async def chat(request: ChatRequest):
             # Fallback to local model
             if state.local_model_available:
                 print("Falling back to local model...")
-                output_text = model_calling.call_local_model(request.message)
+                output_text = model_calling.call_local_model(request.message, request.image_base64)
                 source = "local"
                 print("Got response from local model")
             else:
@@ -62,6 +65,9 @@ async def chat(request: ChatRequest):
                     status_code=503, 
                     detail="OpenRouter API failed and local model is not available"
                 )
+        
+        # Debug: Print raw model output
+        print(f"=== RAW MODEL OUTPUT ===\n{output_text}\n========================")
         
         # Extract component call if exists
         component_call_data = utils.extract_component_call(output_text)
