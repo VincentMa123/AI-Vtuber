@@ -1,29 +1,79 @@
 import httpx
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import state
 import config
 import utils
 
-async def call_openrouter(message: str, image_base64: Optional[str] = None) -> Optional[str]:
+def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Clean up history for the model:
+    1. Remove any large base64 image data from previous turns to save tokens/bandwidth
+    2. Ensure roles are correct
+    """
+    clean_history = []
+    for msg in history:
+        # Create a copy to avoid modifying the original
+        clean_msg = msg.copy()
+        
+        # If content is a list (multimodal), we need to handle it
+        if isinstance(clean_msg.get("content"), list):
+            new_content = []
+            for item in clean_msg["content"]:
+                if item.get("type") == "text":
+                    new_content.append(item)
+                elif item.get("type") == "image_url" or item.get("type") == "image":
+                    new_content.append({"type": "text", "text": "[User shared an image]"})
+            
+            if len(new_content) == 1 and new_content[0]["type"] == "text":
+                clean_msg["content"] = new_content[0]["text"]
+            else:
+                clean_msg["content"] = new_content
+        
+        # If it's the assistant's message, ensure it's just text
+        if clean_msg["role"] == "assistant":
+            # Sometimes we might store metadata, just keep the content
+            pass
+            
+        clean_history.append(clean_msg)
+    
+    # Limit to last 10 messages to prevent context overflow
+    return clean_history[-10:]
+
+async def call_openrouter(message: str, history: List[Dict[str, Any]] = [], image_base64: Optional[str] = None) -> Optional[str]:
     """Call OpenRouter API and return the response text, or None if failed."""
     if not config.OPENROUTER_API_KEY:
         return None
     
     # Build user message content based on whether image is provided
-    user_content = []
+    current_human_msg = []
     if image_base64:
-        user_content.append({
+        current_human_msg.append({
             "type": "image_url",
             "image_url": {"url": f"data:image/png;base64,{image_base64}"}
         })
-    user_content.append({"type": "text", "text": message})
+    current_human_msg.append({"type": "text", "text": message})
+    
+    # Prepare full message list: System -> History -> Current Message
+    messages = [{"role": "system", "content": utils.get_system_prompt()}]
+    
+    # Add sanitized history
+    if history:
+        messages.extend(sanitize_history(history))
+        
+    # Add current message
+    messages.append({
+        "role": "user", 
+        "content": current_human_msg if image_base64 else message
+    })
     
     print(f"[DEBUG] call_api_model - image_base64 provided: {image_base64 is not None}")
     if image_base64:
         print(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        # Longer timeout for image requests (they take more time to process)
+        timeout = 60.0 if image_base64 else 30.0
+        async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
                 config.OPENROUTER_BASE_URL,
                 headers={
@@ -34,10 +84,7 @@ async def call_openrouter(message: str, image_base64: Optional[str] = None) -> O
                 },
                 json={
                     "model": config.OPENROUTER_MODEL,
-                    "messages": [
-                        {"role": "system", "content": utils.get_system_prompt()},
-                        {"role": "user", "content": user_content if image_base64 else message}
-                    ],
+                    "messages": messages, # Use the full history now
                     "max_tokens": 256
                 }
             )
@@ -56,7 +103,7 @@ async def call_openrouter(message: str, image_base64: Optional[str] = None) -> O
         print(f"OpenRouter API call failed: {type(e).__name__}: {e}")
         return None
 
-def call_local_model(message: str, image_base64: Optional[str] = None) -> str:
+def call_local_model(message: str, history: List[Dict[str, Any]] = [], image_base64: Optional[str] = None) -> str:
     """Call the local Qwen model and return the response text."""
     if not state.model or not state.processor:
         raise RuntimeError("Local model is not loaded!")
@@ -66,16 +113,34 @@ def call_local_model(message: str, image_base64: Optional[str] = None) -> str:
     if image_base64:
         print(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
+    # Current message content
     content = [{"type": "text", "text": message}]
     if image_base64:
         content.insert(0, {"type": "image"})
-
-    system_prompt = utils.get_system_prompt()
     
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": content}
-    ]
+    # Logic for system prompt (simplified for images to prevent hallucination)
+    if image_base64:
+        system_prompt = "You are Lumina, a helpful AI assistant. Describe the image and answer the user's question naturally."
+    else:
+        system_prompt = utils.get_system_prompt()
+    
+    # Build messages list
+    messages = [{"role": "system", "content": system_prompt}]
+    
+    # Add sanitized history (keeping it text-only for local model to avoid complexity)
+    if history:
+        clean_history = sanitize_history(history)
+        # Ensure format matches what Qwen expects (basic role/content)
+        for msg in clean_history:
+            # If content is list, extract text
+            if isinstance(msg["content"], list):
+                text_content = next((item["text"] for item in msg["content"] if item["type"] == "text"), "")
+                messages.append({"role": msg["role"], "content": text_content})
+            else:
+                messages.append(msg)
+
+    # Add current message
+    messages.append({"role": "user", "content": content})
     
     text = state.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     

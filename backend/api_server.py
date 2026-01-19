@@ -48,7 +48,7 @@ async def chat(request: ChatRequest):
             print(f"Received image data (length: {len(request.image_base64)})")
             
         print("Trying OpenRouter API...")
-        output_text = await model_calling.call_openrouter(request.message, request.image_base64)
+        output_text = await model_calling.call_openrouter(request.message, request.conversation_history, request.image_base64)
         
         if output_text:
             source = "openrouter"
@@ -57,7 +57,7 @@ async def chat(request: ChatRequest):
             # Fallback to local model
             if state.local_model_available:
                 print("Falling back to local model...")
-                output_text = model_calling.call_local_model(request.message, request.image_base64)
+                output_text = model_calling.call_local_model(request.message, request.conversation_history, request.image_base64)
                 source = "local"
                 print("Got response from local model")
             else:
