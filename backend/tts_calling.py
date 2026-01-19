@@ -35,8 +35,11 @@ async def generate_audio_elevenlabs(text: str) -> Optional[bytes]:
             else:
                 print(f"ElevenLabs error: {response.status_code} - {response.text}")
                 return None
+    except httpx.TimeoutException:
+        print("ElevenLabs generation timed out!")
+        return None
     except Exception as e:
-        print(f"ElevenLabs generation failed: {e}")
+        print(f"ElevenLabs generation failed: {type(e).__name__}: {e}")
         return None
 
 def generate_audio_kokoro(text: str) -> Optional[str]:

@@ -9,6 +9,7 @@ import tts_calling
 import config
 import utils
 import state
+import re
 
 app = FastAPI()
 
@@ -65,13 +66,19 @@ async def chat(request: ChatRequest):
         # Extract component call if exists
         component_call_data = utils.extract_component_call(output_text)
         
-        # Clean text for TTS
+        display_text = re.sub(r'<component_call>.*?</component_call>', '', output_text, flags=re.DOTALL).strip()
+        
         clean_text = utils.clean_text_for_tts(output_text)
         
-        # 2. TTS Generation
+        if not clean_text:
+            clean_text = "Processing that for you now!"
+        
+        if not display_text:
+            display_text = "*Processing action...*"
+    
         audio_base64 = ""
         
-        # Try ElevenLabs if configured
+
         if config.TTS_PROVIDER == "elevenlabs":
             print("Generating audio with ElevenLabs...")
             audio_bytes = await tts_calling.generate_audio_elevenlabs(clean_text)
@@ -91,7 +98,7 @@ async def chat(request: ChatRequest):
                 print("Kokoro generation failed or pipeline not loaded.")
 
         return ChatResponse(
-            text=clean_text,
+            text=display_text,
             audio_base64=audio_base64,
             component_call=component_call_data,
             source=source

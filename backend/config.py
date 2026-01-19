@@ -12,7 +12,7 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 # TTS Configuration
 TTS_PROVIDER = os.getenv("TTS_PROVIDER", "kokoro")  # 'kokoro' or 'elevenlabs'
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
-ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")  # Default: Rachel
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "lhTvHflPVOqgSWyuWQry")  
 
 # Local Model Path
 LOCAL_MODEL_PATH = "./Qwen3-VL-2B-Instruct"
