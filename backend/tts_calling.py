@@ -1,10 +1,7 @@
 import io
 import base64
 import httpx
-import numpy as np
-import soundfile as sf
 from typing import Optional
-import state
 import config
 
 async def generate_audio_elevenlabs(text: str) -> Optional[bytes]:
@@ -41,58 +38,3 @@ async def generate_audio_elevenlabs(text: str) -> Optional[bytes]:
     except Exception as e:
         print(f"ElevenLabs generation failed: {type(e).__name__}: {e}")
         return None
-
-def generate_audio_kokoro(text: str) -> Optional[str]:
-    """Generate audio using Kokoro (Local) and return base64 string."""
-    if not state.tts_pipeline:
-        print("Kokoro pipeline not loaded!")
-        return None
-
-    try:
-        generator = state.tts_pipeline(text, voice="jf_alpha", speed=1.1)
-        audio_chunks = []
-        for gs, ps, audio in generator:
-            audio_chunks.append(audio)
-        
-        if audio_chunks:
-            full_audio = np.concatenate(audio_chunks)
-            buffer = io.BytesIO()
-            sf.write(buffer, full_audio, samplerate=24000, format='WAV')
-            buffer.seek(0)
-            return base64.b64encode(buffer.read()).decode('utf-8')
-    except Exception as e:
-        print(f"Kokoro generation failed: {e}")
-    
-    return None
-
-async def generate_audio_edge(text: str) -> Optional[str]:
-    """Generate audio using Edge TTS (Microsoft) and return base64 string.
-    Free, fast, and high-quality neural voices.
-    """
-    try:
-        import edge_tts
-        
-        # Use a multilingual voice - you can change this
-        # Popular voices: en-US-AvaMultilingualNeural, en-US-AriaNeural, en-US-GuyNeural
-        voice = config.EDGE_TTS_VOICE
-        
-        communicate = edge_tts.Communicate(text, voice)
-        
-        # Collect audio data
-        audio_data = io.BytesIO()
-        async for chunk in communicate.stream():
-            if chunk["type"] == "audio":
-                audio_data.write(chunk["data"])
-        
-        audio_data.seek(0)
-        
-        if audio_data.getbuffer().nbytes > 0:
-            return base64.b64encode(audio_data.read()).decode('utf-8')
-        else:
-            print("Edge TTS returned empty audio")
-            return None
-            
-    except Exception as e:
-        print(f"Edge TTS generation failed: {type(e).__name__}: {e}")
-        return None
-

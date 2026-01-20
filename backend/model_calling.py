@@ -44,7 +44,6 @@ async def call_openrouter(message: str, history: List[Dict[str, Any]] = [], imag
     if not config.OPENROUTER_API_KEY:
         return None
     
-    # Build user message content based on whether image is provided
     current_human_msg = []
     if image_base64:
         current_human_msg.append({
@@ -53,14 +52,11 @@ async def call_openrouter(message: str, history: List[Dict[str, Any]] = [], imag
         })
     current_human_msg.append({"type": "text", "text": message})
     
-    # Prepare full message list: System -> History -> Current Message
-    messages = [{"role": "system", "content": utils.get_system_prompt()}]
+    messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
     
-    # Add sanitized history
     if history:
         messages.extend(sanitize_history(history))
         
-    # Add current message
     messages.append({
         "role": "user", 
         "content": current_human_msg if image_base64 else message
@@ -110,7 +106,7 @@ async def call_deepseek(message: str, history: List[Dict[str, Any]] = [], image_
     if not config.DEEPSEEK_API_KEY:
         return None
     
-    messages = [{"role": "system", "content": utils.get_system_prompt()}]
+    messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
     
     if history:
         messages.extend(sanitize_history(history))
@@ -167,7 +163,7 @@ def call_local_model(message: str, history: List[Dict[str, Any]] = [], image_bas
     if image_base64:
         system_prompt = "You are Lumina, a helpful AI assistant. Describe the image and answer the user's question naturally."
     else:
-        system_prompt = utils.get_system_prompt()
+        system_prompt = utils.get_system_prompt(user_message=message)
     
     # Build messages list
     messages = [{"role": "system", "content": system_prompt}]

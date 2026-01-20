@@ -1,7 +1,6 @@
 import os
 import torch
 from transformers import AutoModelForImageTextToText, AutoProcessor
-from kokoro import KPipeline
 import state as state
 import config as config
 
@@ -27,15 +26,6 @@ async def load_all_models():
     except Exception as e:
         print(f"Failed to load local model: {e}")
         print("Will use OpenRouter API only.")
-    
-    print("Loading Kokoro TTS...")
-    try:
-        # Use CUDA if available for faster TTS
-        kokoro_device = "cuda" if torch.cuda.is_available() else "cpu"
-        state.tts_pipeline = KPipeline(lang_code="a", repo_id='hexgrad/Kokoro-82M', device=kokoro_device)
-        print(f"Kokoro TTS loaded on {kokoro_device.upper()}.")
-    except Exception as e:
-        print(f"Failed to load Kokoro TTS: {e}")
     
     print("Startup complete!")
     

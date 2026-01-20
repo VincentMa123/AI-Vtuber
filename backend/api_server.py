@@ -37,15 +37,19 @@ class ChatResponse(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     await load_models.load_all_models()
+    
+    # Initialize RAG system (pre-load model and embeddings)
+    try:
+        import product_search
+        product_search.initialize_rag()
+    except Exception as e:
+        print(f"[Startup] Warning: Could not initialize RAG: {e}")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     try:
         output_text = None
         source = None
-        
-        print(f"Incoming Request Model Parsed: {request.dict()}")
-        print(f"Incoming Request - TTS Enabled: {request.tts_enabled}")
 
         if request.image_base64:
             print(f"Received image data (length: {len(request.image_base64)})")
@@ -82,9 +86,9 @@ async def chat(request: ChatRequest):
         # Fallback chain: if primary provider failed, try others
         if not output_text:
             print(f"Primary provider '{llm_provider}' failed, trying fallbacks...")
-            
+
             # Try OpenRouter if not already tried
-            if llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
+            if not output_text and llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
                 print("Fallback: Trying OpenRouter...")
                 output_text = await model_calling.call_openrouter(request.message, request.conversation_history, request.image_base64)
                 if output_text:
@@ -135,26 +139,27 @@ async def chat(request: ChatRequest):
                 if audio_bytes:
                     audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
                 else:
-                    print("ElevenLabs failed. Falling back to Kokoro TTS...")
-                    # Fall through to Kokoro
+                    print("ElevenLabs failed to generate audio")
             
-            elif config.TTS_PROVIDER == "edge":
-                print("Generating audio with Edge TTS...")
-                audio_b64_edge = await tts_calling.generate_audio_edge(clean_text)
-                if audio_b64_edge:
-                    audio_base64 = audio_b64_edge
+            elif config.TTS_PROVIDER == "realtimetts":
+                print(f"Generating audio with RealtimeTTS (Engine: {config.REALTIMETTS_ENGINE})...")
+                if not hasattr(state, 'realtimetts_service'):
+                    # Initialize on first use to avoid startup delay if not used
+                    try:
+                        import realtime_tts_service
+                        state.realtimetts_service = realtime_tts_service.RealtimeTTSWrapper(config.REALTIMETTS_ENGINE)
+                    except Exception as e:
+                        print(f"Failed to initialize RealtimeTTS: {e}")
+                        state.realtimetts_service = None
+                
+                if state.realtimetts_service:
+                    audio_bytes = state.realtimetts_service.generate_audio(clean_text)
+                    if audio_bytes:
+                         audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                    else:
+                        print("RealtimeTTS generated no audio")
                 else:
-                    print("Edge TTS failed. Falling back to Kokoro TTS...")
-                    # Fall through to Kokoro
-            
-            # Use Kokoro (as default or fallback)
-            if not audio_base64:
-                print("Generating audio with Kokoro...")
-                audio_b64_kokoro = tts_calling.generate_audio_kokoro(clean_text)
-                if audio_b64_kokoro:
-                    audio_base64 = audio_b64_kokoro
-                else:
-                    print("Kokoro generation failed or pipeline not loaded.")
+                    print("RealtimeTTS service not available")
         else:
             print("TTS disabled for this request.")
 

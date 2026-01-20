@@ -7,3 +7,5 @@ soundfile
 numpy
 scipy
 kokoro
+RealtimeTTS[system]
+PyAudio
