@@ -28,21 +28,27 @@ async def load_all_models():
         print(f"Failed to load local model: {e}")
         print("Will use OpenRouter API only.")
     
-    # Load Kokoro TTS
-    # Only strictly necessary if using Kokoro, but we load it anyway for fallback/switching availability
     print("Loading Kokoro TTS...")
     try:
-        state.tts_pipeline = KPipeline(lang_code="a", repo_id='hexgrad/Kokoro-82M')
-        print("Kokoro TTS loaded.")
+        # Use CUDA if available for faster TTS
+        kokoro_device = "cuda" if torch.cuda.is_available() else "cpu"
+        state.tts_pipeline = KPipeline(lang_code="a", repo_id='hexgrad/Kokoro-82M', device=kokoro_device)
+        print(f"Kokoro TTS loaded on {kokoro_device.upper()}.")
     except Exception as e:
         print(f"Failed to load Kokoro TTS: {e}")
     
     print("Startup complete!")
+    
+    # Initialize runtime LLM provider from config
+    state.llm_provider = config.LLM_PROVIDER.lower()
+    print(f"LLM Provider: {state.llm_provider}")
+    
     if config.OPENROUTER_API_KEY:
         print(f"OpenRouter API configured with model: {config.OPENROUTER_MODEL}")
-    else:
-        print("Warning: OPENROUTER_API_KEY not set.")
+    if config.DEEPSEEK_API_KEY:
+        print(f"DeepSeek API configured with model: {config.DEEPSEEK_MODEL}")
         
     print(f"TTS Provider: {config.TTS_PROVIDER}")
     if config.TTS_PROVIDER == "elevenlabs" and not config.ELEVENLABS_API_KEY:
         print("Warning: TTS_PROVIDER is elevenlabs but ELEVENLABS_API_KEY is missing!")
+
