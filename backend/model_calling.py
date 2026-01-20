@@ -160,7 +160,7 @@ def call_local_model(message: str, history: List[Dict[str, Any]] = [], image_bas
     
     inputs = inputs.to("cuda")
     
-    generated_ids = state.model.generate(**inputs, max_new_tokens=512)
+    generated_ids = state.model.generate(**inputs, max_new_tokens=256)
     generated_ids_trimmed = [
         out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
     ]
