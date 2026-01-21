@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import base64
 import load_models
-import model_calling
-import tts_calling
+from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider
+from tts import ElevenLabsProvider, RealtimeTTSProvider
+from rag import initialize_rag
 import config
 import utils
 import state
@@ -22,26 +23,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize providers
+llm_providers = {
+    "openrouter": OpenRouterProvider(),
+    "deepseek": DeepSeekProvider(),
+    "local": LocalModelProvider()
+}
+
+tts_providers = {
+    "elevenlabs": ElevenLabsProvider(),
+    "realtimetts": None  # Lazy initialization
+}
+
 class ChatRequest(BaseModel):
     message: str
     conversation_history: list = []
     image_base64: Optional[str] = None
-    tts_enabled: bool = True  # New field to control TTS
+    tts_enabled: bool = True  
 
 class ChatResponse(BaseModel):
     text: str
     audio_base64: str
     component_call: Optional[str] = None
-    source: Optional[str] = None  # 'openrouter', 'deepseek', or 'local'
+    source: Optional[str] = None 
 
+class SetProviderRequest(BaseModel):
+    provider: str
+    
 @app.on_event("startup")
 async def startup_event():
     await load_models.load_all_models()
     
-    # Initialize RAG system (pre-load model and embeddings)
     try:
-        import product_search
-        product_search.initialize_rag()
+        initialize_rag()
     except Exception as e:
         print(f"[Startup] Warning: Could not initialize RAG: {e}")
 
@@ -54,57 +68,44 @@ async def chat(request: ChatRequest):
         if request.image_base64:
             print(f"Received image data (length: {len(request.image_base64)})")
         
-        # Use runtime LLM provider (can be changed via API)
         llm_provider = state.llm_provider
         
-        # DeepSeek doesn't support images - auto-switch to OpenRouter for image requests
         if request.image_base64 and llm_provider == "deepseek":
             print("DeepSeek doesn't support vision - using OpenRouter for this image request")
             llm_provider = "openrouter"
         
         print(f"Using LLM provider: {llm_provider}")
         
-        if llm_provider == "deepseek":
-            print("Trying DeepSeek API...")
-            output_text = await model_calling.call_deepseek(request.message, request.conversation_history, request.image_base64)
-            if output_text:
-                source = "deepseek"
-                print("Got response from DeepSeek")
-        elif llm_provider == "openrouter":
-            print("Trying OpenRouter API...")
-            output_text = await model_calling.call_openrouter(request.message, request.conversation_history, request.image_base64)
-            if output_text:
-                source = "openrouter"
-                print("Got response from OpenRouter")
-        elif llm_provider == "local":
-            if state.local_model_available:
-                print("Using local model...")
-                output_text = model_calling.call_local_model(request.message, request.conversation_history, request.image_base64)
-                source = "local"
-                print("Got response from local model")
+        # Get the provider instance
+        provider = llm_providers.get(llm_provider)
+        if not provider:
+            raise HTTPException(status_code=500, detail=f"Invalid LLM provider: {llm_provider}")
         
-        # Fallback chain: if primary provider failed, try others
+        # Try primary provider
+        output_text = await provider.generate(request.message, request.conversation_history, request.image_base64)
+        if output_text:
+            source = llm_provider
+            print(f"Got response from {llm_provider}")
+        
+        # Fallback logic
         if not output_text:
             print(f"Primary provider '{llm_provider}' failed, trying fallbacks...")
 
-            # Try OpenRouter if not already tried
             if not output_text and llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
                 print("Fallback: Trying OpenRouter...")
-                output_text = await model_calling.call_openrouter(request.message, request.conversation_history, request.image_base64)
+                output_text = await llm_providers["openrouter"].generate(request.message, request.conversation_history, request.image_base64)
                 if output_text:
                     source = "openrouter"
             
-            # Try DeepSeek if still no response
             if not output_text and llm_provider != "deepseek" and config.DEEPSEEK_API_KEY:
                 print("Fallback: Trying DeepSeek...")
-                output_text = await model_calling.call_deepseek(request.message, request.conversation_history, request.image_base64)
+                output_text = await llm_providers["deepseek"].generate(request.message, request.conversation_history, request.image_base64)
                 if output_text:
                     source = "deepseek"
             
-            # Try local model as last resort
             if not output_text and state.local_model_available:
                 print("Fallback: Using local model...")
-                output_text = model_calling.call_local_model(request.message, request.conversation_history, request.image_base64)
+                output_text = llm_providers["local"].generate(request.message, request.conversation_history, request.image_base64)
                 source = "local"
         
         if not output_text:
@@ -113,10 +114,8 @@ async def chat(request: ChatRequest):
                 detail="All LLM providers failed"
             )
         
-        # Debug: Print raw model output
         print(f"=== RAW MODEL OUTPUT ===\n{output_text}\n========================")
         
-        # Extract component call if exists
         component_call_data = utils.extract_component_call(output_text)
         
         display_text = re.sub(r'<component_call>.*?</component_call>', '', output_text, flags=re.DOTALL).strip()
@@ -135,7 +134,7 @@ async def chat(request: ChatRequest):
         if request.tts_enabled:
             if config.TTS_PROVIDER == "elevenlabs":
                 print("Generating audio with ElevenLabs...")
-                audio_bytes = await tts_calling.generate_audio_elevenlabs(clean_text)
+                audio_bytes = await tts_providers["elevenlabs"].generate_audio(clean_text)
                 if audio_bytes:
                     audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
                 else:
@@ -143,17 +142,16 @@ async def chat(request: ChatRequest):
             
             elif config.TTS_PROVIDER == "realtimetts":
                 print(f"Generating audio with RealtimeTTS (Engine: {config.REALTIMETTS_ENGINE})...")
-                if not hasattr(state, 'realtimetts_service'):
-                    # Initialize on first use to avoid startup delay if not used
+                
+                # Lazy initialization
+                if tts_providers["realtimetts"] is None:
                     try:
-                        import realtime_tts_service
-                        state.realtimetts_service = realtime_tts_service.RealtimeTTSWrapper(config.REALTIMETTS_ENGINE)
+                        tts_providers["realtimetts"] = RealtimeTTSProvider(config.REALTIMETTS_ENGINE)
                     except Exception as e:
                         print(f"Failed to initialize RealtimeTTS: {e}")
-                        state.realtimetts_service = None
                 
-                if state.realtimetts_service:
-                    audio_bytes = state.realtimetts_service.generate_audio(clean_text)
+                if tts_providers["realtimetts"]:
+                    audio_bytes = await tts_providers["realtimetts"].generate_audio(clean_text)
                     if audio_bytes:
                          audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
                     else:
@@ -197,8 +195,6 @@ async def get_llm_provider():
         "available": ["openrouter", "deepseek", "local"]
     }
 
-class SetProviderRequest(BaseModel):
-    provider: str
 
 @app.post("/api/llm-provider")
 async def set_llm_provider(request: SetProviderRequest):

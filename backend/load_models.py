@@ -6,8 +6,7 @@ import config as config
 
 async def load_all_models():
     """Load all necessary models into the state module."""
-    
-    # Try to load local model
+
     try:
         print("Loading Qwen3-VL model...")
         
@@ -29,7 +28,6 @@ async def load_all_models():
     
     print("Startup complete!")
     
-    # Initialize runtime LLM provider from config
     state.llm_provider = config.LLM_PROVIDER.lower()
     print(f"LLM Provider: {state.llm_provider}")
     
