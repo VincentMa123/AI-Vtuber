@@ -11,6 +11,7 @@ import config
 import utils
 import state
 import re
+from chat_aggregator import ChatAggregator, ChatMessage, AggregationConfig
 
 app = FastAPI()
 
@@ -39,6 +40,14 @@ class ChatRequest(BaseModel):
     conversation_history: list = []
     image_base64: Optional[str] = None
     tts_enabled: bool = True  
+    use_aggregation: bool = False  # NEW: Toggle aggregation for this request
+
+class BatchChatRequest(BaseModel):
+    message: str
+    user_id: str
+    username: str = "Anonymous"
+    image_base64: Optional[str] = None
+    timestamp: Optional[float] = None
 
 class ChatResponse(BaseModel):
     text: str
@@ -48,15 +57,38 @@ class ChatResponse(BaseModel):
 
 class SetProviderRequest(BaseModel):
     provider: str
+
+class AggregationConfigRequest(BaseModel):
+    enabled: Optional[bool] = None
+    window_seconds: Optional[float] = None
+    min_response_interval: Optional[float] = None
+    max_messages_per_user_per_window: Optional[int] = None
     
+chat_aggregator = None
+
 @app.on_event("startup")
 async def startup_event():
+    global chat_aggregator
+    
     await load_models.load_all_models()
     
     try:
         initialize_rag()
     except Exception as e:
         print(f"[Startup] Warning: Could not initialize RAG: {e}")
+    
+    aggregator_config = AggregationConfig(
+        enabled=config.CHAT_AGGREGATION_ENABLED,
+        window_seconds=config.AGGREGATION_WINDOW_SECONDS,
+        min_response_interval=config.MIN_RESPONSE_INTERVAL_SECONDS,
+        max_messages_per_user_per_window=config.MAX_MESSAGES_PER_USER_PER_WINDOW,
+        min_message_length=config.MIN_MESSAGE_LENGTH,
+        similarity_threshold=config.SIMILARITY_THRESHOLD
+    )
+    chat_aggregator = ChatAggregator(aggregator_config)
+    chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
+    await chat_aggregator.start()
+    print(f"[Startup] Chat aggregator initialized (enabled: {config.CHAT_AGGREGATION_ENABLED}, duplicate expiry: {config.DUPLICATE_EXPIRY_SECONDS}s)")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -210,6 +242,69 @@ async def set_llm_provider(request: SetProviderRequest):
     print(f"LLM provider changed to: {provider}")
     
     return {"provider": state.llm_provider, "message": f"Switched to {provider}"}
+
+@app.post("/api/chat/batch")
+async def batch_chat(request: BatchChatRequest):
+    """Submit a message to the chat aggregation queue"""
+    if not chat_aggregator:
+        raise HTTPException(status_code=503, detail="Chat aggregator not initialized")
+    
+    if not chat_aggregator.config.enabled:
+        raise HTTPException(status_code=400, detail="Chat aggregation is disabled")
+    
+    # Create chat message
+    chat_msg = ChatMessage(
+        message=request.message,
+        user_id=request.user_id,
+        username=request.username,
+        timestamp=request.timestamp,
+        image_base64=request.image_base64
+    )
+    
+    # Submit to aggregator
+    accepted = await chat_aggregator.submit_message(chat_msg)
+    
+    return {
+        "accepted": accepted,
+        "queue_size": chat_aggregator.message_queue.qsize(),
+        "message": "Message queued for processing" if accepted else "Message filtered"
+    }
+
+@app.get("/api/chat/aggregation-status")
+async def get_aggregation_status():
+    """Get current chat aggregation status"""
+    if not chat_aggregator:
+        raise HTTPException(status_code=503, detail="Chat aggregator not initialized")
+    
+    return chat_aggregator.get_status()
+
+@app.post("/api/chat/aggregation-config")
+async def update_aggregation_config(request: AggregationConfigRequest):
+    """Update chat aggregation configuration"""
+    if not chat_aggregator:
+        raise HTTPException(status_code=503, detail="Chat aggregator not initialized")
+    
+    # Update config with provided values
+    updates = {k: v for k, v in request.dict().items() if v is not None}
+    chat_aggregator.update_config(**updates)
+    
+    return {
+        "message": "Configuration updated",
+        "current_config": chat_aggregator.get_status()
+    }
+
+@app.post("/api/chat/aggregation-reset")
+async def reset_aggregation():
+    """Reset aggregation state (clear caches) - useful for testing"""
+    if not chat_aggregator:
+        raise HTTPException(status_code=503, detail="Chat aggregator not initialized")
+    
+    chat_aggregator.reset()
+    
+    return {
+        "message": "Aggregation state reset",
+        "status": chat_aggregator.get_status()
+    }
 
 if __name__ == "__main__":
     import uvicorn
