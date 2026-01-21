@@ -9,3 +9,4 @@ scipy
 kokoro
 RealtimeTTS[system]
 PyAudio
+twitchio>=2.9.0

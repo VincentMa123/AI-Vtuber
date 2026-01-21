@@ -60,6 +60,7 @@ class ChatAggregator:
         self._processing_task: Optional[asyncio.Task] = None
         self._is_running: bool = False
         self.duplicate_expiry_seconds: float = 60.0  # Messages older than this are no longer considered duplicates
+        self.response_callback = None  # Callback function to generate AI responses
         
     async def start(self):
         """Start the aggregation service"""
@@ -163,8 +164,7 @@ class ChatAggregator:
     
     async def _process_batch(self, batch: List[ChatMessage]):
         """
-        Process a batch of messages
-        This is where you'd trigger the AI response
+        Process a batch of messages and generate AI response
         """
         # Sort by priority (highest first)
         batch.sort(key=lambda m: m.priority_score, reverse=True)
@@ -183,6 +183,25 @@ class ChatAggregator:
             # Keep only last 20 topics
             if len(self.recent_topics) > 20:
                 self.recent_topics = self.recent_topics[-20:]
+        
+        # Generate AI response
+        try:
+            # Format messages for LLM
+            formatted_message, top_messages = self.get_batch_for_llm(batch)
+            
+            print(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}...")
+            
+            # Call the response callback if set (will be set by api_server)
+            if hasattr(self, 'response_callback') and self.response_callback:
+                await self.response_callback(formatted_message, top_messages)
+            else:
+                print("[ChatAggregator] Warning: No response callback set. AI response not generated.")
+                
+        except Exception as e:
+            print(f"[ChatAggregator] Error generating response: {e}")
+            import traceback
+            traceback.print_exc()
+
     
     def get_batch_for_llm(self, batch: List[ChatMessage]) -> Tuple[str, List[ChatMessage]]:
         """

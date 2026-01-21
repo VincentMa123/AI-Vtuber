@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import base64
@@ -12,6 +12,7 @@ import utils
 import state
 import re
 from chat_aggregator import ChatAggregator, ChatMessage, AggregationConfig
+from websocket_manager import ws_manager
 
 app = FastAPI()
 
@@ -89,6 +90,81 @@ async def startup_event():
     chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
     await chat_aggregator.start()
     print(f"[Startup] Chat aggregator initialized (enabled: {config.CHAT_AGGREGATION_ENABLED}, duplicate expiry: {config.DUPLICATE_EXPIRY_SECONDS}s)")
+    
+    # Initialize Twitch bot if enabled
+    if config.TWITCH_ENABLED:
+        from twitch_bot import start_twitch_bot
+        await start_twitch_bot(
+            token=config.TWITCH_BOT_TOKEN,
+            channel=config.TWITCH_CHANNEL,
+            prefix=config.TWITCH_BOT_PREFIX,
+            aggregator=chat_aggregator
+        )
+        print(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
+    else:
+        print("[Startup] Twitch integration disabled")
+    
+    # Set up aggregator response callback to generate AI responses
+    async def handle_aggregated_response(message: str, top_messages: list):
+        """Generate AI response for aggregated messages"""
+        try:
+            print(f"[Aggregator Callback] Generating response for: {message[:100]}...")
+            
+            # Use the same LLM logic as the regular chat endpoint
+            llm_provider = state.llm_provider
+            provider = llm_providers.get(llm_provider)
+            
+            if not provider:
+                print(f"[Aggregator Callback] Error: Invalid LLM provider: {llm_provider}")
+                return
+            
+            # Generate response
+            output_text = await provider.generate(message, [], None)
+            
+            if output_text:
+                print(f"[Aggregator Callback] Generated response: {output_text[:100]}...")
+                
+                # Generate Audio for TTS
+                audio_base64 = None
+                try:
+                    clean_text = utils.clean_text_for_tts(output_text)
+                    if clean_text:
+                        # Use configured TTS provider (default to ElevenLabs or RealtimeTTS)
+                        if config.TTS_PROVIDER == "elevenlabs":
+                            audio_bytes = await tts_providers["elevenlabs"].generate_audio(clean_text)
+                            if audio_bytes:
+                                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                        elif config.TTS_PROVIDER == "realtimetts":
+                            # Lazy init RealtimeTTS if needed
+                            if tts_providers["realtimetts"] is None:
+                                tts_providers["realtimetts"] = RealtimeTTSProvider(config.REALTIMETTS_ENGINE)
+                            
+                            if tts_providers["realtimetts"]:
+                                audio_bytes = await tts_providers["realtimetts"].generate_audio(clean_text)
+                                if audio_bytes:
+                                    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                except Exception as e:
+                    print(f"[Aggregator Callback] TTS Error: {e}")
+
+                # Broadcast via WebSocket (with audio!)
+                await ws_manager.broadcast_ai_response(output_text, audio_base64)
+                
+                # Send to Twitch chat if bot is available
+                if config.TWITCH_ENABLED:
+                    from twitch_bot import get_twitch_bot
+                    bot = get_twitch_bot()
+                    if bot:
+                        await bot.send_response(output_text)
+            else:
+                print("[Aggregator Callback] No response generated")
+                
+        except Exception as e:
+            print(f"[Aggregator Callback] Error: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    chat_aggregator.response_callback = handle_aggregated_response
+    print("[Startup] Chat aggregator response callback configured")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -306,6 +382,19 @@ async def reset_aggregation():
         "status": chat_aggregator.get_status()
     }
 
+@app.websocket("/ws/chat")
+async def websocket_chat(websocket: WebSocket):
+    """WebSocket endpoint for real-time chat updates"""
+    await ws_manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+    except WebSocketDisconnect:
+        ws_manager.disconnect(websocket)
+    except Exception as e:
+        print(f"[WebSocket] Error: {e}")
+        ws_manager.disconnect(websocket)
+    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

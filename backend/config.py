@@ -26,3 +26,9 @@ MAX_MESSAGES_PER_USER_PER_WINDOW = int(os.getenv("MAX_MESSAGES_PER_USER_PER_WIND
 MIN_MESSAGE_LENGTH = int(os.getenv("MIN_MESSAGE_LENGTH", "2"))
 SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.8"))
 DUPLICATE_EXPIRY_SECONDS = float(os.getenv("DUPLICATE_EXPIRY_SECONDS", "60.0"))  # How long to remember messages for duplicate detection
+
+# Twitch Integration
+TWITCH_ENABLED = os.getenv("TWITCH_ENABLED", "false").lower() == "true"
+TWITCH_BOT_TOKEN = os.getenv("TWITCH_BOT_TOKEN", "")
+TWITCH_CHANNEL = os.getenv("TWITCH_CHANNEL", "")
+TWITCH_BOT_PREFIX = os.getenv("TWITCH_BOT_PREFIX", "!")
