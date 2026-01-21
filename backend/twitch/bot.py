@@ -7,8 +7,8 @@ from twitchio.ext import commands
 import asyncio
 import time
 from typing import Optional
-from chat_aggregator import ChatMessage
-from websocket_manager import ws_manager
+from chat.aggregator import ChatMessage
+from websocket.manager import ws_manager
 
 
 class TwitchBot(commands.Bot):

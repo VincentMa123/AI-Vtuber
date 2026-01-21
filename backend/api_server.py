@@ -11,8 +11,9 @@ import config
 import utils
 import state
 import re
-from chat_aggregator import ChatAggregator, ChatMessage, AggregationConfig
-from websocket_manager import ws_manager
+from chat.aggregator import ChatAggregator, ChatMessage, AggregationConfig
+from websocket.manager import ws_manager
+import uvicorn
 
 app = FastAPI()
 
@@ -93,7 +94,7 @@ async def startup_event():
     
     # Initialize Twitch bot if enabled
     if config.TWITCH_ENABLED:
-        from twitch_bot import start_twitch_bot
+        from twitch.bot import start_twitch_bot
         await start_twitch_bot(
             token=config.TWITCH_BOT_TOKEN,
             channel=config.TWITCH_CHANNEL,
@@ -151,7 +152,7 @@ async def startup_event():
                 
                 # Send to Twitch chat if bot is available
                 if config.TWITCH_ENABLED:
-                    from twitch_bot import get_twitch_bot
+                    from twitch.bot import get_twitch_bot
                     bot = get_twitch_bot()
                     if bot:
                         await bot.send_response(output_text)
@@ -396,5 +397,4 @@ async def websocket_chat(websocket: WebSocket):
         ws_manager.disconnect(websocket)
     
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
