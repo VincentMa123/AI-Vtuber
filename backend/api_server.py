@@ -1,7 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 import base64
 import load_models
 from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider
@@ -11,9 +10,17 @@ import config
 import utils
 import state
 import re
-from chat.aggregator import ChatAggregator, ChatMessage, AggregationConfig
-from websocket.manager import ws_manager
 import uvicorn
+
+# Import models from chat module
+from chat.aggregator import ChatAggregator
+from chat.models import (
+    ChatMessage, AggregationConfig,
+    ChatRequest, BatchChatRequest, ChatResponse,
+    SetProviderRequest, AggregationConfigRequest
+)
+from chat.response_handler import handle_aggregated_response
+from websocket.manager import ws_manager
 
 app = FastAPI()
 
@@ -34,37 +41,8 @@ llm_providers = {
 
 tts_providers = {
     "elevenlabs": ElevenLabsProvider(),
-    "realtimetts": None 
+    "realtimetts": None
 }
-
-class ChatRequest(BaseModel):
-    message: str
-    conversation_history: list = []
-    image_base64: Optional[str] = None
-    tts_enabled: bool = True  
-    use_aggregation: bool = False  # NEW: Toggle aggregation for this request
-
-class BatchChatRequest(BaseModel):
-    message: str
-    user_id: str
-    username: str = "Anonymous"
-    image_base64: Optional[str] = None
-    timestamp: Optional[float] = None
-
-class ChatResponse(BaseModel):
-    text: str
-    audio_base64: str
-    component_call: Optional[str] = None
-    source: Optional[str] = None 
-
-class SetProviderRequest(BaseModel):
-    provider: str
-
-class AggregationConfigRequest(BaseModel):
-    enabled: Optional[bool] = None
-    window_seconds: Optional[float] = None
-    min_response_interval: Optional[float] = None
-    max_messages_per_user_per_window: Optional[int] = None
     
 chat_aggregator = None
 
@@ -105,66 +83,17 @@ async def startup_event():
     else:
         print("[Startup] Twitch integration disabled")
     
-    # Set up aggregator response callback to generate AI responses
-    async def handle_aggregated_response(message: str, top_messages: list):
-        """Generate AI response for aggregated messages"""
-        try:
-            print(f"[Aggregator Callback] Generating response for: {message[:100]}...")
-            
-            # Use the same LLM logic as the regular chat endpoint
-            llm_provider = state.llm_provider
-            provider = llm_providers.get(llm_provider)
-            
-            if not provider:
-                print(f"[Aggregator Callback] Error: Invalid LLM provider: {llm_provider}")
-                return
-            
-            # Generate response
-            output_text = await provider.generate(message, [], None)
-            
-            if output_text:
-                print(f"[Aggregator Callback] Generated response: {output_text[:100]}...")
-                
-                # Generate Audio for TTS
-                audio_base64 = None
-                try:
-                    clean_text = utils.clean_text_for_tts(output_text)
-                    if clean_text:
-                        # Use configured TTS provider (default to ElevenLabs or RealtimeTTS)
-                        if config.TTS_PROVIDER == "elevenlabs":
-                            audio_bytes = await tts_providers["elevenlabs"].generate_audio(clean_text)
-                            if audio_bytes:
-                                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                        elif config.TTS_PROVIDER == "realtimetts":
-                            # Lazy init RealtimeTTS if needed
-                            if tts_providers["realtimetts"] is None:
-                                tts_providers["realtimetts"] = RealtimeTTSProvider(config.REALTIMETTS_ENGINE)
-                            
-                            if tts_providers["realtimetts"]:
-                                audio_bytes = await tts_providers["realtimetts"].generate_audio(clean_text)
-                                if audio_bytes:
-                                    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                except Exception as e:
-                    print(f"[Aggregator Callback] TTS Error: {e}")
-
-                # Broadcast via WebSocket (with audio!)
-                await ws_manager.broadcast_ai_response(output_text, audio_base64)
-                
-                # Send to Twitch chat if bot is available
-                if config.TWITCH_ENABLED:
-                    from twitch.bot import get_twitch_bot
-                    bot = get_twitch_bot()
-                    if bot:
-                        await bot.send_response(output_text)
-            else:
-                print("[Aggregator Callback] No response generated")
-                
-        except Exception as e:
-            print(f"[Aggregator Callback] Error: {e}")
-            import traceback
-            traceback.print_exc()
+    # Set up aggregator response callback using the modular response handler
+    async def aggregation_callback(message: str, top_messages: list):
+        await handle_aggregated_response(
+            message=message,
+            top_messages=top_messages,
+            llm_providers=llm_providers,
+            tts_providers=tts_providers,
+            RealtimeTTSProvider=RealtimeTTSProvider
+        )
     
-    chat_aggregator.response_callback = handle_aggregated_response
+    chat_aggregator.response_callback = aggregation_callback
     print("[Startup] Chat aggregator response callback configured")
 
 @app.post("/api/chat", response_model=ChatResponse)

@@ -60,13 +60,14 @@ class WebSocketManager:
             "timestamp": asyncio.get_event_loop().time()
         })
     
-    async def broadcast_ai_response(self, response: str, audio_base64: str = None):
-        """Broadcast Lumina's AI response"""
+    async def broadcast_ai_response(self, response: str, audio_base64: str = None, emotion: str = "neutral"):
+        """Broadcast Lumina's AI response with emotion"""
         await self.broadcast({
             "type": "ai_response",
             "username": "Lumina",
             "message": response,
             "audio_base64": audio_base64,
+            "emotion": emotion,
             "timestamp": asyncio.get_event_loop().time()
         })
     
