@@ -23,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize providers
 llm_providers = {
     "openrouter": OpenRouterProvider(),
     "deepseek": DeepSeekProvider(),
@@ -32,7 +31,7 @@ llm_providers = {
 
 tts_providers = {
     "elevenlabs": ElevenLabsProvider(),
-    "realtimetts": None  # Lazy initialization
+    "realtimetts": None 
 }
 
 class ChatRequest(BaseModel):

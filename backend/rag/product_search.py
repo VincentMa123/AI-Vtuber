@@ -78,47 +78,127 @@ def get_all_promotions() -> List[Dict]:
     return dataset.get("promotions", [])
 
 
-def detect_product_query(message: str) -> bool:
-    """Detect if a user message is asking about products."""
-    if not message:
+def detect_product_query(message: str, threshold: float = 0.4) -> bool:
+    """
+    Detect if a user message is asking about products using semantic similarity.
+    
+    Args:
+        message: User's message
+        threshold: Similarity threshold (0-1), default 0.4 for better recall
+    
+    Returns:
+        True if message is likely about products
+    """
+    if not message or len(message.strip()) < 3:
         return False
     
-    message_lower = message.lower()
+    from .embeddings import get_embedding_model
     
-    # Indonesian + English product keywords
-    keywords = [
-        "produk", "beli", "jual", "harga", "promo", "diskon", 
-        "rekomendasi", "ada", "cari", "butuh", "mau",
-        "susu", "snack", "vitamin", "sabun", "deterjen", "minyak",
-        "minuman", "makanan", "popok", "bayi", "obat", "roti",
-        "product", "buy", "price", "recommend", "discount", 
-        "need", "want", "looking for", "sell"
+    model = get_embedding_model()
+    if model is None:
+        # Fallback to simple keyword matching if model unavailable
+        keywords = ["produk", "beli", "harga", "rekomendasi", "product", "buy", "price"]
+        return any(keyword in message.lower() for keyword in keywords)
+    
+    product_examples = [
+        "Ada produk susu apa?",
+        "Berapa harga snack?",
+        
+        "Mau beli sabun",
+        "Butuh deterjen",
+        "Pengen beli minyak goreng",
+        
+        "Cari vitamin murah",
+        "Rekomendasi shampo dong",
+        
+        "What products do you have?",
+        "Do you sell bread?",
+        
+        "I need to buy milk",
+        "Looking for cooking oil",
+        
+        "Show me some snacks",
+        "I'm looking for toothpaste"
     ]
     
-    return any(keyword in message_lower for keyword in keywords)
+    try:
+        message_embedding = model.encode([message], convert_to_numpy=True)[0]
+        example_embeddings = model.encode(product_examples, convert_to_numpy=True)
+        
+        message_norm = message_embedding / np.linalg.norm(message_embedding)
+        example_norms = example_embeddings / np.linalg.norm(example_embeddings, axis=1, keepdims=True)
+        similarities = np.dot(example_norms, message_norm)
+        
+
+        max_similarity = np.max(similarities)
+        
+        if os.environ.get('RAG_VERBOSE') == '1':
+            print(f"[RAG] Product query detection: '{message}' -> similarity: {max_similarity:.3f}")
+        
+        return max_similarity >= threshold
+    except Exception as e:
+        print(f"[RAG] Error in semantic product detection: {e}")
+        # Fallback to keyword matching
+        keywords = ["produk", "beli", "harga", "rekomendasi", "product", "buy", "price"]
+        return any(keyword in message.lower() for keyword in keywords)
 
 
-def detect_promotion_query(message: str) -> bool:
-    """Detect if a user message is specifically asking about promotions."""
-    if not message:
+def detect_promotion_query(message: str, threshold: float = 0.4) -> bool:
+    """
+    Detect if a user message is asking about promotions using semantic similarity.
+    
+    Args:
+        message: User's message
+        threshold: Similarity threshold (0-1), default 0.4 for better recall
+    
+    Returns:
+        True if message is likely about promotions
+    """
+    if not message or len(message.strip()) < 3:
         return False
     
-    message_lower = message.lower()
+    from .embeddings import get_embedding_model
     
-    promo_keywords = [
-        "promo", "promosi", "diskon", "discount", "sale",
-        "penawaran", "offer", "deal", "heboh", "gratis",
-        "hadiah", "gift", "umroh"
+    model = get_embedding_model()
+    if model is None:
+        # Fallback to keyword matching
+        keywords = ["promo", "diskon", "discount", "sale", "offer"]
+        return any(keyword in message.lower() for keyword in keywords)
+    
+    promo_examples = [
+        "Ada promo apa hari ini?",
+        "Diskon apa yang tersedia?",
+        "Penawaran spesial dong",
+        "Promo heboh bulan ini",
+        "Ada hadiah gratis?",
+        "What promotions are available?",
+        "Any discounts today?",
+        "Special offers?",
+        "Current sales?"
     ]
     
-    return any(keyword in message_lower for keyword in promo_keywords)
+    try:
+        message_embedding = model.encode([message], convert_to_numpy=True)[0]
+        example_embeddings = model.encode(promo_examples, convert_to_numpy=True)
+        
+        message_norm = message_embedding / np.linalg.norm(message_embedding)
+        example_norms = example_embeddings / np.linalg.norm(example_embeddings, axis=1, keepdims=True)
+        similarities = np.dot(example_norms, message_norm)
+        
+        max_similarity = np.max(similarities)
+        
+        if os.environ.get('RAG_VERBOSE') == '1':
+            print(f"[RAG] Promotion query detection: '{message}' -> similarity: {max_similarity:.3f}")
+        
+        return max_similarity >= threshold
+    except Exception as e:
+        print(f"[RAG] Error in semantic promotion detection: {e}")
+        keywords = ["promo", "diskon", "discount", "sale", "offer"]
+        return any(keyword in message.lower() for keyword in keywords)
 
 
 def initialize_rag():
-    """
-    Initialize RAG system by pre-loading model and embeddings.
-    Call this once at backend startup for better performance.
-    """
+
     print("[RAG] Initializing RAG system...")
     
     from .embeddings import get_embedding_model, create_product_embeddings
