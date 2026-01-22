@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-LLM_PROVIDER = "deepseek"
+LLM_PROVIDER = "remote"
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL ="allenai/molmo-2-8b:free"
@@ -11,6 +11,10 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1/chat/completions"
+
+# Remote vLLM Configuration
+REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "http://localhost:8001/v1/chat/completions")
+REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "./Qwen3-VL-2B-Instruct")  # Explicitly set model name
 
 TTS_PROVIDER = "realtimetts"
 REALTIMETTS_ENGINE = "elevenlabs"

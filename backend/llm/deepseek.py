@@ -8,6 +8,9 @@ from .base import BaseLLMProvider, sanitize_history
 class DeepSeekProvider(BaseLLMProvider):
     """DeepSeek API provider for LLM inference (text-only, no vision)."""
     
+    def __init__(self):
+        self.client = httpx.AsyncClient(timeout=30.0)
+
     async def generate(
         self, 
         message: str, 
@@ -30,29 +33,29 @@ class DeepSeekProvider(BaseLLMProvider):
         
         try:
             timeout = 30.0
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                response = await client.post(
-                    config.DEEPSEEK_BASE_URL,
-                    headers={
-                        "Authorization": f"Bearer {config.DEEPSEEK_API_KEY}",
-                        "Content-Type": "application/json"
-                    },
-                    json={
-                        "model": config.DEEPSEEK_MODEL,
-                        "messages": messages,
-                        "max_tokens": 256
-                    }
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if "choices" not in data:
-                        print(f"DeepSeek API returned 200 but missing 'choices': {data}")
-                        return None
-                    return data["choices"][0]["message"]["content"]
-                else:
-                    print(f"DeepSeek API error: {response.status_code} - {response.text}")
+            response = await self.client.post(
+                config.DEEPSEEK_BASE_URL,
+                headers={
+                    "Authorization": f"Bearer {config.DEEPSEEK_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": config.DEEPSEEK_MODEL,
+                    "messages": messages,
+                    "max_tokens": 256
+                },
+                timeout=timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "choices" not in data:
+                    print(f"DeepSeek API returned 200 but missing 'choices': {data}")
                     return None
+                return data["choices"][0]["message"]["content"]
+            else:
+                print(f"DeepSeek API error: {response.status_code} - {response.text}")
+                return None
                     
         except Exception as e:
             print(f"DeepSeek API call failed: {type(e).__name__}: {e}")

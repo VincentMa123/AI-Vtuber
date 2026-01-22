@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import base64
 import load_models
-from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider
+from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider, RemoteVLLMProvider
 from tts import ElevenLabsProvider, RealtimeTTSProvider
 from rag import initialize_rag
 import config
@@ -36,7 +36,8 @@ app.add_middleware(
 llm_providers = {
     "openrouter": OpenRouterProvider(),
     "deepseek": DeepSeekProvider(),
-    "local": LocalModelProvider()
+    "local": LocalModelProvider(),
+    "remote": RemoteVLLMProvider()
 }
 
 tts_providers = {
@@ -109,8 +110,8 @@ async def chat(request: ChatRequest):
         llm_provider = state.llm_provider
         
         if request.image_base64 and llm_provider == "deepseek":
-            print("DeepSeek doesn't support vision - using OpenRouter for this image request")
-            llm_provider = "openrouter"
+            print("DeepSeek doesn't support vision - using remote vLLM for this image request")
+            llm_provider = "remote"
         
         print(f"Using LLM provider: {llm_provider}")
         
@@ -129,6 +130,12 @@ async def chat(request: ChatRequest):
         if not output_text:
             print(f"Primary provider '{llm_provider}' failed, trying fallbacks...")
 
+            if not output_text and llm_provider != "remote" and config.REMOTE_VLLM_BASE_URL:
+                print("Fallback: Trying remote vLLM...")
+                output_text = await llm_providers["remote"].generate(request.message, request.conversation_history, request.image_base64)
+                if output_text:
+                    source = "remote"
+            
             if not output_text and llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
                 print("Fallback: Trying OpenRouter...")
                 output_text = await llm_providers["openrouter"].generate(request.message, request.conversation_history, request.image_base64)
@@ -222,6 +229,7 @@ async def health_check():
         "llm_provider": state.llm_provider,
         "openrouter_configured": bool(config.OPENROUTER_API_KEY),
         "deepseek_configured": bool(config.DEEPSEEK_API_KEY),
+        "remote_vllm_configured": bool(config.REMOTE_VLLM_BASE_URL),
         "tts_provider": config.TTS_PROVIDER
     }
 
@@ -230,7 +238,7 @@ async def get_llm_provider():
     """Get current LLM provider."""
     return {
         "provider": state.llm_provider,
-        "available": ["openrouter", "deepseek", "local"]
+        "available": ["openrouter", "deepseek", "local", "remote"]
     }
 
 
@@ -239,8 +247,8 @@ async def set_llm_provider(request: SetProviderRequest):
     """Set the LLM provider at runtime."""
     provider = request.provider.lower()
     
-    if provider not in ["openrouter", "deepseek", "local"]:
-        raise HTTPException(status_code=400, detail="Invalid provider. Must be 'openrouter', 'deepseek', or 'local'")
+    if provider not in ["openrouter", "deepseek", "local", "remote"]:
+        raise HTTPException(status_code=400, detail="Invalid provider. Must be 'openrouter', 'deepseek', 'local', or 'remote'")
     
     if provider == "local" and not state.local_model_available:
         raise HTTPException(status_code=400, detail="Local model is not available")

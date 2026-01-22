@@ -35,6 +35,9 @@ async def load_all_models():
         print(f"OpenRouter API configured with model: {config.OPENROUTER_MODEL}")
     if config.DEEPSEEK_API_KEY:
         print(f"DeepSeek API configured with model: {config.DEEPSEEK_MODEL}")
+    if config.REMOTE_VLLM_BASE_URL:
+        model_info = config.REMOTE_VLLM_MODEL if config.REMOTE_VLLM_MODEL else "(auto-detect)"
+        print(f"Remote vLLM API configured: {config.REMOTE_VLLM_BASE_URL} (model: {model_info})")
         
     print(f"TTS Provider: {config.TTS_PROVIDER}")
     if config.TTS_PROVIDER == "elevenlabs" and not config.ELEVENLABS_API_KEY:

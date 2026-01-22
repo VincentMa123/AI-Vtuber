@@ -3,5 +3,5 @@
 model = None
 processor = None
 local_model_available = False
-llm_provider = "openrouter"
+llm_provider = None
 

@@ -4,10 +4,12 @@ from .base import BaseLLMProvider
 from .openrouter import OpenRouterProvider
 from .deepseek import DeepSeekProvider
 from .local import LocalModelProvider
+from .remote_vllm import RemoteVLLMProvider
 
 __all__ = [
     "BaseLLMProvider",
     "OpenRouterProvider",
     "DeepSeekProvider",
     "LocalModelProvider",
+    "RemoteVLLMProvider",
 ]
