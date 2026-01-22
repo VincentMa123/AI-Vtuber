@@ -63,7 +63,8 @@ async def startup_event():
         min_response_interval=config.MIN_RESPONSE_INTERVAL_SECONDS,
         max_messages_per_user_per_window=config.MAX_MESSAGES_PER_USER_PER_WINDOW,
         min_message_length=config.MIN_MESSAGE_LENGTH,
-        similarity_threshold=config.SIMILARITY_THRESHOLD
+        similarity_threshold=config.SIMILARITY_THRESHOLD,
+        max_batch_size=config.MAX_BATCH_SIZE
     )
     chat_aggregator = ChatAggregator(aggregator_config)
     chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS

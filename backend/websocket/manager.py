@@ -62,6 +62,9 @@ class WebSocketManager:
     
     async def broadcast_ai_response(self, response: str, audio_base64: str = None, emotion: str = "neutral"):
         """Broadcast Lumina's AI response with emotion"""
+        audio_len = len(audio_base64) if audio_base64 else 0
+        print(f"[WebSocket] Broadcasting AI response with audio: {audio_len} chars, emotion: {emotion}")
+        
         await self.broadcast({
             "type": "ai_response",
             "username": "Lumina",

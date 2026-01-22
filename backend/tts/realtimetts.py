@@ -4,42 +4,45 @@ import threading
 from typing import Optional
 import os
 from .base import BaseTTSProvider
-
-winget_ffmpeg_path = os.path.join(
-    os.environ.get('LOCALAPPDATA', ''),
-    'Microsoft', 'WinGet', 'Packages',
-    'Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe',
-    'ffmpeg-8.0.1-full_build', 'bin'
-)
-
-if os.path.exists(os.path.join(winget_ffmpeg_path, 'ffmpeg.exe')):
-    os.environ['PATH'] = winget_ffmpeg_path + os.pathsep + os.environ.get('PATH', '')
-
-try:
-    from RealtimeTTS import TextToAudioStream, SystemEngine
-except ImportError as e:
-    TextToAudioStream = None
-    SystemEngine = None
-    print(f"RealtimeTTS import failed: {e}")
-except Exception as e:
-    TextToAudioStream = None
-    SystemEngine = None
-    print(f"RealtimeTTS import failed with unexpected error: {e}")
-
+import config
+from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 
 class RealtimeTTSProvider(BaseTTSProvider):
-    """RealtimeTTS provider for text-to-speech using system engine."""
+    """RealtimeTTS provider for text-to-speech with streaming support.
     
-    def __init__(self, engine_name="system"):
+    Supports engines:
+    - 'system': Uses system TTS (Windows SAPI, etc.)
+    - 'elevenlabs': Uses ElevenLabs API with streaming for lower latency
+    """
+    
+    def __init__(self, engine_name: str = "system"):
         if not TextToAudioStream:
             raise ImportError("RealtimeTTS library is not available")
             
         self.audio_buffer = []
         self.lock = threading.Lock()
+        self.engine_name = engine_name
         
         print(f"Initializing RealtimeTTS with {engine_name} engine...")
-        self.engine = SystemEngine() 
+        
+        if engine_name == "elevenlabs":
+            if not ElevenlabsEngine:
+                raise ImportError("ElevenlabsEngine not available. Install with: pip install RealtimeTTS[elevenlabs]")
+            if not config.ELEVENLABS_API_KEY:
+                raise ValueError("ELEVENLABS_API_KEY not set in config")
+            
+            self.engine = ElevenlabsEngine(
+                api_key=config.ELEVENLABS_API_KEY,
+                id = config.ELEVENLABS_VOICE_ID,
+                model="eleven_multilingual_v2",
+            )
+            self.sample_rate = 44100 
+        else:
+            self.engine = SystemEngine()
+            self.sample_rate = 22050  
+        
         self.stream = TextToAudioStream(self.engine)
+        print(f"RealtimeTTS initialized with {engine_name} engine")
         
     def _on_audio_chunk(self, chunk):
         """Callback to receive audio chunks."""
@@ -49,30 +52,46 @@ class RealtimeTTSProvider(BaseTTSProvider):
     async def generate_audio(self, text: str) -> Optional[bytes]:
         """
         Generates audio for the given text and returns WAV bytes.
+        Uses streaming for lower latency with ElevenLabs.
         """
         try:
+            print(f"[RealtimeTTS] Starting audio generation for text: {text[:50]}...")
+            
             with self.lock:
                 self.audio_buffer = []
+            
+            print(f"[RealtimeTTS] Feeding text to stream...")
             self.stream.feed(text)
+            
+            print(f"[RealtimeTTS] Playing stream (muted mode)...")
             self.stream.play(
                 muted=True, 
                 on_audio_chunk=self._on_audio_chunk
             )
             
             with self.lock:
+                chunk_count = len(self.audio_buffer)
+                print(f"[RealtimeTTS] Audio chunks received: {chunk_count}")
+                
                 if not self.audio_buffer:
-                    print("No audio chunks generated")
+                    print("[RealtimeTTS] No audio chunks generated!")
                     return None
                 
                 full_audio_data = b''.join(self.audio_buffer)
             
+            if self.engine_name == "elevenlabs":
+                print(f"[RealtimeTTS] Returning MP3 audio ({len(full_audio_data)} bytes)")
+                return full_audio_data
+            
+            print(f"[RealtimeTTS] Wrapping raw PCM in WAV format...")
             channel_count = 1
             sample_width = 2  
-            sample_rate = 22050
+            sample_rate = self.sample_rate
+            
             if hasattr(self.engine, 'get_stream_info'):
-                 info = self.engine.get_stream_info()
-                 if hasattr(info, 'rate'):
-                     sample_rate = int(info.rate)
+                info = self.engine.get_stream_info()
+                if hasattr(info, 'rate'):
+                    sample_rate = int(info.rate)
 
             wav_buffer = io.BytesIO()
             with wave.open(wav_buffer, 'wb') as wf:
@@ -88,3 +107,4 @@ class RealtimeTTSProvider(BaseTTSProvider):
             import traceback
             traceback.print_exc()
             return None
+
