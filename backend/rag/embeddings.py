@@ -87,4 +87,71 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
     except Exception as e:
         logging.error(f"[RAG] Warning: Could not save embeddings to disk: {e}")
     
+
+    
     return embeddings
+
+
+# --- Precomputed Detection Embeddings ---
+
+PRODUCT_QUERY_EXAMPLES = [
+    "Ada produk susu apa?",
+    "Berapa harga snack?",
+    "Mau beli sabun",
+    "Butuh deterjen",
+    "Pengen beli minyak goreng",
+    "Cari vitamin murah",
+    "Rekomendasi shampo dong",
+    "What products do you have?",
+    "Do you sell bread?",
+    "I need to buy milk",
+    "Looking for cooking oil",
+    "Show me some snacks",
+    "I'm looking for toothpaste"
+]
+
+PROMOTION_QUERY_EXAMPLES = [
+    "Ada promo apa hari ini?",
+    "Diskon apa yang tersedia?",
+    "Penawaran spesial dong",
+    "Promo heboh bulan ini",
+    "Ada hadiah gratis?",
+    "What promotions are available?",
+    "Any discounts today?",
+    "Special offers?",
+    "Current sales?"
+]
+
+_product_example_embeddings = None
+_promo_example_embeddings = None
+
+def get_product_query_embeddings():
+    """Get or compute embeddings for product query examples."""
+    global _product_example_embeddings
+    if _product_example_embeddings is not None:
+        return _product_example_embeddings
+        
+    model = get_embedding_model()
+    if model:
+        _product_example_embeddings = model.encode(PRODUCT_QUERY_EXAMPLES, convert_to_numpy=True, show_progress_bar=False)
+        return _product_example_embeddings
+    return None
+
+def get_promotion_query_embeddings():
+    """Get or compute embeddings for promotion query examples."""
+    global _promo_example_embeddings
+    if _promo_example_embeddings is not None:
+        return _promo_example_embeddings
+        
+    model = get_embedding_model()
+    if model:
+        _promo_example_embeddings = model.encode(PROMOTION_QUERY_EXAMPLES, convert_to_numpy=True, show_progress_bar=False)
+        return _promo_example_embeddings
+    return None
+
+def precompute_detection_embeddings():
+    """Trigger computation of detection embeddings (call during init)."""
+    logging.info("[RAG] Pre-computing detection embeddings...")
+    get_product_query_embeddings()
+    get_promotion_query_embeddings()
+

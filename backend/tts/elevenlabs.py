@@ -1,6 +1,6 @@
 import httpx
 from typing import Optional
-import config
+import core.config as config
 from .base import BaseTTSProvider
 import logging
 

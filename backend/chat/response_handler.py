@@ -6,9 +6,9 @@ Contains the callback logic for handling aggregated chat messages and generating
 import base64
 from typing import List
 import logging
-import config
-import state
-import utils
+import core.config as config
+import core.state as state
+import core.utils as utils
 from chat.emotions import detect_emotion
 from websocket.manager import ws_manager
 

@@ -1,8 +1,8 @@
 import httpx
 import logging
 from typing import Optional, List, Dict, Any
-import config
-import utils
+import core.config as config
+import core.utils as utils
 from .base import BaseLLMProvider, sanitize_history
 
 

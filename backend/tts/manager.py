@@ -1,7 +1,7 @@
 import logging
 import base64
-import config
-import utils
+import core.config as config
+import core.utils as utils
 from typing import Optional, Dict
 
 # Import providers

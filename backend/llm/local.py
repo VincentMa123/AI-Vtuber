@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict, Any
-import state
-import utils
+import core.state as state
+import core.utils as utils
 from .base import BaseLLMProvider, sanitize_history
 
 

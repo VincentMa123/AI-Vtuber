@@ -4,7 +4,7 @@ import threading
 from typing import Optional
 import os
 from .base import BaseTTSProvider
-import config
+import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 import logging
 

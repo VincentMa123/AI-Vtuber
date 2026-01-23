@@ -2,8 +2,8 @@ import os
 import torch
 from transformers import AutoModelForImageTextToText, AutoProcessor
 import logging
-import state as state
-import config as config
+from . import state as state
+from . import config as config
 
 async def load_all_models():
     """Load all necessary models into the state module."""

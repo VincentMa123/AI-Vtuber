@@ -4,9 +4,9 @@ import asyncio
 from typing import Dict, Optional, Tuple, Any
 from pydantic import BaseModel
 
-import config
-import state
-import utils
+import core.config as config
+import core.state as state
+import core.utils as utils
 from chat.models import ChatResponse
 
 

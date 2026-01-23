@@ -79,6 +79,9 @@ def _get_model():
             return None
 
 
+import os
+import pickle
+
 def _get_emotion_embeddings():
     """Pre-compute embeddings for all emotion reference sentences."""
     global _emotion_embeddings_cache
@@ -86,6 +89,20 @@ def _get_emotion_embeddings():
     if _emotion_embeddings_cache is not None:
         return _emotion_embeddings_cache
     
+    # Check disk cache
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(base_dir, "data")
+    cache_file = os.path.join(data_dir, "emotion_embeddings.pkl")
+    
+    if os.path.exists(cache_file):
+        try:
+            with open(cache_file, 'rb') as f:
+                _emotion_embeddings_cache = pickle.load(f)
+                logging.info(f"[Emotions] Loaded embeddings from disk cache: {cache_file}")
+                return _emotion_embeddings_cache
+        except Exception as e:
+            logging.error(f"[Emotions] Failed to load disk cache: {e}")
+
     model = _get_model()
     if model is None:
         return None
@@ -97,6 +114,16 @@ def _get_emotion_embeddings():
         _emotion_embeddings_cache[emotion] = np.mean(embeddings, axis=0)
     
     logging.info(f"[Emotions] Pre-computed embeddings for {len(_emotion_embeddings_cache)} emotions")
+    
+    # Save to disk
+    try:
+        os.makedirs(data_dir, exist_ok=True)
+        with open(cache_file, 'wb') as f:
+            pickle.dump(_emotion_embeddings_cache, f)
+        logging.info(f"[Emotions] Saved embeddings to disk cache: {cache_file}")
+    except Exception as e:
+        logging.error(f"[Emotions] Failed to save disk cache: {e}")
+        
     return _emotion_embeddings_cache
 
 

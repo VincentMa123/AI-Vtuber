@@ -16,7 +16,8 @@ def load_prompt_file(filename):
     """Load content from a markdown file in the backend/prompts directory."""
     try:
         # Get absolute path relative to this file
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Get absolute path relative to this file (one level up from core)
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         file_path = os.path.join(base_dir, "prompts", filename)
         
         with open(file_path, "r", encoding="utf-8") as f:
@@ -44,7 +45,7 @@ def get_system_prompt(user_message: str = ""):
     product_context = ""
     if user_message:
         try:
-            backend_dir = os.path.dirname(os.path.abspath(__file__))
+            backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             if backend_dir not in sys.path:
                 sys.path.insert(0, backend_dir)
 

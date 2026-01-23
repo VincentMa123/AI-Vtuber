@@ -2,18 +2,18 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import base64
-import load_models
+import core.load_models as load_models
 from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider, RemoteVLLMProvider
 from tts import TTSManager
 from rag import initialize_rag
 from vision.heartbeat import HeartbeatRequest, HeartbeatResponse, VisionHeartbeat
-import config
-import utils
-import state
+import core.config as config
+import core.utils as utils
+import core.state as state
 import re
 import uvicorn
 import logging
-import logger
+import core.logger as logger
 
 from chat.aggregator import ChatAggregator
 from chat.models import (
