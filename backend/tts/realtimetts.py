@@ -6,6 +6,7 @@ import os
 from .base import BaseTTSProvider
 import config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
+import logging
 
 class RealtimeTTSProvider(BaseTTSProvider):
     """RealtimeTTS provider for text-to-speech with streaming support.
@@ -23,7 +24,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
         self.lock = threading.Lock()
         self.engine_name = engine_name
         
-        print(f"Initializing RealtimeTTS with {engine_name} engine...")
+        logging.info(f"Initializing RealtimeTTS with {engine_name} engine...")
         
         if engine_name == "elevenlabs":
             if not ElevenlabsEngine:
@@ -42,7 +43,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
             self.sample_rate = 22050  
         
         self.stream = TextToAudioStream(self.engine)
-        print(f"RealtimeTTS initialized with {engine_name} engine")
+        logging.info(f"RealtimeTTS initialized with {engine_name} engine")
         
     def _on_audio_chunk(self, chunk):
         """Callback to receive audio chunks."""
@@ -55,15 +56,15 @@ class RealtimeTTSProvider(BaseTTSProvider):
         Uses streaming for lower latency with ElevenLabs.
         """
         try:
-            print(f"[RealtimeTTS] Starting audio generation for text: {text[:50]}...")
+            logging.info(f"[RealtimeTTS] Starting audio generation for text: {text[:50]}...")
             
             with self.lock:
                 self.audio_buffer = []
             
-            print(f"[RealtimeTTS] Feeding text to stream...")
+            logging.info(f"[RealtimeTTS] Feeding text to stream...")
             self.stream.feed(text)
             
-            print(f"[RealtimeTTS] Playing stream (muted mode)...")
+            logging.info(f"[RealtimeTTS] Playing stream (muted mode)...")
             self.stream.play(
                 muted=True, 
                 on_audio_chunk=self._on_audio_chunk
@@ -71,19 +72,19 @@ class RealtimeTTSProvider(BaseTTSProvider):
             
             with self.lock:
                 chunk_count = len(self.audio_buffer)
-                print(f"[RealtimeTTS] Audio chunks received: {chunk_count}")
+                logging.info(f"[RealtimeTTS] Audio chunks received: {chunk_count}")
                 
                 if not self.audio_buffer:
-                    print("[RealtimeTTS] No audio chunks generated!")
+                    logging.info("[RealtimeTTS] No audio chunks generated!")
                     return None
                 
                 full_audio_data = b''.join(self.audio_buffer)
             
             if self.engine_name == "elevenlabs":
-                print(f"[RealtimeTTS] Returning MP3 audio ({len(full_audio_data)} bytes)")
+                logging.info(f"[RealtimeTTS] Returning MP3 audio ({len(full_audio_data)} bytes)")
                 return full_audio_data
             
-            print(f"[RealtimeTTS] Wrapping raw PCM in WAV format...")
+            logging.info(f"[RealtimeTTS] Wrapping raw PCM in WAV format...")
             channel_count = 1
             sample_width = 2  
             sample_rate = self.sample_rate
@@ -103,7 +104,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
             return wav_buffer.getvalue()
             
         except Exception as e:
-            print(f"RealtimeTTS generation failed: {e}")
+            logging.error(f"RealtimeTTS generation failed: {e}")
             import traceback
             traceback.print_exc()
             return None

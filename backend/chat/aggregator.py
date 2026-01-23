@@ -5,6 +5,7 @@ Handles message batching, priority scoring, and spam filtering
 
 import asyncio
 import time
+import logging
 from typing import List, Dict, Optional, Tuple
 from .models import ChatMessage, AggregationConfig
 from .scoring import ChatScorer
@@ -44,7 +45,7 @@ class ChatAggregator:
         
         self._is_running = True
         self._processing_task = asyncio.create_task(self._process_queue())
-        print("[ChatAggregator] Service started")
+        logging.info("[ChatAggregator] Service started")
     
     async def stop(self):
         """Stop the aggregation service"""
@@ -55,7 +56,7 @@ class ChatAggregator:
                 await self._processing_task
             except asyncio.CancelledError:
                 pass
-        print("[ChatAggregator] Service stopped")
+        logging.info("[ChatAggregator] Service stopped")
     
     async def submit_message(self, message: ChatMessage) -> bool:
         """Submit a message to the aggregation queue"""
@@ -75,7 +76,7 @@ class ChatAggregator:
         
         # Add to queue
         await self.message_queue.put(message)
-        print(f"[ChatAggregator] Queued message from {message.username} (priority: {message.priority_score:.2f})")
+        logging.info(f"[ChatAggregator] Queued message from {message.username} (priority: {message.priority_score:.2f})")
         
         return True
     
@@ -97,7 +98,7 @@ class ChatAggregator:
                     time_since_last = time.time() - self.last_response_time
                     if time_since_last < self.config.min_response_interval:
                         wait_time = self.config.min_response_interval - time_since_last
-                        print(f"[ChatAggregator] Rate limiting: waiting {wait_time:.1f}s before next response")
+                        logging.info(f"[ChatAggregator] Rate limiting: waiting {wait_time:.1f}s before next response")
                         await asyncio.sleep(wait_time)
                     
                     # Process the batch
@@ -106,18 +107,16 @@ class ChatAggregator:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                print(f"[ChatAggregator] Error in processing loop: {e}")
-                import traceback
-                traceback.print_exc()
+                logging.error(f"[ChatAggregator] Error in processing loop: {e}", exc_info=True)
     
     async def _process_batch(self, batch: List[ChatMessage]):
         """Process a batch of messages and generate AI response"""
         # Sort by priority (highest first)
         batch.sort(key=lambda m: m.priority_score, reverse=True)
         
-        print(f"\n[ChatAggregator] Processing batch of {len(batch)} messages:")
+        logging.info(f"[ChatAggregator] Processing batch of {len(batch)} messages:")
         for msg in batch:
-            print(f"  - {msg.username}: {msg.message[:50]}... (priority: {msg.priority_score:.2f})")
+            logging.debug(f"  - {msg.username}: {msg.message[:50]}... (priority: {msg.priority_score:.2f})")
         
         # Update last response time
         self.last_response_time = time.time()
@@ -129,18 +128,16 @@ class ChatAggregator:
         try:
             formatted_message, top_messages = self.get_batch_for_llm(batch)
             
-            print(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}...")
+            logging.info(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}...")
             
             # Call the response callback if set
             if self.response_callback:
                 await self.response_callback(formatted_message, top_messages)
             else:
-                print("[ChatAggregator] Warning: No response callback set. AI response not generated.")
+                logging.warning("[ChatAggregator] Warning: No response callback set. AI response not generated.")
                 
         except Exception as e:
-            print(f"[ChatAggregator] Error generating response: {e}")
-            import traceback
-            traceback.print_exc()
+            logging.error(f"[ChatAggregator] Error generating response: {e}", exc_info=True)
 
     def get_batch_for_llm(self, batch: List[ChatMessage]) -> Tuple[str, List[ChatMessage]]:
         """Format a batch of messages for LLM processing"""
@@ -179,4 +176,4 @@ class ChatAggregator:
         for key, value in kwargs.items():
             if hasattr(self.config, key):
                 setattr(self.config, key, value)
-                print(f"[ChatAggregator] Config updated: {key} = {value}")
+                logging.info(f"[ChatAggregator] Config updated: {key} = {value}")

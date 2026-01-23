@@ -15,7 +15,8 @@ class OpenRouterProvider(BaseLLMProvider):
         self, 
         message: str, 
         history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None
+        image_base64: Optional[str] = None,
+        **kwargs
     ) -> Optional[str]:
         """Call OpenRouter API and return the response text, or None if failed."""
         if not config.OPENROUTER_API_KEY:
@@ -39,10 +40,11 @@ class OpenRouterProvider(BaseLLMProvider):
             "content": current_human_msg if image_base64 else message
         })
         
-        print(f"[DEBUG] OpenRouter - image_base64 provided: {image_base64 is not None}")
+        logging.debug(f"[DEBUG] OpenRouter - image_base64 provided: {image_base64 is not None}")
         if image_base64:
-            print(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
+            logging.debug(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
+        max_tokens = kwargs.get("max_tokens", 256)
         try:
             timeout = 60.0 if image_base64 else 30.0
             response = await self.client.post(
@@ -56,7 +58,7 @@ class OpenRouterProvider(BaseLLMProvider):
                 json={
                     "model": config.OPENROUTER_MODEL,
                     "messages": messages, 
-                    "max_tokens": 256
+                    "max_tokens": max_tokens
                 },
                 timeout=timeout
             )
@@ -64,13 +66,13 @@ class OpenRouterProvider(BaseLLMProvider):
             if response.status_code == 200:
                 data = response.json()
                 if "choices" not in data:
-                    print(f"OpenRouter API returned 200 but missing 'choices': {data}")
+                    logging.error(f"OpenRouter API returned 200 but missing 'choices': {data}")
                     return None
                 return data["choices"][0]["message"]["content"]
             else:
-                print(f"OpenRouter API error: {response.status_code} - {response.text}")
+                logging.error(f"OpenRouter API error: {response.status_code} - {response.text}")
                 return None
                     
         except Exception as e:
-            print(f"OpenRouter API call failed: {type(e).__name__}: {e}")
+            logging.error(f"OpenRouter API call failed: {type(e).__name__}: {e}")
             return None

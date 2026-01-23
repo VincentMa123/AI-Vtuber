@@ -3,6 +3,7 @@ import re
 from typing import Dict, List, Tuple
 from collections import defaultdict
 from .models import AggregationConfig
+import logging
 
 class ChatFilter:
     """Handles message filtering (spam, rate limits, duplicates)"""
@@ -20,22 +21,22 @@ class ChatFilter:
         """
         # Filter by message length
         if len(message_text.strip()) < self.config.min_message_length:
-            print(f"[ChatFilter] Filtered: too short - '{message_text}'")
+            logging.info(f"[ChatFilter] Filtered: too short - '{message_text}'")
             return True
         
         # Filter emote-only messages
         if self._is_emote_only(message_text):
-            print(f"[ChatFilter] Filtered: emote-only - '{message_text}'")
+            logging.info(f"[ChatFilter] Filtered: emote-only - '{message_text}'")
             return True
         
         # Check user rate limit
         if not self._check_user_rate_limit(user_id):
-            print(f"[ChatFilter] Filtered: rate limit - user {username}")
+            logging.info(f"[ChatFilter] Filtered: rate limit - user {username}")
             return True
         
         # Check for duplicates
         if self._is_duplicate(message_text):
-            print(f"[ChatFilter] Filtered: duplicate - '{message_text}'")
+            logging.info(f"[ChatFilter] Filtered: duplicate - '{message_text}'")
             return True
             
         return False

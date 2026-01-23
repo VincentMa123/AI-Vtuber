@@ -15,7 +15,8 @@ class DeepSeekProvider(BaseLLMProvider):
         self, 
         message: str, 
         history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None
+        image_base64: Optional[str] = None,
+        **kwargs
     ) -> Optional[str]:
         """
         Call DeepSeek API and return the response text, or None if failed.
@@ -31,6 +32,8 @@ class DeepSeekProvider(BaseLLMProvider):
         
         messages.append({"role": "user", "content": message})
         
+        max_tokens = kwargs.get("max_tokens", 256)
+        
         try:
             timeout = 30.0
             response = await self.client.post(
@@ -42,7 +45,7 @@ class DeepSeekProvider(BaseLLMProvider):
                 json={
                     "model": config.DEEPSEEK_MODEL,
                     "messages": messages,
-                    "max_tokens": 256
+                    "max_tokens": max_tokens
                 },
                 timeout=timeout
             )
@@ -50,13 +53,13 @@ class DeepSeekProvider(BaseLLMProvider):
             if response.status_code == 200:
                 data = response.json()
                 if "choices" not in data:
-                    print(f"DeepSeek API returned 200 but missing 'choices': {data}")
+                    logging.error(f"DeepSeek API returned 200 but missing 'choices': {data}")
                     return None
                 return data["choices"][0]["message"]["content"]
             else:
-                print(f"DeepSeek API error: {response.status_code} - {response.text}")
+                logging.error(f"DeepSeek API error: {response.status_code} - {response.text}")
                 return None
                     
         except Exception as e:
-            print(f"DeepSeek API call failed: {type(e).__name__}: {e}")
+            logging.error(f"DeepSeek API call failed: {type(e).__name__}: {e}")
             return None

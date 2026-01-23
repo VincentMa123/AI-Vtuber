@@ -7,7 +7,7 @@ from fastapi import WebSocket
 from typing import List, Dict, Any
 import json
 import asyncio
-
+import logging
 
 class WebSocketManager:
     """Manages WebSocket connections and message broadcasting"""
@@ -19,20 +19,20 @@ class WebSocketManager:
         """Accept and register a new WebSocket connection"""
         await websocket.accept()
         self.active_connections.append(websocket)
-        print(f"[WebSocket] New connection. Total: {len(self.active_connections)}")
+        logging.info(f"[WebSocket] New connection. Total: {len(self.active_connections)}")
         
     def disconnect(self, websocket: WebSocket):
         """Remove a WebSocket connection"""
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-            print(f"[WebSocket] Connection closed. Total: {len(self.active_connections)}")
+            logging.info(f"[WebSocket] Connection closed. Total: {len(self.active_connections)}")
     
     async def send_personal(self, message: Dict[str, Any], websocket: WebSocket):
         """Send a message to a specific WebSocket client"""
         try:
             await websocket.send_json(message)
         except Exception as e:
-            print(f"[WebSocket] Error sending to client: {e}")
+            logging.error(f"[WebSocket] Error sending to client: {e}")
             self.disconnect(websocket)
     
     async def broadcast(self, message: Dict[str, Any]):
@@ -43,7 +43,7 @@ class WebSocketManager:
             try:
                 await connection.send_json(message)
             except Exception as e:
-                print(f"[WebSocket] Error broadcasting to client: {e}")
+                logging.error(f"[WebSocket] Error broadcasting to client: {e}")
                 disconnected.append(connection)
         
         # Clean up disconnected clients
@@ -63,7 +63,7 @@ class WebSocketManager:
     async def broadcast_ai_response(self, response: str, audio_base64: str = None, emotion: str = "neutral"):
         """Broadcast Lumina's AI response with emotion"""
         audio_len = len(audio_base64) if audio_base64 else 0
-        print(f"[WebSocket] Broadcasting AI response with audio: {audio_len} chars, emotion: {emotion}")
+        logging.info(f"[WebSocket] Broadcasting AI response with audio: {audio_len} chars, emotion: {emotion}")
         
         await self.broadcast({
             "type": "ai_response",

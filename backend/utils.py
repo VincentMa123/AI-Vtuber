@@ -2,6 +2,7 @@ import re
 import datetime
 import os
 import sys
+import logging
 from rag import (
     detect_product_query,
     detect_promotion_query,
@@ -21,7 +22,7 @@ def load_prompt_file(filename):
         with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
     except Exception as e:
-        print(f"Error loading prompt file {filename}: {e}")
+        logging.error(f"Error loading prompt file {filename}: {e}")
         return ""
 
 def get_system_prompt(user_message: str = ""):
@@ -53,18 +54,16 @@ def get_system_prompt(user_message: str = ""):
 
                 if promotions:
                     product_context = format_promotions_for_prompt(promotions)
-                    print(f"[System Prompt] Injected {len(promotions)} promotions into context")
+                    logging.info(f"[System Prompt] Injected {len(promotions)} promotions into context")
             
             elif detect_product_query(user_message):
                 products = search_products_rag(user_message, top_k=3)
                 
                 if products:
                     product_context = format_products_for_prompt(products)
-                    print(f"[System Prompt] Injected {len(products)} products into context")
+                    logging.info(f"[System Prompt] Injected {len(products)} products into context")
         except Exception as e:
-            print(f"[System Prompt] Error loading product context: {e}")
-            import traceback
-            traceback.print_exc()
+            logging.error(f"[System Prompt] Error loading product context: {e}", exc_info=True)
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     

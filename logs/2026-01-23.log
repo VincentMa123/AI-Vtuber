@@ -1,0 +1,1155 @@
+[2026-01-23 13:08:46] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 13:08:57] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 13:08:57] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 13:12:16] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 13:12:23] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 13:12:23] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 13:12:30] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 13:12:31] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 13:12:31] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 13:12:33] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 13:40:30] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 13:40:30] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 13:40:40] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 13:40:40] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 13:40:40] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: deepseek
+[2026-01-23 13:40:40] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 13:40:40] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 13:40:40] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-2B-Instruct)
+[2026-01-23 13:40:40] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 13:40:40] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 13:40:40] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 13:40:40] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 13:40:48] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 13:40:48] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 13:40:48] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 13:40:48] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 13:40:48] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 13:40:48] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 13:40:48] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 13:40:50] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 13:40:50] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 13:40:50] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 13:40:50] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 13:42:06] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 13:42:06] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 13:42:19] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 13:42:19] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 13:42:19] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 13:42:19] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 13:42:19] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 13:42:19] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-2B-Instruct)
+[2026-01-23 13:42:19] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 13:42:19] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 13:42:19] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 13:42:19] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 13:42:29] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 13:42:29] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 13:42:29] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 13:42:29] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 13:42:29] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 13:42:29] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 13:42:29] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 13:42:33] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 13:42:33] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 13:42:33] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 13:42:33] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 13:57:44] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 13:57:44] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 13:57:56] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 13:57:56] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 13:57:56] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 13:57:56] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 13:57:56] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 13:57:56] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-2B-Instruct)
+[2026-01-23 13:57:56] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 13:57:56] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 13:57:57] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 13:57:57] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 13:58:12] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 13:58:12] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 13:58:12] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 13:58:12] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 13:58:12] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 13:58:12] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 13:58:12] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 13:58:15] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 13:58:15] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 13:58:15] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 13:58:15] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 14:00:44] [ERROR] [websocket.py::180 _keep_alive]: Websocket connection was closed: None
+[2026-01-23 14:00:56] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 1.776223945984228 seconds.
+[2026-01-23 14:01:10] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 3.0506126993897764 seconds.
+[2026-01-23 14:01:38] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 14:06:01] [ERROR] [websocket.py::180 _keep_alive]: Websocket connection was closed: None
+[2026-01-23 14:06:13] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 2.532116698966834 seconds.
+[2026-01-23 14:06:17] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 14:06:42] [ERROR] [base_events.py::1758 default_exception_handler]: Exception in callback WSConnection._task_callback(':tmi.twitch....elcome, GLHF!')(<Task cancell...ocket.py:341>>)
+handle: <Handle WSConnection._task_callback(':tmi.twitch....elcome, GLHF!')(<Task cancell...ocket.py:341>>)>
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 636, in run_until_complete
+    self.run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 603, in run_forever
+    self._run_once()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 1909, in _run_once
+    handle._run()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 70, in serve
+    with self.capture_signals():
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 331, in capture_signals
+    signal.raise_signal(captured_signal)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 348, in _process_data
+    return await self._code(parsed, parsed["code"])
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 377, in _code
+    await self.is_ready.wait()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\locks.py", line 214, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 198, in _task_callback
+    exc = task.exception()
+asyncio.exceptions.CancelledError
+[2026-01-23 14:06:42] [ERROR] [base_events.py::1758 default_exception_handler]: Exception in callback WSConnection._task_callback(':tmi.twitch....elcome, GLHF!')(<Task cancell...ocket.py:341>>)
+handle: <Handle WSConnection._task_callback(':tmi.twitch....elcome, GLHF!')(<Task cancell...ocket.py:341>>)>
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 636, in run_until_complete
+    self.run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 603, in run_forever
+    self._run_once()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 1909, in _run_once
+    handle._run()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 70, in serve
+    with self.capture_signals():
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 331, in capture_signals
+    signal.raise_signal(captured_signal)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 348, in _process_data
+    return await self._code(parsed, parsed["code"])
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 377, in _code
+    await self.is_ready.wait()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\locks.py", line 214, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 198, in _task_callback
+    exc = task.exception()
+asyncio.exceptions.CancelledError
+[2026-01-23 14:16:39] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 14:16:39] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 14:16:50] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 14:16:50] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 14:16:50] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 14:16:50] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 14:16:50] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 14:16:50] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-2B-Instruct)
+[2026-01-23 14:16:50] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 14:16:50] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 14:16:50] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 14:16:50] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 14:16:57] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 14:16:57] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 14:16:57] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 14:16:58] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 14:16:58] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 14:16:58] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 14:16:58] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 14:17:00] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 1.6773055644072004 seconds.
+[2026-01-23 14:17:02] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 1.3479369190609218 seconds.
+[2026-01-23 14:17:04] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 14:17:05] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 14:17:05] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 14:17:05] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 14:32:50] [INFO ] [aggregator.py::79 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-23 14:32:51] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-23 14:32:51] [INFO ] [aggregator.py::131 _process_batch]: [ChatAggregator] Generating AI response for: Test...
+[2026-01-23 14:32:51] [INFO ] [response_handler.py::44 handle_aggregated_response]: [Response Handler] Generating response for: Test...
+[2026-01-23 14:32:55] [INFO ] [response_handler.py::48 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-23 14:33:07] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 404 Not Found"
+[2026-01-23 14:33:07] [WARNI] [response_handler.py::69 handle_aggregated_response]: [Response Handler] Primary provider 'remote' failed, trying fallbacks...
+[2026-01-23 14:33:07] [INFO ] [response_handler.py::73 handle_aggregated_response]: [Response Handler] Fallback: Trying DeepSeek...
+[2026-01-23 14:33:27] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 14:33:28] [INFO ] [response_handler.py::92 handle_aggregated_response]: [Response Handler] Generated response: Hai guys! Welcome to the stream! *waves energetically* How's everyone doing today?...
+[2026-01-23 14:33:28] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-23 14:33:28] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-23 14:33:28] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 14:33:46] [ERROR] [elevenlabs_engine.py::112 synthesize]: Elevenlabs synthesis error: Server disconnected without sending a response.
+[2026-01-23 14:33:46] [WARNI] [text_to_stream.py::549 synthesize_worker]: engine elevenlabs failed to synthesize sentence "Hai guys! Welcome to the stream!", unknown error
+[2026-01-23 14:33:46] [WARNI] [text_to_stream.py::564 synthesize_worker]: engine elevenlabs is the only engine available, can't switch to another engine
+[2026-01-23 14:33:59] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 14:33:59] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 30.85s
+[2026-01-23 14:34:43] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 14:34:43] [INFO ] [response_handler.py::102 handle_aggregated_response]: [Response Handler] Using emotion for avatar: neutral
+[2026-01-23 14:34:43] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Hai guys! Welcome to the stream! *waves energetically* How's everyone doing today?
+[2026-01-23 14:35:27] [INFO ] [aggregator.py::79 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 0.50)
+[2026-01-23 14:35:28] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-23 14:35:28] [INFO ] [aggregator.py::131 _process_batch]: [ChatAggregator] Generating AI response for: Woi...
+[2026-01-23 14:35:28] [INFO ] [response_handler.py::44 handle_aggregated_response]: [Response Handler] Generating response for: Woi...
+[2026-01-23 14:35:28] [INFO ] [response_handler.py::48 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-23 14:36:09] [INFO ] [utils.py::57 get_system_prompt]: [System Prompt] Injected 4 promotions into context
+[2026-01-23 16:36:50] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 16:36:50] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 16:37:04] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 16:37:04] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 16:37:04] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 16:37:04] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 16:37:04] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 16:37:04] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 16:37:04] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 16:37:04] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 16:37:05] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 16:37:05] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 16:37:13] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 16:37:13] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 16:37:13] [INFO ] [api_server.py::76 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 16:37:13] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 16:37:13] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 16:37:13] [INFO ] [api_server.py::87 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 16:37:13] [INFO ] [api_server.py::102 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 16:37:15] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 16:37:15] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 16:37:15] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 16:37:15] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 16:38:42] [INFO ] [aggregator.py::79 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-23 16:38:43] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-23 16:38:43] [INFO ] [aggregator.py::131 _process_batch]: [ChatAggregator] Generating AI response for: Test...
+[2026-01-23 16:38:43] [INFO ] [response_handler.py::44 handle_aggregated_response]: [Response Handler] Generating response for: Test...
+[2026-01-23 16:38:45] [INFO ] [response_handler.py::48 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-23 16:38:50] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 16:38:50] [INFO ] [response_handler.py::92 handle_aggregated_response]: [Response Handler] Generated response: Hei! 😊  
+Nggak ada yang salah kok, aku siap nge-NGEJAR promo Indomaret bareng kamu!  
+Apa yang mau a...
+[2026-01-23 16:38:50] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-23 16:38:50] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-23 16:38:50] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 16:38:52] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 16:38:52] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.52s
+[2026-01-23 16:38:53] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 16:38:54] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 16:38:54] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 16:38:54] [INFO ] [response_handler.py::102 handle_aggregated_response]: [Response Handler] Using emotion for avatar: neutral
+[2026-01-23 16:38:54] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Hei! 😊  
+Nggak ada yang salah kok, aku siap nge-NGEJAR promo Indomaret bareng kamu!  
+Apa yang mau aku bantu sekarang? 🛒✨
+[2026-01-23 16:40:04] [INFO ] [aggregator.py::79 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 2.50)
+[2026-01-23 16:40:05] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-23 16:40:05] [INFO ] [aggregator.py::131 _process_batch]: [ChatAggregator] Generating AI response for: Susu harganya berapa...
+[2026-01-23 16:40:05] [INFO ] [response_handler.py::44 handle_aggregated_response]: [Response Handler] Generating response for: Susu harganya berapa...
+[2026-01-23 16:40:05] [INFO ] [response_handler.py::48 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-23 16:40:06] [INFO ] [utils.py::64 get_system_prompt]: [System Prompt] Injected 3 products into context
+[2026-01-23 16:40:18] [WARNI] [response_handler.py::69 handle_aggregated_response]: [Response Handler] Primary provider 'remote' failed, trying fallbacks...
+[2026-01-23 16:40:18] [INFO ] [response_handler.py::73 handle_aggregated_response]: [Response Handler] Fallback: Trying DeepSeek...
+[2026-01-23 16:40:18] [INFO ] [utils.py::64 get_system_prompt]: [System Prompt] Injected 3 products into context
+[2026-01-23 16:40:55] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 16:40:55] [INFO ] [response_handler.py::92 handle_aggregated_response]: [Response Handler] Generated response: Wah, susu kental manis Frisian Flag putih 535g cuma Rp 19.200 aja di Indomaret! Bisa buat bikin kopi...
+[2026-01-23 16:40:55] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 16:41:21] [ERROR] [elevenlabs_engine.py::112 synthesize]: Elevenlabs synthesis error: Server disconnected without sending a response.
+[2026-01-23 16:41:22] [WARNI] [text_to_stream.py::549 synthesize_worker]: engine elevenlabs failed to synthesize sentence "Wah, susu kental manis Frisian Flag putih 535g cuma Rp 19.", unknown error
+[2026-01-23 16:41:22] [WARNI] [text_to_stream.py::564 synthesize_worker]: engine elevenlabs is the only engine available, can't switch to another engine
+[2026-01-23 16:42:20] [ERROR] [elevenlabs_engine.py::112 synthesize]: Elevenlabs synthesis error: Server disconnected without sending a response.
+[2026-01-23 16:42:20] [WARNI] [text_to_stream.py::549 synthesize_worker]: engine elevenlabs failed to synthesize sentence "200 aja di Indomaret!", unknown error
+[2026-01-23 16:42:20] [WARNI] [text_to_stream.py::564 synthesize_worker]: engine elevenlabs is the only engine available, can't switch to another engine
+[2026-01-23 16:42:42] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 16:42:42] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 107.53s
+[2026-01-23 16:43:10] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 16:43:10] [INFO ] [response_handler.py::102 handle_aggregated_response]: [Response Handler] Using emotion for avatar: neutral
+[2026-01-23 16:43:10] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, susu kental manis Frisian Flag putih 535g cuma Rp 19.200 aja di Indomaret! Bisa buat bikin kopi susu atau martabak manis nih~
+[2026-01-23 17:39:46] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 17:39:46] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 17:40:14] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 17:40:14] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 17:40:14] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 17:40:14] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 17:40:14] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 17:40:14] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 17:40:14] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 17:40:14] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 17:40:16] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 17:40:16] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 17:40:32] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 17:40:32] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 17:40:32] [INFO ] [api_server.py::77 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 17:40:33] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 17:40:33] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 17:40:33] [INFO ] [api_server.py::88 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 17:40:33] [INFO ] [api_server.py::103 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 17:40:33] [INFO ] [heartbeat.py::61 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 17:40:33] [INFO ] [api_server.py::118 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 17:40:36] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 17:40:36] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 17:40:36] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 17:40:36] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 17:40:37] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 161968)
+[2026-01-23 17:40:48] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 114924)
+[2026-01-23 17:40:50] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:40:51] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:40:58] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 172328)
+[2026-01-23 17:41:01] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:10] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 186156)
+[2026-01-23 17:41:12] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:19] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 250956)
+[2026-01-23 17:41:22] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:29] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 258676)
+[2026-01-23 17:41:32] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:39] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 298732)
+[2026-01-23 17:41:42] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:50] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 296616)
+[2026-01-23 17:41:53] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:41:59] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 293348)
+[2026-01-23 17:42:04] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:42:09] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 293200)
+[2026-01-23 17:42:12] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 17:54:03] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 17:54:03] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 17:54:16] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 17:54:16] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 17:54:16] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 17:54:16] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 17:54:16] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 17:54:16] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 17:54:16] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 17:54:16] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 17:54:16] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 17:54:16] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 17:54:25] [WARNI] [api_server.py::63 startup_event]: [Startup] Warning: Could not initialize RAG: name 'logging' is not defined
+[2026-01-23 17:54:25] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 17:54:25] [INFO ] [api_server.py::77 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 17:54:25] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 17:54:25] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 17:54:25] [INFO ] [api_server.py::88 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 17:54:25] [INFO ] [api_server.py::103 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 17:54:25] [INFO ] [heartbeat.py::61 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 17:54:25] [INFO ] [api_server.py::118 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 17:54:25] [ERROR] [base_events.py::1758 default_exception_handler]: unhandled exception during asyncio.run() shutdown
+task: <Task finished name='Task-4' coro=<Client.start() done, defined at C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\client.py:169> exception=AttributeError("'NoneType' object has no attribute 'cancel'")>
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 636, in run_until_complete
+    self.run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 603, in run_forever
+    self._run_once()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\base_events.py", line 1909, in _run_once
+    handle._run()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 70, in serve
+    with self.capture_signals():
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\server.py", line 331, in capture_signals
+    signal.raise_signal(captured_signal)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\client.py", line 180, in start
+    await self.connect()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\client.py", line 192, in connect
+    await self._connection._connect()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 140, in _connect
+    data = await self._client._http.validate(token=self._token)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\http.py", line 298, in validate
+    async with self.session.get(url, headers=headers) as resp:
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\client.py", line 779, in _request
+    resp = await handler(req)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\connector.py", line 1562, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\aiohttp\connector.py", line 1178, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\client.py", line 184, in start
+    await self.close()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\client.py", line 200, in close
+    await self._connection._close()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\twitchio\websocket.py", line 595, in _close
+    self._keeper.cancel()
+AttributeError: 'NoneType' object has no attribute 'cancel'
+[2026-01-23 18:08:56] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:08:56] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:09:11] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:09:11] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:09:11] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:09:11] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:09:11] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:09:11] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:09:11] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:09:11] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:09:11] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:09:11] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:09:20] [WARNI] [api_server.py::62 startup_event]: [Startup] Warning: Could not initialize RAG: name 'logging' is not defined
+[2026-01-23 18:09:20] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:09:20] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:09:20] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:09:20] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:09:20] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:09:20] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:09:20] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:09:20] [INFO ] [heartbeat.py::61 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:09:20] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:09:23] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:09:23] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:09:23] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:09:23] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:09:57] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 256504)
+[2026-01-23 18:09:58] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:09:58] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 256680)
+[2026-01-23 18:09:59] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:09:59] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 273664)
+[2026-01-23 18:10:00] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:00] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 273664)
+[2026-01-23 18:10:00] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:00] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 273652)
+[2026-01-23 18:10:01] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:01] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 273572)
+[2026-01-23 18:10:02] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:02] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 279316)
+[2026-01-23 18:10:02] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:02] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 276640)
+[2026-01-23 18:10:03] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:03] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 279292)
+[2026-01-23 18:10:03] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:04] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 280944)
+[2026-01-23 18:10:04] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:04] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 280252)
+[2026-01-23 18:10:05] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:05] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285472)
+[2026-01-23 18:10:05] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:05] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285472)
+[2026-01-23 18:10:06] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:06] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285472)
+[2026-01-23 18:10:07] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:07] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285484)
+[2026-01-23 18:10:07] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:07] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285468)
+[2026-01-23 18:10:08] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:08] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285468)
+[2026-01-23 18:10:09] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:09] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285468)
+[2026-01-23 18:10:10] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:10] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285464)
+[2026-01-23 18:10:10] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:10] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285428)
+[2026-01-23 18:10:11] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:11] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285428)
+[2026-01-23 18:10:12] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:12] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285544)
+[2026-01-23 18:10:13] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:13] [ERROR] [base_events.py::1758 default_exception_handler]: Exception in callback _ProactorReadPipeTransport._loop_reading(<_OverlappedF...ed result=614>)
+handle: <Handle _ProactorReadPipeTransport._loop_reading(<_OverlappedF...ed result=614>)>
+Traceback (most recent call last):
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\proactor_events.py", line 324, in _loop_reading
+    self._data_received(data, length)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\asyncio\proactor_events.py", line 274, in _data_received
+    self._protocol.data_received(data)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 174, in data_received
+    self.handle_events()
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 183, in handle_events
+    self.send_400_response(msg)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 305, in send_400_response
+    output = self.conn.send(event)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\h11\_connection.py", line 538, in send
+    data_list = self.send_with_data_passthrough(event)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\h11\_connection.py", line 563, in send_with_data_passthrough
+    self._process_event(self.our_role, event)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\h11\_connection.py", line 284, in _process_event
+    self._cstate.process_event(role, type(event), server_switch_event)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\h11\_state.py", line 291, in process_event
+    self._fire_event_triggered_transitions(role, _event_type)
+  File "C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\h11\_state.py", line 309, in _fire_event_triggered_transitions
+    raise LocalProtocolError(
+h11._util.LocalProtocolError: can't handle event type Response when role=SERVER and state=CLOSED
+[2026-01-23 18:10:13] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285544)
+[2026-01-23 18:10:14] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:14] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285604)
+[2026-01-23 18:10:14] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:14] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285588)
+[2026-01-23 18:10:15] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:10:15] [INFO ] [heartbeat.py::126 process_heartbeat]: [Vision] Processing heartbeat (img size: 285588)
+[2026-01-23 18:10:16] [ERROR] [heartbeat.py::99 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:14:55] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:14:55] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:15:10] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:15:10] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:15:10] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:15:10] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:15:10] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:15:10] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:15:10] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:15:10] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:15:10] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:15:10] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:15:19] [WARNI] [api_server.py::62 startup_event]: [Startup] Warning: Could not initialize RAG: name 'logging' is not defined
+[2026-01-23 18:15:19] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:15:19] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:15:19] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:15:19] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:15:19] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:15:19] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:15:19] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:15:19] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:15:19] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:15:20] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 1.9995829303339911 seconds.
+[2026-01-23 18:15:21] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:15:23] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:15:23] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:15:23] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:15:23] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:15:33] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:16:48] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:16:48] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:17:01] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:17:01] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:17:01] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:17:01] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:17:01] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:17:01] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:17:01] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:17:01] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:17:01] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:17:01] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:17:10] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:17:10] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:17:10] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:17:10] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:17:10] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:17:10] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:17:10] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:17:10] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:17:10] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:17:10] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:17:10] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:17:10] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:17:13] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:17:13] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:17:13] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:17:13] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:17:37] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:17:52] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 181656)
+[2026-01-23 18:17:53] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:17:53] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 196012)
+[2026-01-23 18:17:54] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:17:54] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 196012)
+[2026-01-23 18:17:55] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:18:01] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 284028)
+[2026-01-23 18:18:02] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:18:02] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 284028)
+[2026-01-23 18:18:03] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:18:03] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 284028)
+[2026-01-23 18:18:03] [ERROR] [heartbeat.py::100 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:18:05] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:19:16] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:19:16] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:19:30] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:19:30] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:19:30] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:19:30] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:19:30] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:19:30] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:19:30] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:19:30] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:19:30] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:19:30] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:19:38] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:19:38] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:19:38] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:19:38] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:19:38] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:19:38] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:19:39] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:19:39] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:19:39] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:19:39] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:19:39] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:19:39] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:19:39] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:19:42] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 268132)
+[2026-01-23 18:19:43] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:19:43] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 268132)
+[2026-01-23 18:19:44] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:19:44] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:19:44] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:19:44] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:19:44] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:19:51] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 272272)
+[2026-01-23 18:19:52] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:19:52] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 272272)
+[2026-01-23 18:19:53] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:19:53] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 272272)
+[2026-01-23 18:19:53] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:02] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278432)
+[2026-01-23 18:20:02] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:02] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278384)
+[2026-01-23 18:20:03] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:03] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278404)
+[2026-01-23 18:20:03] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:11] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278172)
+[2026-01-23 18:20:12] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:12] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278172)
+[2026-01-23 18:20:13] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:13] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 278148)
+[2026-01-23 18:20:13] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:22] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 285028)
+[2026-01-23 18:20:22] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:22] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 285028)
+[2026-01-23 18:20:23] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:23] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 285028)
+[2026-01-23 18:20:24] [ERROR] [heartbeat.py::101 _analyze_interestingness]: [Vision] Error in interestingness check: name 'logging' is not defined
+[2026-01-23 18:20:25] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:21:17] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:21:17] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:21:30] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:21:30] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:21:30] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:21:30] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:21:30] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:21:30] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:21:30] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:21:30] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:21:30] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:21:30] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:21:38] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:21:38] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:21:38] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:21:38] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:21:38] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:21:38] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:21:38] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:21:38] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:21:38] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:21:38] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:21:38] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:21:38] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:21:39] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 280788)
+[2026-01-23 18:21:41] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 276520)
+[2026-01-23 18:21:42] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:21:42] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 276520)
+[2026-01-23 18:21:43] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:21:43] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:21:43] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:21:43] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:21:52] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 281976)
+[2026-01-23 18:21:52] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 281976)
+[2026-01-23 18:21:55] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 263388)
+[2026-01-23 18:22:01] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:23:08] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:23:08] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:23:24] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:23:24] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:23:24] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:23:24] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:23:24] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:23:24] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:23:24] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:23:24] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:23:24] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:23:24] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:23:33] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:23:33] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:23:33] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:23:33] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:23:33] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:23:33] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:23:33] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:23:33] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:23:33] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:23:33] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:23:33] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:23:33] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:23:33] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 293492)
+[2026-01-23 18:23:35] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 293492)
+[2026-01-23 18:23:35] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:23:35] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 293536)
+[2026-01-23 18:23:38] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:23:38] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:23:38] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:23:38] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:23:41] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 289676)
+[2026-01-23 18:23:42] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 289676)
+[2026-01-23 18:23:48] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 295320)
+[2026-01-23 18:23:51] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 295604)
+[2026-01-23 18:23:52] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 295396)
+[2026-01-23 18:23:52] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:26:13] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:26:13] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:26:25] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:26:25] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:26:25] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:26:25] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:26:25] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:26:25] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:26:25] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:26:25] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:26:25] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:26:25] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:26:34] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:26:34] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:26:34] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:26:34] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:26:34] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:26:34] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:26:34] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:26:34] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:26:34] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:26:34] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:26:34] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:26:34] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:26:34] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:26:36] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:26:36] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:26:36] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:26:36] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:26:41] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 279596)
+[2026-01-23 18:26:43] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 279596)
+[2026-01-23 18:26:46] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 280196)
+[2026-01-23 18:26:46] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:26:47] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:26:48] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:26:51] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 290300)
+[2026-01-23 18:26:52] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 290300)
+[2026-01-23 18:26:53] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:26:53] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:26:55] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 287740)
+[2026-01-23 18:26:57] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:01] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 286144)
+[2026-01-23 18:27:02] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 286108)
+[2026-01-23 18:27:04] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:04] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:05] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 287192)
+[2026-01-23 18:27:07] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:11] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 212592)
+[2026-01-23 18:27:12] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 212724)
+[2026-01-23 18:27:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:15] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 290416)
+[2026-01-23 18:27:17] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:17] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:27:17] [INFO ] [manager.py::72 _generate_realtimetts]: [TTSManager] Initializing RealtimeTTS engine...
+[2026-01-23 18:27:17] [ERROR] [manager.py::75 _generate_realtimetts]: [TTSManager] Failed to initialize RealtimeTTS: name 'logging' is not defined
+[2026-01-23 18:27:17] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:27:17] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:17] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:27:17] [INFO ] [manager.py::72 _generate_realtimetts]: [TTSManager] Initializing RealtimeTTS engine...
+[2026-01-23 18:27:17] [ERROR] [manager.py::75 _generate_realtimetts]: [TTSManager] Failed to initialize RealtimeTTS: name 'logging' is not defined
+[2026-01-23 18:27:17] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:27:18] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:21] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 299628)
+[2026-01-23 18:27:22] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 310448)
+[2026-01-23 18:27:23] [ERROR] [remote_vllm.py::107 generate]: Remote vLLM API call failed: RemoteProtocolError: Server disconnected without sending a response.
+[2026-01-23 18:27:24] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:25] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 311744)
+[2026-01-23 18:27:27] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:31] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 287888)
+[2026-01-23 18:27:32] [INFO ] [heartbeat.py::128 process_heartbeat]: [Vision] Processing heartbeat (img size: 287888)
+[2026-01-23 18:27:33] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:27:33] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:27:34] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:00] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:33:00] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:33:14] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:33:14] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:33:14] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:33:14] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:33:14] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:33:14] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:33:14] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:33:14] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:33:14] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:33:14] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:33:25] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:33:25] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:33:25] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:33:25] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:33:25] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:33:25] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:33:25] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:33:25] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:33:25] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:33:25] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:33:25] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:33:25] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:33:25] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297420)
+[2026-01-23 18:33:28] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:28] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:28] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:33:29] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:33:29] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:33:29] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:33:29] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:33:31] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 301004)
+[2026-01-23 18:33:32] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 300136)
+[2026-01-23 18:33:33] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:33] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:34] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:34] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:41] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297844)
+[2026-01-23 18:33:42] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297864)
+[2026-01-23 18:33:42] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297868)
+[2026-01-23 18:33:45] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:45] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:45] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:45] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:45] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:45] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:51] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 300868)
+[2026-01-23 18:33:52] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 300900)
+[2026-01-23 18:33:53] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 300900)
+[2026-01-23 18:33:55] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:55] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:55] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:55] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:33:55] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:33:55] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:01] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 211452)
+[2026-01-23 18:34:02] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 211452)
+[2026-01-23 18:34:03] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 211452)
+[2026-01-23 18:34:04] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:04] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:34:05] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:05] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:05] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:34:05] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:34:08] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:08] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:34:08] [INFO ] [manager.py::72 _generate_realtimetts]: [TTSManager] Initializing RealtimeTTS engine...
+[2026-01-23 18:34:08] [INFO ] [realtimetts.py::27 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-23 18:34:08] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-23 18:34:08] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-23 18:34:08] [INFO ] [realtimetts.py::46 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-23 18:34:08] [INFO ] [realtimetts.py::59 generate_audio]: [RealtimeTTS] Starting audio generation for text: OMG, MEGA PROMO TIME! 💥  
+Lumina ngejalanin promo ...
+[2026-01-23 18:34:08] [INFO ] [realtimetts.py::64 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-23 18:34:08] [INFO ] [realtimetts.py::67 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-23 18:34:08] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 18:34:11] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:11] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 3.20s
+[2026-01-23 18:34:12] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:14] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:15] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:16] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 18:34:16] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Audio chunks received: 117
+[2026-01-23 18:34:16] [INFO ] [realtimetts.py::84 generate_audio]: [RealtimeTTS] Returning MP3 audio (118042 bytes)
+[2026-01-23 18:34:16] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:34:16] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:16] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:16] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:34:16] [INFO ] [realtimetts.py::59 generate_audio]: [RealtimeTTS] Starting audio generation for text: OMG, MEGA PROMO time! 🎉  
+The Oreo Mini and Max Te...
+[2026-01-23 18:34:16] [INFO ] [realtimetts.py::64 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-23 18:34:16] [INFO ] [realtimetts.py::67 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-23 18:34:16] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 18:34:17] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:17] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.53s
+[2026-01-23 18:34:19] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:20] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:21] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 18:34:21] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Audio chunks received: 138
+[2026-01-23 18:34:21] [INFO ] [realtimetts.py::84 generate_audio]: [RealtimeTTS] Returning MP3 audio (140985 bytes)
+[2026-01-23 18:34:21] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:34:21] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:34:21] [INFO ] [realtimetts.py::59 generate_audio]: [RealtimeTTS] Starting audio generation for text: WOW, MEGA_PROMO time! 🎉  
+Ini promo hemat banget n...
+[2026-01-23 18:34:21] [INFO ] [realtimetts.py::64 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-23 18:34:21] [INFO ] [realtimetts.py::67 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-23 18:34:21] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 18:34:22] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:22] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.39s
+[2026-01-23 18:34:24] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:25] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:34:25] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 18:34:25] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Audio chunks received: 112
+[2026-01-23 18:34:25] [INFO ] [realtimetts.py::84 generate_audio]: [RealtimeTTS] Returning MP3 audio (113401 bytes)
+[2026-01-23 18:34:25] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:34:25] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 296060)
+[2026-01-23 18:34:26] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297308)
+[2026-01-23 18:34:27] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297308)
+[2026-01-23 18:34:27] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 298320)
+[2026-01-23 18:34:28] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 298320)
+[2026-01-23 18:34:29] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 294444)
+[2026-01-23 18:34:31] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:31] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:31] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:31] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:31] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 301280)
+[2026-01-23 18:34:32] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:32] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:32] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:32] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:32] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:32] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:32] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 297432)
+[2026-01-23 18:34:33] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:33] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:33] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:33] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:33] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:33] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:36] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 300740)
+[2026-01-23 18:34:37] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 304700)
+[2026-01-23 18:34:38] [ERROR] [remote_vllm.py::107 generate]: Remote vLLM API call failed: RemoteProtocolError: Server disconnected without sending a response.
+[2026-01-23 18:34:39] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:34:39] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:34:40] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:38:24] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:38:24] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:38:37] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:38:37] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:38:37] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:38:37] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:38:37] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:38:37] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:38:37] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:38:37] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:38:37] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:38:37] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:38:48] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:38:48] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:38:48] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:38:48] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:38:48] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:38:48] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:38:48] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:38:48] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:38:48] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:38:48] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:38:48] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:38:48] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:38:49] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:38:51] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:38:51] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:38:51] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:38:51] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:39:00] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 280084)
+[2026-01-23 18:39:03] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:39:03] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:39:09] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 285292)
+[2026-01-23 18:39:12] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:39:12] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:39:20] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 265392)
+[2026-01-23 18:39:22] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:39:22] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:39:24] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:39:24] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:39:24] [INFO ] [manager.py::72 _generate_realtimetts]: [TTSManager] Initializing RealtimeTTS engine...
+[2026-01-23 18:39:24] [INFO ] [realtimetts.py::27 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-23 18:39:24] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-23 18:39:24] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-23 18:39:24] [INFO ] [realtimetts.py::46 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-23 18:39:24] [INFO ] [realtimetts.py::59 generate_audio]: [RealtimeTTS] Starting audio generation for text: WOW, MEGA_PROMO time! 🎉  
+Sunco Minyak Goreng 2L j...
+[2026-01-23 18:39:24] [INFO ] [realtimetts.py::64 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-23 18:39:24] [INFO ] [realtimetts.py::67 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-23 18:39:24] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 18:39:26] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:39:26] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.86s
+[2026-01-23 18:39:28] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:39:29] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:39:30] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:39:32] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:39:32] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 18:39:32] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Audio chunks received: 143
+[2026-01-23 18:39:32] [INFO ] [realtimetts.py::84 generate_audio]: [RealtimeTTS] Returning MP3 audio (144837 bytes)
+[2026-01-23 18:39:32] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:39:32] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 294356)
+[2026-01-23 18:39:34] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:39:34] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:40:12] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:40:54] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:40:54] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:41:15] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:41:15] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:41:15] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:41:15] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:41:15] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:41:15] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:41:15] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:41:15] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:41:15] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:41:15] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:41:24] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:41:24] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:41:24] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:41:24] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:41:24] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:41:24] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:41:25] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:41:25] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:41:25] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:41:25] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:41:25] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:41:25] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:41:25] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:41:27] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:41:27] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:41:27] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:41:27] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:41:29] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 2
+[2026-01-23 18:42:45] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 1
+[2026-01-23 18:43:03] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:43:39] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:43:39] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:43:56] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:43:56] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:43:56] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:43:56] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:43:56] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:43:56] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:43:56] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:43:56] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:43:56] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:43:56] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:44:06] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:44:06] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:44:06] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:44:06] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:44:06] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:44:06] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:44:06] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:44:06] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:44:06] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:44:06] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:44:06] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:44:06] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:44:07] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:44:09] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:44:09] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:44:09] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:44:09] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:44:40] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:44:42] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:44:42] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 2
+[2026-01-23 18:44:58] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 265940)
+[2026-01-23 18:45:01] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:01] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:45:07] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 225480)
+[2026-01-23 18:45:10] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:10] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:45:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:14] [INFO ] [manager.py::67 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-23 18:45:14] [INFO ] [manager.py::72 _generate_realtimetts]: [TTSManager] Initializing RealtimeTTS engine...
+[2026-01-23 18:45:14] [INFO ] [realtimetts.py::27 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-23 18:45:14] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-23 18:45:14] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-23 18:45:14] [INFO ] [realtimetts.py::46 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-23 18:45:14] [INFO ] [realtimetts.py::59 generate_audio]: [RealtimeTTS] Starting audio generation for text: WOW! MEGA_PROMO time? 🎉  
+Btw, that Arnon Roti Man...
+[2026-01-23 18:45:14] [INFO ] [realtimetts.py::64 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-23 18:45:14] [INFO ] [realtimetts.py::67 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-23 18:45:14] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-23 18:45:16] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:45:16] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.86s
+[2026-01-23 18:45:18] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:45:19] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 200 OK"
+[2026-01-23 18:45:20] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-23 18:45:20] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Audio chunks received: 169
+[2026-01-23 18:45:20] [INFO ] [realtimetts.py::84 generate_audio]: [RealtimeTTS] Returning MP3 audio (172332 bytes)
+[2026-01-23 18:45:20] [INFO ] [heartbeat.py::52 record_reaction]: [Vision] Reaction recorded. global_cd=60s, topic_lock(MEGA_PROMO)=300s
+[2026-01-23 18:45:20] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 287980)
+[2026-01-23 18:45:22] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:22] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:45:27] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 283828)
+[2026-01-23 18:45:30] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:30] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-23 18:45:37] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 167760)
+[2026-01-23 18:45:41] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:41] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:45:47] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 166900)
+[2026-01-23 18:45:50] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:45:50] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:45:57] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 139072)
+[2026-01-23 18:46:02] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:46:02] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:46:07] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 168604)
+[2026-01-23 18:46:09] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:46:09] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:46:12] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 1
+[2026-01-23 18:46:12] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:49:49] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-23.log
+[2026-01-23 18:49:49] [INFO ] [load_models.py::12 load_all_models]: Loading Qwen3-VL model...
+[2026-01-23 18:50:07] [INFO ] [load_models.py::23 load_all_models]: Local Qwen3-VL model loaded successfully!
+[2026-01-23 18:50:07] [INFO ] [load_models.py::30 load_all_models]: Startup complete!
+[2026-01-23 18:50:07] [INFO ] [load_models.py::33 load_all_models]: LLM Provider: remote
+[2026-01-23 18:50:07] [INFO ] [load_models.py::36 load_all_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-23 18:50:07] [INFO ] [load_models.py::38 load_all_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-23 18:50:07] [INFO ] [load_models.py::41 load_all_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-23 18:50:07] [INFO ] [load_models.py::43 load_all_models]: TTS Provider: realtimetts
+[2026-01-23 18:50:07] [INFO ] [product_search.py::203 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-23 18:50:07] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda:0
+[2026-01-23 18:50:07] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:50:20] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-23 18:50:20] [INFO ] [embeddings.py::54 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-23 18:50:20] [INFO ] [product_search.py::217 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-23 18:50:20] [INFO ] [api_server.py::66 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-23 18:50:20] [INFO ] [aggregator.py::48 start]: [ChatAggregator] Service started
+[2026-01-23 18:50:20] [INFO ] [api_server.py::80 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-23 18:50:20] [INFO ] [bot.py::26 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-23 18:50:20] [INFO ] [bot.py::120 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-23 18:50:20] [INFO ] [api_server.py::91 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-23 18:50:20] [INFO ] [api_server.py::105 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-23 18:50:20] [INFO ] [heartbeat.py::62 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-23 18:50:20] [INFO ] [api_server.py::115 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-23 18:50:22] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:50:23] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-23 18:50:23] [INFO ] [bot.py::30 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-23 18:50:23] [INFO ] [bot.py::31 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-23 18:50:23] [INFO ] [bot.py::32 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-23 18:50:27] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 261804)
+[2026-01-23 18:50:31] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-23 18:50:32] [INFO ] [manager.py::22 connect]: [WebSocket] New connection. Total: 1
+[2026-01-23 18:50:34] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:50:34] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:51:06] [INFO ] [heartbeat.py::127 process_heartbeat]: [Vision] Processing heartbeat (img size: 266560)
+[2026-01-23 18:51:09] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST http://localhost:8001/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-23 18:51:09] [INFO ] [heartbeat.py::89 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-23 18:51:09] [INFO ] [manager.py::28 disconnect]: [WebSocket] Connection closed. Total: 0

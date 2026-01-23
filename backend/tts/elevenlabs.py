@@ -2,7 +2,7 @@ import httpx
 from typing import Optional
 import config
 from .base import BaseTTSProvider
-
+import logging
 
 class ElevenLabsProvider(BaseTTSProvider):
     """ElevenLabs API provider for text-to-speech."""
@@ -10,7 +10,7 @@ class ElevenLabsProvider(BaseTTSProvider):
     async def generate_audio(self, text: str) -> Optional[bytes]:
         """Generate audio using ElevenLabs API."""
         if not config.ELEVENLABS_API_KEY:
-            print("ElevenLabs API key not set!")
+            logging.error("ElevenLabs API key not set!")
             return None
             
         try:
@@ -33,11 +33,11 @@ class ElevenLabsProvider(BaseTTSProvider):
                 if response.status_code == 200:
                     return response.content
                 else:
-                    print(f"ElevenLabs error: {response.status_code} - {response.text}")
+                    logging.error(f"ElevenLabs error: {response.status_code} - {response.text}")
                     return None
         except httpx.TimeoutException:
-            print("ElevenLabs generation timed out!")
+            logging.error("ElevenLabs generation timed out!")
             return None
         except Exception as e:
-            print(f"ElevenLabs generation failed: {type(e).__name__}: {e}")
+            logging.error(f"ElevenLabs generation failed: {type(e).__name__}: {e}")
             return None

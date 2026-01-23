@@ -1,6 +1,7 @@
 import os
 import torch
 from transformers import AutoModelForImageTextToText, AutoProcessor
+import logging
 import state as state
 import config as config
 
@@ -8,7 +9,7 @@ async def load_all_models():
     """Load all necessary models into the state module."""
 
     try:
-        print("Loading Qwen3-VL model...")
+        logging.info("Loading Qwen3-VL model...")
         
         if os.path.exists(config.LOCAL_MODEL_PATH):
             state.model = AutoModelForImageTextToText.from_pretrained(
@@ -19,27 +20,27 @@ async def load_all_models():
             state.processor = AutoProcessor.from_pretrained(config.LOCAL_MODEL_PATH)
             state.model.eval()
             state.local_model_available = True
-            print("Local Qwen3-VL model loaded successfully!")
+            logging.info("Local Qwen3-VL model loaded successfully!")
         else:
-            print(f"Local model path '{config.LOCAL_MODEL_PATH}' not found. Will use OpenRouter only.")
+            logging.warning(f"Local model path '{config.LOCAL_MODEL_PATH}' not found. Will use OpenRouter only.")
     except Exception as e:
-        print(f"Failed to load local model: {e}")
-        print("Will use OpenRouter API only.")
+        logging.error(f"Failed to load local model: {e}")
+        logging.info("Will use OpenRouter API only.")
     
-    print("Startup complete!")
+    logging.info("Startup complete!")
     
     state.llm_provider = config.LLM_PROVIDER.lower()
-    print(f"LLM Provider: {state.llm_provider}")
+    logging.info(f"LLM Provider: {state.llm_provider}")
     
     if config.OPENROUTER_API_KEY:
-        print(f"OpenRouter API configured with model: {config.OPENROUTER_MODEL}")
+        logging.info(f"OpenRouter API configured with model: {config.OPENROUTER_MODEL}")
     if config.DEEPSEEK_API_KEY:
-        print(f"DeepSeek API configured with model: {config.DEEPSEEK_MODEL}")
+        logging.info(f"DeepSeek API configured with model: {config.DEEPSEEK_MODEL}")
     if config.REMOTE_VLLM_BASE_URL:
         model_info = config.REMOTE_VLLM_MODEL if config.REMOTE_VLLM_MODEL else "(auto-detect)"
-        print(f"Remote vLLM API configured: {config.REMOTE_VLLM_BASE_URL} (model: {model_info})")
+        logging.info(f"Remote vLLM API configured: {config.REMOTE_VLLM_BASE_URL} (model: {model_info})")
         
-    print(f"TTS Provider: {config.TTS_PROVIDER}")
+    logging.info(f"TTS Provider: {config.TTS_PROVIDER}")
     if config.TTS_PROVIDER == "elevenlabs" and not config.ELEVENLABS_API_KEY:
-        print("Warning: TTS_PROVIDER is elevenlabs but ELEVENLABS_API_KEY is missing!")
+        logging.warning("Warning: TTS_PROVIDER is elevenlabs but ELEVENLABS_API_KEY is missing!")
 

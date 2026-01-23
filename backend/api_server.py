@@ -4,15 +4,17 @@ from fastapi.middleware.cors import CORSMiddleware
 import base64
 import load_models
 from llm import OpenRouterProvider, DeepSeekProvider, LocalModelProvider, RemoteVLLMProvider
-from tts import ElevenLabsProvider, RealtimeTTSProvider
+from tts import TTSManager
 from rag import initialize_rag
+from vision.heartbeat import HeartbeatRequest, HeartbeatResponse, VisionHeartbeat
 import config
 import utils
 import state
 import re
 import uvicorn
+import logging
+import logger
 
-# Import models from chat module
 from chat.aggregator import ChatAggregator
 from chat.models import (
     ChatMessage, AggregationConfig,
@@ -40,23 +42,28 @@ llm_providers = {
     "remote": RemoteVLLMProvider()
 }
 
-tts_providers = {
-    "elevenlabs": ElevenLabsProvider(),
-    "realtimetts": None
-}
+
     
+tts_manager = None 
 chat_aggregator = None
+vision_heartbeat = None
 
 @app.on_event("startup")
 async def startup_event():
+    logger.setup_logger()
     global chat_aggregator
+    global tts_manager
     
     await load_models.load_all_models()
     
     try:
         initialize_rag()
     except Exception as e:
-        print(f"[Startup] Warning: Could not initialize RAG: {e}")
+        logging.warning(f"[Startup] Warning: Could not initialize RAG: {e}")
+
+    # Initialize TTS Manager
+    tts_manager = TTSManager()
+    logging.info(f"[Startup] TTS Manager initialized (Provider: {config.TTS_PROVIDER})")
     
     aggregator_config = AggregationConfig(
         enabled=config.CHAT_AGGREGATION_ENABLED,
@@ -70,7 +77,7 @@ async def startup_event():
     chat_aggregator = ChatAggregator(aggregator_config)
     chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
     await chat_aggregator.start()
-    print(f"[Startup] Chat aggregator initialized (enabled: {config.CHAT_AGGREGATION_ENABLED}, duplicate expiry: {config.DUPLICATE_EXPIRY_SECONDS}s)")
+    logging.info(f"[Startup] Chat aggregator initialized (enabled: {config.CHAT_AGGREGATION_ENABLED}, duplicate expiry: {config.DUPLICATE_EXPIRY_SECONDS}s)")
     
     # Initialize Twitch bot if enabled
     if config.TWITCH_ENABLED:
@@ -81,9 +88,9 @@ async def startup_event():
             prefix=config.TWITCH_BOT_PREFIX,
             aggregator=chat_aggregator
         )
-        print(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
+        logging.info(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
     else:
-        print("[Startup] Twitch integration disabled")
+        logging.info("[Startup] Twitch integration disabled")
     
     # Set up aggregator response callback using the modular response handler
     async def aggregation_callback(message: str, top_messages: list):
@@ -91,12 +98,21 @@ async def startup_event():
             message=message,
             top_messages=top_messages,
             llm_providers=llm_providers,
-            tts_providers=tts_providers,
-            RealtimeTTSProvider=RealtimeTTSProvider
+            tts_manager=tts_manager
         )
     
     chat_aggregator.response_callback = aggregation_callback
-    print("[Startup] Chat aggregator response callback configured")
+    logging.info("[Startup] Chat aggregator response callback configured")
+    
+    # Initialize Vision Heartbeat
+    global vision_heartbeat
+    
+    vision_heartbeat = VisionHeartbeat(
+        llm_providers=llm_providers,
+        tts_providers={}, # Unused now
+        text_to_speech_func=tts_manager.generate_audio
+    )
+    logging.info("[Startup] Vision Heartbeat system initialized")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -105,15 +121,15 @@ async def chat(request: ChatRequest):
         source = None
 
         if request.image_base64:
-            print(f"Received image data (length: {len(request.image_base64)})")
+            logging.info(f"Received image data (length: {len(request.image_base64)})")
         
         llm_provider = state.llm_provider
         
         if request.image_base64 and llm_provider == "deepseek":
-            print("DeepSeek doesn't support vision - using remote vLLM for this image request")
+            logging.info("DeepSeek doesn't support vision - using remote vLLM for this image request")
             llm_provider = "remote"
         
-        print(f"Using LLM provider: {llm_provider}")
+        logging.info(f"Using LLM provider: {llm_provider}")
         
         # Get the provider instance
         provider = llm_providers.get(llm_provider)
@@ -124,32 +140,34 @@ async def chat(request: ChatRequest):
         output_text = await provider.generate(request.message, request.conversation_history, request.image_base64)
         if output_text:
             source = llm_provider
-            print(f"Got response from {llm_provider}")
+            logging.info(f"Got response from {llm_provider}")
         
         # Fallback logic
         if not output_text:
-            print(f"Primary provider '{llm_provider}' failed, trying fallbacks...")
+            logging.warning(f"Primary provider '{llm_provider}' failed, trying fallbacks...")
 
-            if not output_text and llm_provider != "remote" and config.REMOTE_VLLM_BASE_URL:
-                print("Fallback: Trying remote vLLM...")
-                output_text = await llm_providers["remote"].generate(request.message, request.conversation_history, request.image_base64)
-                if output_text:
-                    source = "remote"
-            
-            if not output_text and llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
-                print("Fallback: Trying OpenRouter...")
-                output_text = await llm_providers["openrouter"].generate(request.message, request.conversation_history, request.image_base64)
-                if output_text:
-                    source = "openrouter"
-            
             if not output_text and llm_provider != "deepseek" and config.DEEPSEEK_API_KEY:
-                print("Fallback: Trying DeepSeek...")
+                logging.info("Fallback: Trying DeepSeek...")
                 output_text = await llm_providers["deepseek"].generate(request.message, request.conversation_history, request.image_base64)
                 if output_text:
                     source = "deepseek"
             
+            if not output_text and llm_provider != "openrouter" and config.OPENROUTER_API_KEY:
+                logging.info("Fallback: Trying OpenRouter...")
+                output_text = await llm_providers["openrouter"].generate(request.message, request.conversation_history, request.image_base64)
+                if output_text:
+                    source = "openrouter"
+            
+            if not output_text and llm_provider != "remote" and config.REMOTE_VLLM_BASE_URL:
+                logging.info("Fallback: Trying remote vLLM...")
+                output_text = await llm_providers["remote"].generate(request.message, request.conversation_history, request.image_base64)
+
+
+                if output_text:
+                    source = "remote"
+            
             if not output_text and state.local_model_available:
-                print("Fallback: Using local model...")
+                logging.info("Fallback: Using local model...")
                 output_text = llm_providers["local"].generate(request.message, request.conversation_history, request.image_base64)
                 source = "local"
         
@@ -159,7 +177,7 @@ async def chat(request: ChatRequest):
                 detail="All LLM providers failed"
             )
         
-        print(f"=== RAW MODEL OUTPUT ===\n{output_text}\n========================")
+        logging.debug(f"=== RAW MODEL OUTPUT ===\n{output_text}\n========================")
         
         component_call_data = utils.extract_component_call(output_text)
         
@@ -177,34 +195,9 @@ async def chat(request: ChatRequest):
         
 
         if request.tts_enabled:
-            if config.TTS_PROVIDER == "elevenlabs":
-                print("Generating audio with ElevenLabs...")
-                audio_bytes = await tts_providers["elevenlabs"].generate_audio(clean_text)
-                if audio_bytes:
-                    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                else:
-                    print("ElevenLabs failed to generate audio")
-            
-            elif config.TTS_PROVIDER == "realtimetts":
-                print(f"Generating audio with RealtimeTTS (Engine: {config.REALTIMETTS_ENGINE})...")
-                
-                # Lazy initialization
-                if tts_providers["realtimetts"] is None:
-                    try:
-                        tts_providers["realtimetts"] = RealtimeTTSProvider(config.REALTIMETTS_ENGINE)
-                    except Exception as e:
-                        print(f"Failed to initialize RealtimeTTS: {e}")
-                
-                if tts_providers["realtimetts"]:
-                    audio_bytes = await tts_providers["realtimetts"].generate_audio(clean_text)
-                    if audio_bytes:
-                         audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                    else:
-                        print("RealtimeTTS generated no audio")
-                else:
-                    print("RealtimeTTS service not available")
+            audio_base64 = await tts_manager.generate_audio(clean_text)
         else:
-            print("TTS disabled for this request.")
+            logging.info("TTS disabled for this request.")
 
 
         return ChatResponse(
@@ -254,7 +247,7 @@ async def set_llm_provider(request: SetProviderRequest):
         raise HTTPException(status_code=400, detail="Local model is not available")
     
     state.llm_provider = provider
-    print(f"LLM provider changed to: {provider}")
+    logging.info(f"LLM provider changed to: {provider}")
     
     return {"provider": state.llm_provider, "message": f"Switched to {provider}"}
 
@@ -331,8 +324,16 @@ async def websocket_chat(websocket: WebSocket):
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
     except Exception as e:
-        print(f"[WebSocket] Error: {e}")
+        logging.error(f"[WebSocket] Error: {e}")
         ws_manager.disconnect(websocket)
+
+
+@app.post("/api/vision/heartbeat", response_model=HeartbeatResponse)
+async def vision_heartbeat_endpoint(request: HeartbeatRequest):
+    if not vision_heartbeat:
+        raise HTTPException(status_code=503, detail="Vision system not initialized")
     
+    return await vision_heartbeat.process_heartbeat(request)
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

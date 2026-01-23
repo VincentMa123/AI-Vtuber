@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 from typing import Optional
 from sentence_transformers import SentenceTransformer
+import logging
 
 _embeddings_cache = None
 _model_cache = None
@@ -17,13 +18,13 @@ def get_embedding_model():
     
     try:
         _model_cache = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-        print("[RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2")
+        logging.info("[RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2")
         return _model_cache
     except ImportError:
-        print("[RAG] Error: sentence-transformers not installed. Run: pip install sentence-transformers")
+        logging.error("[RAG] Error: sentence-transformers not installed. Run: pip install sentence-transformers")
         return None
     except Exception as e:
-        print(f"[RAG] Error loading embedding model: {e}")
+        logging.error(f"[RAG] Error loading embedding model: {e}")
         return None
 
 
@@ -50,10 +51,10 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
         try:
             with open(cache_file, 'rb') as f:
                 _embeddings_cache = pickle.load(f)
-                print(f"[RAG] Loaded {len(_embeddings_cache)} product embeddings from cache")
+                logging.info(f"[RAG] Loaded {len(_embeddings_cache)} product embeddings from cache")
                 return _embeddings_cache
         except Exception as e:
-            print(f"[RAG] Error loading cached embeddings: {e}")
+            logging.error(f"[RAG] Error loading cached embeddings: {e}")
     
     model = get_embedding_model()
     if model is None:
@@ -66,7 +67,7 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
     products = dataset.get("products", [])
     
     if not products:
-        print("[RAG] No products found in dataset")
+        logging.info("[RAG] No products found in dataset")
         return None
     
     product_texts = []
@@ -74,7 +75,7 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
         text = f"{product.get('name', '')} {product.get('description', '')} {' '.join(product.get('keywords', []))}"
         product_texts.append(text)
     
-    print(f"[RAG] Creating embeddings for {len(product_texts)} products...")
+    logging.info(f"[RAG] Creating embeddings for {len(product_texts)} products...")
     embeddings = model.encode(product_texts, show_progress_bar=True, convert_to_numpy=True)
     
     _embeddings_cache = embeddings
@@ -82,8 +83,8 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
     try:
         with open(cache_file, 'wb') as f:
             pickle.dump(embeddings, f)
-        print(f"[RAG] Saved embeddings to {cache_file}")
+        logging.info(f"[RAG] Saved embeddings to {cache_file}")
     except Exception as e:
-        print(f"[RAG] Warning: Could not save embeddings to disk: {e}")
+        logging.error(f"[RAG] Warning: Could not save embeddings to disk: {e}")
     
     return embeddings

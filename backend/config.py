@@ -14,7 +14,7 @@ DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1/chat/completions"
 
 # Remote vLLM Configuration
 REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "http://localhost:8001/v1/chat/completions")
-REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "./Qwen3-VL-2B-Instruct")  # Explicitly set model name
+REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "./Qwen3-VL-8B-Instruct")  
 
 TTS_PROVIDER = "realtimetts"
 REALTIMETTS_ENGINE = "elevenlabs"

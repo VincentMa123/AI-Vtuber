@@ -5,6 +5,9 @@ Uses SentenceTransformer to compare AI response with emotion reference texts
 
 import numpy as np
 from typing import Literal, Tuple
+from sentence_transformers import SentenceTransformer
+from rag.embeddings import get_embedding_model
+import logging
 
 EmotionType = Literal["happy", "sad", "angry", "excited", "neutral"]
 
@@ -64,17 +67,15 @@ def _get_model():
         return _model
     
     try:
-        from rag.embeddings import get_embedding_model
         _model = get_embedding_model()
         return _model
     except ImportError:
         try:
-            from sentence_transformers import SentenceTransformer
             _model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-            print("[Emotions] Loaded embedding model directly")
+            logging.debug("[Emotions] Loaded embedding model directly")
             return _model
         except Exception as e:
-            print(f"[Emotions] Failed to load model: {e}")
+            logging.error(f"[Emotions] Failed to load model: {e}")
             return None
 
 
@@ -95,7 +96,7 @@ def _get_emotion_embeddings():
         embeddings = model.encode(sentences, convert_to_numpy=True)
         _emotion_embeddings_cache[emotion] = np.mean(embeddings, axis=0)
     
-    print(f"[Emotions] Pre-computed embeddings for {len(_emotion_embeddings_cache)} emotions")
+    logging.info(f"[Emotions] Pre-computed embeddings for {len(_emotion_embeddings_cache)} emotions")
     return _emotion_embeddings_cache
 
 
@@ -126,7 +127,7 @@ def detect_emotion(text: str) -> EmotionType:
     if best_score < 0.3:
         return "neutral"
     
-    print(f"[Emotions] Detected '{best_emotion}' (score: {best_score:.3f})")
+    logging.info(f"[Emotions] Detected '{best_emotion}' (score: {best_score:.3f})")
     return best_emotion
 
 

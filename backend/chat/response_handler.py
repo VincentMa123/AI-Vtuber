@@ -5,6 +5,7 @@ Contains the callback logic for handling aggregated chat messages and generating
 
 import base64
 from typing import List
+import logging
 import config
 import state
 import utils
@@ -26,8 +27,7 @@ async def handle_aggregated_response(
     message: str, 
     top_messages: list,
     llm_providers: dict,
-    tts_providers: dict,
-    RealtimeTTSProvider
+    tts_manager,
 ) -> None:
     """
     Generate AI response for aggregated chat messages.
@@ -36,15 +36,14 @@ async def handle_aggregated_response(
         message: The aggregated/selected message to respond to
         top_messages: List of top messages from the batch
         llm_providers: Dictionary of LLM provider instances
-        tts_providers: Dictionary of TTS provider instances
-        RealtimeTTSProvider: RealtimeTTS provider class for lazy initialization
+        tts_manager: TTSManager instance for audio generation
     """
     try:
-        print(f"[Response Handler] Generating response for: {message[:100]}...")
+        logging.info(f"[Response Handler] Generating response for: {message[:100]}...")
         
         # Detect emotion from USER INPUT
         user_emotion = detect_emotion(message)
-        print(f"[Response Handler] User emotion detected: {user_emotion}")
+        logging.info(f"[Response Handler] User emotion detected: {user_emotion}")
         
         # Add emotion context to the message for the LLM
         emotion_instruction = EMOTION_CONTEXT.get(user_emotion, "")
@@ -57,24 +56,44 @@ async def handle_aggregated_response(
         provider = llm_providers.get(llm_provider)
         
         if not provider:
-            print(f"[Response Handler] Error: Invalid LLM provider: {llm_provider}")
+            logging.error(f"[Response Handler] Error: Invalid LLM provider: {llm_provider}")
             return
         
         # Generate response with emotion context
         output_text = await provider.generate(enhanced_message, [], None)
         
-        if output_text:
-            print(f"[Response Handler] Generated response: {output_text[:100]}...")
+        # Fallback logic if primary provider fails
+        if not output_text:
+            logging.warning(f"[Response Handler] Primary provider '{llm_provider}' failed, trying fallbacks...")
             
-            # Generate Audio for TTS
-            audio_base64 = await _generate_tts_audio(
-                output_text, 
-                tts_providers, 
-                RealtimeTTSProvider
-            )
+            # 1. Fallback: DeepSeek (Preference as per user request)
+            if llm_provider != "deepseek":
+                logging.info("[Response Handler] Fallback: Trying DeepSeek...")
+                output_text = await llm_providers["deepseek"].generate(enhanced_message, [], None)
+                
+            # 2. Fallback: OpenRouter
+            if not output_text and llm_provider != "openrouter":
+                logging.info("[Response Handler] Fallback: Trying OpenRouter...")
+                output_text = await llm_providers["openrouter"].generate(enhanced_message, [], None)
+                
+            # 3. Fallback: Remote vLLM
+            if not output_text and llm_provider != "remote":
+                logging.info("[Response Handler] Fallback: Trying Remote vLLM...")
+                output_text = await llm_providers["remote"].generate(enhanced_message, [], None)
+            
+            # 4. Fallback: Local
+            if not output_text and llm_provider != "local":
+                logging.info("[Response Handler] Fallback: Trying Local Model...")
+                output_text = llm_providers["local"].generate(enhanced_message, [], None)
+        
+        if output_text:
+            logging.info(f"[Response Handler] Generated response: {output_text[:100]}...")
+            
+            # Generate Audio for TTS via Manager
+            audio_base64 = await tts_manager.generate_audio(output_text)
 
             # Use the USER's detected emotion for avatar animation
-            print(f"[Response Handler] Using emotion for avatar: {user_emotion}")
+            logging.info(f"[Response Handler] Using emotion for avatar: {user_emotion}")
 
             # Broadcast via WebSocket (with audio and emotion!)
             await ws_manager.broadcast_ai_response(output_text, audio_base64, user_emotion)
@@ -86,46 +105,7 @@ async def handle_aggregated_response(
                 if bot:
                     await bot.send_response(output_text)
         else:
-            print("[Response Handler] No response generated")
+            logging.warning("[Response Handler] No response generated")
             
     except Exception as e:
-        print(f"[Response Handler] Error: {e}")
-        import traceback
-        traceback.print_exc()
-
-
-async def _generate_tts_audio(
-    text: str,
-    tts_providers: dict,
-    RealtimeTTSProvider
-) -> str | None:
-    """
-    Generate TTS audio for the given text.
-    
-    Returns:
-        Base64 encoded audio string, or None if generation failed
-    """
-    try:
-        clean_text = utils.clean_text_for_tts(text)
-        if not clean_text:
-            return None
-            
-        if config.TTS_PROVIDER == "elevenlabs":
-            audio_bytes = await tts_providers["elevenlabs"].generate_audio(clean_text)
-            if audio_bytes:
-                return base64.b64encode(audio_bytes).decode('utf-8')
-                
-        elif config.TTS_PROVIDER == "realtimetts":
-            # Lazy init RealtimeTTS if needed
-            if tts_providers["realtimetts"] is None:
-                tts_providers["realtimetts"] = RealtimeTTSProvider(config.REALTIMETTS_ENGINE)
-            
-            if tts_providers["realtimetts"]:
-                audio_bytes = await tts_providers["realtimetts"].generate_audio(clean_text)
-                if audio_bytes:
-                    return base64.b64encode(audio_bytes).decode('utf-8')
-                    
-    except Exception as e:
-        print(f"[Response Handler] TTS Error: {e}")
-    
-    return None
+        logging.error(f"[Response Handler] Error: {e}", exc_info=True)

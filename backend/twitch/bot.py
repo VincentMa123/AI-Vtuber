@@ -6,6 +6,7 @@ Connects to Twitch IRC and forwards chat messages to the chat aggregator
 from twitchio.ext import commands
 import asyncio
 import time
+import logging
 from typing import Optional
 from chat.aggregator import ChatMessage
 from websocket.manager import ws_manager
@@ -22,13 +23,13 @@ class TwitchBot(commands.Bot):
         )
         self.aggregator = aggregator
         self.channel_name = channel
-        print(f"[TwitchBot] Initialized for channel: {channel}")
+        logging.info(f"[TwitchBot] Initialized for channel: {channel}")
     
     async def event_ready(self):
         """Called when the bot is ready"""
-        print(f"[TwitchBot] Logged in as {self.nick}")
-        print(f"[TwitchBot] Connected to channel: {self.channel_name}")
-        print(f"[TwitchBot] Bot is ready!")
+        logging.info(f"[TwitchBot] Logged in as {self.nick}")
+        logging.info(f"[TwitchBot] Connected to channel: {self.channel_name}")
+        logging.info(f"[TwitchBot] Bot is ready!")
     
     async def event_message(self, message):
         """Called when a message is received in chat"""
@@ -41,7 +42,7 @@ class TwitchBot(commands.Bot):
             await self.handle_commands(message)
             return
         
-        print(f"[TwitchBot] {message.author.name}: {message.content}")
+        logging.debug(f"[TwitchBot] {message.author.name}: {message.content}")
         
         # Broadcast to WebSocket clients
         await ws_manager.broadcast_chat_message(
@@ -62,7 +63,7 @@ class TwitchBot(commands.Bot):
             accepted = await self.aggregator.submit_message(chat_msg)
             
             if not accepted:
-                print(f"[TwitchBot] Message from {message.author.name} was filtered")
+                logging.debug(f"[TwitchBot] Message from {message.author.name} was filtered")
     
     @commands.command(name='lumina')
     async def lumina_command(self, ctx: commands.Context):
@@ -89,9 +90,9 @@ class TwitchBot(commands.Bot):
                     text = text[:447] + "..."
                 
                 await channel.send(text)
-                print(f"[TwitchBot] Sent to chat: {text}")
+                logging.info(f"[TwitchBot] Sent to chat: {text}")
         except Exception as e:
-            print(f"[TwitchBot] Error sending message: {e}")
+            logging.error(f"[TwitchBot] Error sending message: {e}")
 
 
 # Global bot instance
@@ -103,7 +104,7 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
     global twitch_bot
     
     if not token or not channel:
-        print("[TwitchBot] Token or channel not configured. Skipping Twitch integration.")
+        logging.warning("[TwitchBot] Token or channel not configured. Skipping Twitch integration.")
         return None
     
     try:
@@ -116,12 +117,12 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
         
         # Run bot in background
         asyncio.create_task(twitch_bot.start())
-        print("[TwitchBot] Starting bot...")
+        logging.info("[TwitchBot] Starting bot...")
         
         return twitch_bot
         
     except Exception as e:
-        print(f"[TwitchBot] Failed to start: {e}")
+        logging.error(f"[TwitchBot] Failed to start: {e}")
         return None
 
 

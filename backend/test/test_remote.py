@@ -39,7 +39,7 @@ try:
                 ],
             }
         ],
-        max_tokens=10,
+        max_tokens=50,
     )
     end = time.time()
     print(f"Time taken: {end - start} seconds")

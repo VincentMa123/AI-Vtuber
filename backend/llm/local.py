@@ -11,15 +11,16 @@ class LocalModelProvider(BaseLLMProvider):
         self, 
         message: str, 
         history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None
+        image_base64: Optional[str] = None,
+        **kwargs
     ) -> Optional[str]:
         """Call the local Qwen model and return the response text."""
         if not state.model or not state.processor:
             raise RuntimeError("Local model is not loaded!")
 
-        print(f"[DEBUG] LocalModel - image_base64 provided: {image_base64 is not None}")
+        logging.debug(f"[DEBUG] LocalModel - image_base64 provided: {image_base64 is not None}")
         if image_base64:
-            print(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
+            logging.debug(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
         content = [{"type": "text", "text": message}]
         if image_base64:
@@ -59,7 +60,8 @@ class LocalModelProvider(BaseLLMProvider):
         
         inputs = inputs.to("cuda")
         
-        generated_ids = state.model.generate(**inputs, max_new_tokens=256)
+        max_new_tokens = kwargs.get("max_tokens", 256)
+        generated_ids = state.model.generate(**inputs, max_new_tokens=max_new_tokens)
         generated_ids_trimmed = [
             out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
         ]

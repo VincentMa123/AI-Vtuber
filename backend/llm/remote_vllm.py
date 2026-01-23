@@ -1,4 +1,5 @@
 import httpx
+import logging
 from typing import Optional, List, Dict, Any
 import config
 import utils
@@ -21,10 +22,10 @@ async def get_remote_model_name() -> Optional[str]:
                 data = response.json()
                 if "data" in data and len(data["data"]) > 0:
                     model_name = data["data"][0]["id"]
-                    print(f"[RemoteVLLM] Auto-detected model name: {model_name}")
+                    logging.debug(f"[RemoteVLLM] Auto-detected model name: {model_name}")
                     return model_name
     except Exception as e:
-        print(f"[RemoteVLLM] Failed to auto-detect model name: {e}")
+        logging.error(f"[RemoteVLLM] Failed to auto-detect model name: {e}")
     
     return None
 
@@ -39,7 +40,8 @@ class RemoteVLLMProvider(BaseLLMProvider):
         self, 
         message: str, 
         history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None
+        image_base64: Optional[str] = None,
+        **kwargs
     ) -> Optional[str]:
         """Call remote vLLM API and return the response text, or None if failed."""
         if not config.REMOTE_VLLM_BASE_URL:
@@ -50,7 +52,7 @@ class RemoteVLLMProvider(BaseLLMProvider):
         if not model_name:
             model_name = await get_remote_model_name()
             if not model_name:
-                print("[RemoteVLLM] Could not determine model name. Please set REMOTE_VLLM_MODEL in config.")
+                logging.error("[RemoteVLLM] Could not determine model name. Please set REMOTE_VLLM_MODEL in config.")
                 return None
         
         current_human_msg = []
@@ -71,10 +73,11 @@ class RemoteVLLMProvider(BaseLLMProvider):
             "content": current_human_msg if image_base64 else message
         })
         
-        print(f"[DEBUG] RemoteVLLM - image_base64 provided: {image_base64 is not None}")
+        logging.debug(f"[DEBUG] RemoteVLLM - image_base64 provided: {image_base64 is not None}")
         if image_base64:
-            print(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
+            logging.debug(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
+        max_tokens = kwargs.get("max_tokens", 100)
         try:
             timeout = 60.0 if image_base64 else 30.0
             response = await self.client.post(
@@ -85,7 +88,7 @@ class RemoteVLLMProvider(BaseLLMProvider):
                 json={
                     "model": model_name,
                     "messages": messages, 
-                    "max_tokens": 100
+                    "max_tokens": max_tokens
                 },
                 timeout=timeout
             )
@@ -93,14 +96,14 @@ class RemoteVLLMProvider(BaseLLMProvider):
             if response.status_code == 200:
                 data = response.json()
                 if "choices" not in data:
-                    print(f"Remote vLLM API returned 200 but missing 'choices': {data}")
+                    logging.error(f"Remote vLLM API returned 200 but missing 'choices': {data}")
                     return None
                 return data["choices"][0]["message"]["content"]
             else:
-                print(f"Remote vLLM API error: {response.status_code} - {response.text}")
+                logging.error(f"Remote vLLM API error: {response.status_code} - {response.text}")
                 return None
                     
         except Exception as e:
-            print(f"Remote vLLM API call failed: {type(e).__name__}: {e}")
+            logging.error(f"Remote vLLM API call failed: {type(e).__name__}: {e}")
             return None
 

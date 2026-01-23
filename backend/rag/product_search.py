@@ -1,6 +1,7 @@
 import json
 import os
 import numpy as np
+import logging
 from typing import List, Dict, Optional
 
 
@@ -14,7 +15,7 @@ def load_product_dataset() -> Dict:
             data = json.load(f)
             return data
     except Exception as e:
-        print(f"[RAG] Error loading product dataset: {e}")
+        logging.error(f"[RAG] Error loading product dataset: {e}")
         return {"products": [], "categories": [], "promotions": []}
 
 
@@ -37,12 +38,12 @@ def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float 
     
     model = get_embedding_model()
     if model is None:
-        print("[RAG] Error: Embedding model not available")
+        logging.error("[RAG] Error: Embedding model not available")
         return []
     
     product_embeddings = create_product_embeddings()
     if product_embeddings is None:
-        print("[RAG] Error: Product embeddings not available")
+        logging.error("[RAG] Error: Product embeddings not available")
         return []
     
     query_embedding = model.encode([query], convert_to_numpy=True)[0]
@@ -65,9 +66,9 @@ def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float 
             results.append(product)
     
     if os.environ.get('RAG_VERBOSE') == '1':
-        print(f"[RAG] Query: '{query}' -> Found {len(results)} products (threshold: {similarity_threshold})")
+        logging.debug(f"[RAG] Query: '{query}' -> Found {len(results)} products (threshold: {similarity_threshold})")
         for i, r in enumerate(results):
-            print(f"  {i+1}. {r['name']} (similarity: {r['_similarity_score']:.3f})")
+            logging.debug(f"  {i+1}. {r['name']} (similarity: {r['_similarity_score']:.3f})")
     
     return results
 
@@ -133,11 +134,11 @@ def detect_product_query(message: str, threshold: float = 0.4) -> bool:
         max_similarity = np.max(similarities)
         
         if os.environ.get('RAG_VERBOSE') == '1':
-            print(f"[RAG] Product query detection: '{message}' -> similarity: {max_similarity:.3f}")
+            logging.debug(f"[RAG] Product query detection: '{message}' -> similarity: {max_similarity:.3f}")
         
         return max_similarity >= threshold
     except Exception as e:
-        print(f"[RAG] Error in semantic product detection: {e}")
+        logging.error(f"[RAG] Error in semantic product detection: {e}")
         # Fallback to keyword matching
         keywords = ["produk", "beli", "harga", "rekomendasi", "product", "buy", "price"]
         return any(keyword in message.lower() for keyword in keywords)
@@ -188,30 +189,30 @@ def detect_promotion_query(message: str, threshold: float = 0.4) -> bool:
         max_similarity = np.max(similarities)
         
         if os.environ.get('RAG_VERBOSE') == '1':
-            print(f"[RAG] Promotion query detection: '{message}' -> similarity: {max_similarity:.3f}")
+            logging.debug(f"[RAG] Promotion query detection: '{message}' -> similarity: {max_similarity:.3f}")
         
         return max_similarity >= threshold
     except Exception as e:
-        print(f"[RAG] Error in semantic promotion detection: {e}")
+        logging.error(f"[RAG] Error in semantic promotion detection: {e}")
         keywords = ["promo", "diskon", "discount", "sale", "offer"]
         return any(keyword in message.lower() for keyword in keywords)
 
 
 def initialize_rag():
 
-    print("[RAG] Initializing RAG system...")
+    logging.info("[RAG] Initializing RAG system...")
     
     from .embeddings import get_embedding_model, create_product_embeddings
     
     model = get_embedding_model()
     if model is None:
-        print("[RAG] Warning: Could not load embedding model")
+        logging.warning("[RAG] Warning: Could not load embedding model")
         return False
     
     embeddings = create_product_embeddings()
     if embeddings is None:
-        print("[RAG] Warning: Could not load product embeddings")
+        logging.warning("[RAG] Warning: Could not load product embeddings")
         return False
     
-    print(f"[RAG] ✓ Ready! Model and {len(embeddings)} product embeddings loaded")
+    logging.info(f"[RAG] ✓ Ready! Model and {len(embeddings)} product embeddings loaded")
     return True
