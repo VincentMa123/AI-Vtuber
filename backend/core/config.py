@@ -17,7 +17,7 @@ REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "http://localhost:8001/
 REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "./Qwen3-VL-8B-Instruct")  
 
 TTS_PROVIDER = "realtimetts"
-REALTIMETTS_ENGINE = "elevenlabs"
+REALTIMETTS_ENGINE = "system"
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE_ID = "lhTvHflPVOqgSWyuWQry"  
 

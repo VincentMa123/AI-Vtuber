@@ -2,7 +2,7 @@ import logging
 import base64
 import core.config as config
 import core.utils as utils
-from typing import Optional, Dict
+from typing import Optional, Dict, AsyncGenerator
 
 # Import providers
 from .elevenlabs import ElevenLabsProvider
@@ -86,3 +86,45 @@ class TTSManager:
         else:
             logging.error("[TTSManager] RealtimeTTS service not available")
             return None
+    
+    async def generate_audio_stream(
+        self, 
+        text_stream: AsyncGenerator[str, None],
+        min_chunk_size: int = 10
+    ) -> AsyncGenerator[str, None]:
+        """
+        Generate TTS audio chunks as text tokens arrive.
+        Yields base64-encoded audio chunks.
+        """
+        try:
+            if config.TTS_PROVIDER == "realtimetts":
+                # Lazy initialization
+                if self.providers["realtimetts"] is None:
+                    try:
+                        logging.info("[TTSManager] Initializing RealtimeTTS engine for streaming...")
+                        self.providers["realtimetts"] = self.realtime_tts_cls(config.REALTIMETTS_ENGINE)
+                    except Exception as e:
+                        logging.error(f"[TTSManager] Failed to initialize RealtimeTTS: {e}")
+                        return
+                
+                provider = self.providers["realtimetts"]
+                if provider:
+                    async for audio_chunk in provider.generate_audio_stream(text_stream, min_chunk_size):
+                        if audio_chunk:
+                            yield base64.b64encode(audio_chunk).decode('utf-8')
+                else:
+                    logging.error("[TTSManager] RealtimeTTS service not available")
+            else:
+                # For non-streaming providers, collect text then generate
+                full_text = ""
+                async for token in text_stream:
+                    full_text += token
+                
+                if full_text:
+                    clean_text = utils.clean_text_for_tts(full_text)
+                    if clean_text:
+                        audio_base64 = await self.generate_audio(clean_text)
+                        if audio_base64:
+                            yield audio_base64
+        except Exception as e:
+            logging.error(f"[TTSManager] Streaming error: {e}")

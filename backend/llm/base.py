@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, AsyncGenerator
 
 
 def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -56,3 +56,27 @@ class BaseLLMProvider(ABC):
             Generated text response, or None if failed
         """
         pass
+    
+    async def generate_stream(
+        self, 
+        message: str, 
+        history: List[Dict[str, Any]] = [], 
+        image_base64: Optional[str] = None,
+        **kwargs
+    ) -> AsyncGenerator[str, None]:
+        """
+        Stream tokens as they're generated from the LLM.
+        
+        Args:
+            message: The user's message
+            history: Conversation history
+            image_base64: Optional base64-encoded image
+            **kwargs: Additional arguments (e.g., max_tokens, temperature)
+            
+        Yields:
+            Text tokens as they're generated
+        """
+        # Default implementation: fallback to non-streaming and yield full response
+        result = await self.generate(message, history, image_base64, **kwargs)
+        if result:
+            yield result

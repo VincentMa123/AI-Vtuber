@@ -74,6 +74,39 @@ class WebSocketManager:
             "timestamp": asyncio.get_event_loop().time()
         })
     
+    async def broadcast_text_chunk(self, chunk: str, is_complete: bool = False):
+        """Broadcast a text chunk from streaming LLM"""
+        await self.broadcast({
+            "type": "text_chunk",
+            "chunk": chunk,
+            "complete": is_complete,
+            "timestamp": asyncio.get_event_loop().time()
+        })
+    
+    async def broadcast_audio_chunk(self, audio_base64: str, is_complete: bool = False):
+        """Broadcast an audio chunk from streaming TTS"""
+        await self.broadcast({
+            "type": "audio_chunk",
+            "audio_base64": audio_base64,
+            "complete": is_complete,
+            "timestamp": asyncio.get_event_loop().time()
+        })
+    
+    async def broadcast_stream_start(self, emotion: str = "neutral"):
+        """Broadcast that streaming has started"""
+        await self.broadcast({
+            "type": "stream_start",
+            "emotion": emotion,
+            "timestamp": asyncio.get_event_loop().time()
+        })
+    
+    async def broadcast_stream_end(self):
+        """Broadcast that streaming has ended"""
+        await self.broadcast({
+            "type": "stream_end",
+            "timestamp": asyncio.get_event_loop().time()
+        })
+    
     async def broadcast_status(self, status: Dict[str, Any]):
         """Broadcast aggregation status update"""
         await self.broadcast({
