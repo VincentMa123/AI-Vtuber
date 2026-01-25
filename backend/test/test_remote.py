@@ -2,10 +2,18 @@ import base64
 from openai import OpenAI
 import time
 # 1. Setup Client
-client = OpenAI(base_url="http://localhost:8001/v1", api_key="EMPTY")
-
-# 2. Get correct model name
-model_name = client.models.list().data[0].id
+print("Setup client...")
+try:
+    client = OpenAI(base_url="http://localhost:8001/v1", api_key="EMPTY", timeout=5)
+    
+    # 2. Get correct model name
+    print("Get model name...")
+    model_name = client.models.list().data[0].id
+except Exception as e:
+    print(f"\n❌ ERROR: Could not connect to vLLM server at http://localhost:8001")
+    print("   Make sure you have started the local vLLM server!")
+    print(f"   Details: {e}")
+    exit(1)
 
 # 3. Function to encode a local image
 def encode_image(image_path):
@@ -16,7 +24,7 @@ def encode_image(image_path):
 local_image_path = "./test_image.png" 
 
 
-
+print("Testing....")
 # Only run if you have a file named test_image.jpg
 try:
     base64_image = encode_image(local_image_path)

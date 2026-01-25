@@ -239,42 +239,26 @@ class RealtimeTTSProvider(BaseTTSProvider):
             
             while True:
                 try:
-                    # Get chunk from queue with timeout
-                    # Helper function that catches Empty exception
-                    def get_chunk_with_timeout():
-                        try:
-                            return audio_queue.get(timeout=0.1)
-                        except Empty:
-                            # Queue timeout - return None to signal empty
-                            return None
-                    
+                    # Optimized non-blocking poll
                     try:
-                        chunk_result = await asyncio.wait_for(
-                            asyncio.to_thread(get_chunk_with_timeout),
-                            timeout=0.2
-                        )
-                    except asyncio.TimeoutError:
-                        # Outer timeout
-                        chunk_result = None
+                        chunk = audio_queue.get_nowait()
+                    except Empty:
+                        # Queue is empty, wait briefly to let other tasks run
+                        chunk = None
+                        await asyncio.sleep(0.01)
                     
-                    if chunk_result is None:
-                        # Queue was empty (timeout)
+                    if chunk is None:
                         timeout_count += 1
                         
                         # Check if everything is done
-                        if feed_task.done() and play_complete:
-                            if timeout_count < 10:
-                                await asyncio.sleep(0.2)
-                                continue
-                            else:
-                                break
-                        
-                        if timeout_count > max_timeouts:
-                            logging.warning("[RealtimeTTS] Too many timeouts")
+                        # We need to make sure we don't exit if the thread is just starting up
+                        if feed_complete and play_complete and audio_queue.empty():
+                             break
+
+                        if timeout_count > max_timeouts * 10: # Adjust for faster loop
+                            logging.warning("[RealtimeTTS] Stream timeout waiting for audio")
                             break
                         continue
-                    
-                    chunk = chunk_result
                     
                     timeout_count = 0
                     
@@ -301,7 +285,13 @@ class RealtimeTTSProvider(BaseTTSProvider):
                     else:
                         # System engine: accumulate and yield as WAV
                         audio_chunk_buffer.append(chunk)
-                        if len(audio_chunk_buffer) >= 5:
+                        
+                        # Calculate total size to avoid sending tiny WAVs
+                        current_buffer_size = sum(len(c) for c in audio_chunk_buffer)
+                        
+                        # Buffer ~32KB (approx 1.5s of audio) to ensure smooth playback segments
+                        # This avoids the "machine gun" effect of playing many small WAV files
+                        if current_buffer_size >= 32000:
                             full_audio = b''.join(audio_chunk_buffer)
                             audio_chunk_buffer = []
                             chunks_yielded += 1
@@ -313,7 +303,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
                                 wf.setframerate(self.sample_rate)
                                 wf.writeframes(full_audio)
                             
-                            logging.debug(f"[RealtimeTTS] Yielding WAV chunk #{chunks_yielded}")
+                            logging.debug(f"[RealtimeTTS] Yielding large WAV chunk #{chunks_yielded} ({len(full_audio)} bytes)")
                             yield wav_buffer.getvalue()
                 
                 except Exception as e:
@@ -337,7 +327,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
                     wf.setframerate(self.sample_rate)
                     wf.writeframes(full_audio)
                 chunks_yielded += 1
-                logging.info(f"[RealtimeTTS] Yielding final chunk")
+                logging.debug(f"[RealtimeTTS] Yielding final WAV chunk #{chunks_yielded} ({len(full_audio)} bytes)")
                 yield wav_buffer.getvalue()
             
             if play_error:

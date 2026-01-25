@@ -127,8 +127,11 @@ class VisionHeartbeat:
         logging.info(f"[Vision] Processing heartbeat (img size: {len(request.image_base64)})")
         
         # 1. Fast Check
+        logging.info("[Vision] Analyzing image for interestingness...")
         is_interesting, category = await self._analyze_interestingness(request.image_base64)
         
+        logging.info(f"[Vision] Check Result: Interesting={is_interesting}, Category={category}")
+
         if not is_interesting:
             return HeartbeatResponse(processed=True, action="ignore", debug_info="Not interesting")
 
