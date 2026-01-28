@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+torch
+transformers
+accelerate
+soundfile
+numpy
+scipy
+kokoro
+RealtimeTTS[system]
+PyAudio
+twitchio>=2.9.0
+pytest
+pytest-cov
+pytest-asyncio
+httpx

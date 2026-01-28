@@ -1,0 +1,1032 @@
+[2026-01-28 09:54:07] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 09:54:07] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 09:54:07] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 09:54:07] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 09:54:07] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 09:54:07] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 09:54:07] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 09:54:07] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 09:54:07] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 09:54:16] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 09:54:17] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 09:54:17] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 09:54:17] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 09:54:18] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 09:54:18] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with system engine...
+[2026-01-28 09:54:18] [INFO ] [_code_cache.py::102 _create_comtypes_gen_package]: Imported existing <module 'comtypes.gen' from 'C:\\Users\\NIGGABALLS\\miniconda3\\envs\\yolo11\\lib\\site-packages\\comtypes\\gen\\__init__.py'>
+[2026-01-28 09:54:18] [INFO ] [_code_cache.py::83 _find_gen_dir]: Using writeable comtypes cache directory: 'C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\comtypes\gen'
+[2026-01-28 09:54:19] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 09:54:19] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine system
+[2026-01-28 09:54:19] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with system engine
+[2026-01-28 09:54:19] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 09:54:19] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 09:54:19] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 09:54:19] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 09:54:19] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 09:54:19] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 09:54:19] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 09:54:19] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 09:54:19] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 09:54:24] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 09:54:24] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 09:54:24] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 09:54:24] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 09:56:01] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 09:56:58] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.890s
+[2026-01-28 09:56:58] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 09:56:58] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 09:56:58] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: test...
+[2026-01-28 09:56:58] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: test...
+[2026-01-28 09:56:58] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 09:56:58] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 09:56:58] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 09:56:58] [INFO ] [realtimetts.py::109 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 09:56:58] [INFO ] [realtimetts.py::156 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 09:56:58] [INFO ] [realtimetts.py::162 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 09:56:58] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 09:56:59] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 09:57:00] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.01s
+[2026-01-28 09:57:01] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 09:57:01] [INFO ] [realtimetts.py::172 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 09:57:01] [INFO ] [realtimetts.py::289 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 9 chunks
+[2026-01-28 09:57:01] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Hai! Lumina di sini! Lagi live nih, ada yang mau cerita soal Indomaret favorit? 😄
+[2026-01-28 09:57:01] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 81 chars
+[2026-01-28 09:57:01] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 2.67s
+[2026-01-28 09:57:01] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 2.74s
+[2026-01-28 09:57:13] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.895s
+[2026-01-28 09:57:13] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 09:57:13] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 09:57:13] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: waaduhh...
+[2026-01-28 09:57:13] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: waaduhh...
+[2026-01-28 09:57:13] [INFO ] [emotions.py::144 detect_emotion]: [Emotions] Detected 'angry' (score: 0.556)
+[2026-01-28 09:57:13] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: angry
+[2026-01-28 09:57:13] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 09:57:13] [INFO ] [realtimetts.py::109 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 09:57:13] [INFO ] [realtimetts.py::156 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 09:57:13] [INFO ] [realtimetts.py::162 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 09:57:13] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 09:57:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 09:57:15] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.60s
+[2026-01-28 09:57:16] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 09:57:16] [INFO ] [realtimetts.py::172 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 09:57:16] [INFO ] [realtimetts.py::289 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 9 chunks
+[2026-01-28 09:57:16] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, ada apa nih? Kok keliatannya kesel gitu? 😅 Ada yang bisa Lumina bantu?
+[2026-01-28 09:57:16] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 75 chars
+[2026-01-28 09:57:16] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 2.36s
+[2026-01-28 09:57:16] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 2.41s
+[2026-01-28 09:57:22] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 09:57:50] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 09:57:50] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 09:57:50] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 09:57:50] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 09:57:50] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 09:57:50] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 09:57:50] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 09:57:50] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 09:57:50] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 09:58:05] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 09:58:05] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 09:58:05] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 09:58:05] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 09:58:05] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 09:58:05] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 09:58:05] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 09:58:06] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 09:58:06] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 09:58:06] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 09:58:06] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 09:58:06] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 09:58:06] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 09:58:06] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 09:58:06] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 09:58:06] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 09:58:06] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 09:58:06] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 09:58:08] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 09:58:08] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 09:58:08] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 09:58:08] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 09:58:08] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 09:58:22] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.904s
+[2026-01-28 09:58:22] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 09:58:22] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 09:58:23] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: wkwkwk...
+[2026-01-28 09:58:23] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: wkwkwk...
+[2026-01-28 09:58:23] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 09:58:23] [INFO ] [emotions.py::144 detect_emotion]: [Emotions] Detected 'happy' (score: 0.330)
+[2026-01-28 09:58:23] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: happy
+[2026-01-28 09:58:23] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 09:58:23] [INFO ] [realtimetts.py::109 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 09:58:23] [INFO ] [realtimetts.py::156 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 09:58:23] [INFO ] [realtimetts.py::162 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 09:58:23] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 09:58:23] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 09:58:26] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 402 Payment Required"
+[2026-01-28 09:58:26] [ERROR] [elevenlabs_engine.py::112 synthesize]: Elevenlabs synthesis error: headers: {'date': 'Wed, 28 Jan 2026 02:58:24 GMT', 'server': 'uvicorn', 'content-length': '153', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': 'ca0cf227d542e2f4d14f23792f7a62d4', 'x-region': 'asia-southeast1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 402, body: {'detail': {'status': 'payment_required', 'message': 'Free users cannot use library voices via the API. Please upgrade your subscription to use this voice'}}
+[2026-01-28 09:58:26] [WARNI] [text_to_stream.py::549 synthesize_worker]: engine elevenlabs failed to synthesize sentence "Wkwkwk! Lagi seneng banget ya?", unknown error
+[2026-01-28 09:58:27] [WARNI] [text_to_stream.py::564 synthesize_worker]: engine elevenlabs is the only engine available, can't switch to another engine
+[2026-01-28 09:58:27] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/lhTvHflPVOqgSWyuWQry/stream "HTTP/1.1 402 Payment Required"
+[2026-01-28 09:58:27] [ERROR] [elevenlabs_engine.py::112 synthesize]: Elevenlabs synthesis error: headers: {'date': 'Wed, 28 Jan 2026 02:58:26 GMT', 'server': 'uvicorn', 'content-length': '153', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=1800;', 'x-trace-id': 'e83bae7f0681a7add14f23792f7a6281', 'x-region': 'asia-southeast1', 'via': '1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 402, body: {'detail': {'status': 'payment_required', 'message': 'Free users cannot use library voices via the API. Please upgrade your subscription to use this voice'}}
+[2026-01-28 09:58:27] [WARNI] [text_to_stream.py::549 synthesize_worker]: engine elevenlabs failed to synthesize sentence "Ada cerita apa nih?", unknown error
+[2026-01-28 09:58:27] [WARNI] [text_to_stream.py::564 synthesize_worker]: engine elevenlabs is the only engine available, can't switch to another engine
+[2026-01-28 09:58:27] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 09:58:27] [INFO ] [realtimetts.py::172 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 09:58:27] [INFO ] [realtimetts.py::289 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 0 chunks
+[2026-01-28 09:58:27] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wkwkwk! Lagi seneng banget ya? Ada cerita apa nih? 😄
+[2026-01-28 09:58:27] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 52 chars
+[2026-01-28 09:58:27] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 4.48s
+[2026-01-28 09:58:27] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 4.55s
+[2026-01-28 10:02:44] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:03:04] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:03:04] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:03:04] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 10:03:04] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:03:04] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:03:04] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:03:04] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:03:04] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:03:04] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:03:12] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:03:12] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:03:12] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:03:12] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:03:13] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:03:13] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:03:13] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 10:03:13] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:03:13] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:03:13] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:03:13] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:03:13] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:03:13] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:03:13] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:03:13] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:03:13] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:03:13] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:03:13] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:03:14] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:03:23] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:03:23] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:03:23] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:03:23] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:03:42] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.865s
+[2026-01-28 10:03:42] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 10:03:43] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 10:03:43] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: dede...
+[2026-01-28 10:03:43] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: dede...
+[2026-01-28 10:03:43] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 10:03:43] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 10:03:43] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 10:03:43] [INFO ] [realtimetts.py::109 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:03:43] [INFO ] [realtimetts.py::156 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:03:43] [INFO ] [realtimetts.py::162 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:03:43] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:03:43] [INFO ] [utils.py::47 get_system_prompt]: [System Prompt] Injected 4 promotions into context
+[2026-01-28 10:03:43] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:03:46] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:03:46] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.84s
+[2026-01-28 10:03:47] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:03:48] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:03:48] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:03:48] [INFO ] [realtimetts.py::172 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:03:48] [INFO ] [realtimetts.py::289 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 151 chunks
+[2026-01-28 10:03:48] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, Dede! Welcome to the stream! Lagi ngapain nih? Btw, ada promo Diskon Kilat di Indomaret lho, cek aja jam-jam tertentu buat dapet harga spesial!
+[2026-01-28 10:03:48] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 148 chars
+[2026-01-28 10:03:48] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 5.70s
+[2026-01-28 10:03:48] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 5.77s
+[2026-01-28 10:07:34] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:07:51] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:07:51] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:07:51] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 10:07:51] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:07:51] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:07:51] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:07:51] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:07:51] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:07:51] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:07:59] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:07:59] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:07:59] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:07:59] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:07:59] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:07:59] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:07:59] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 10:08:00] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:08:00] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:08:00] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:08:00] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:08:00] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:08:00] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:08:00] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:08:00] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:08:00] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:08:00] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:08:00] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:08:00] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:08:04] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:08:04] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:08:04] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:08:04] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:08:06] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.814s
+[2026-01-28 10:08:06] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 10:08:06] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 10:08:06] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: wehhh...
+[2026-01-28 10:08:06] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: wehhh...
+[2026-01-28 10:08:06] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 10:08:06] [INFO ] [emotions.py::144 detect_emotion]: [Emotions] Detected 'angry' (score: 0.524)
+[2026-01-28 10:08:06] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: angry
+[2026-01-28 10:08:06] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 10:08:06] [INFO ] [realtimetts.py::109 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:08:06] [INFO ] [realtimetts.py::156 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:08:06] [INFO ] [realtimetts.py::162 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:08:06] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:08:06] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:08:09] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:08:09] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.66s
+[2026-01-28 10:08:10] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:08:11] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:08:12] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:08:13] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:08:13] [INFO ] [realtimetts.py::172 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:08:13] [INFO ] [realtimetts.py::289 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 97 chunks
+[2026-01-28 10:08:13] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, ada apa nih? Kok kayaknya lagi kesel gitu? 😅 Ada yang bisa Lumina bantu? Atau mau cerita sambil nyemil?
+[2026-01-28 10:08:13] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 108 chars
+[2026-01-28 10:08:13] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 6.56s
+[2026-01-28 10:08:13] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 6.62s
+[2026-01-28 10:08:30] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:09:14] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:09:14] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:09:14] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:09:14] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:09:14] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:09:14] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:09:14] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:09:14] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:09:14] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:09:23] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:09:23] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:09:23] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:09:23] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:09:24] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:09:24] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:09:24] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 10:09:24] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:09:24] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:09:24] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:09:24] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:09:24] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:09:24] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:09:24] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:09:24] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:09:24] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:09:24] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:09:24] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:09:26] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:09:27] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:09:27] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:09:27] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:09:27] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:09:49] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:09:49] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 86992)
+[2026-01-28 10:09:49] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:09:49] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:09:58] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:09:58] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 86604)
+[2026-01-28 10:09:58] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:09:58] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:08] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:09] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 44188)
+[2026-01-28 10:10:09] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:09] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:18] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:18] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 89828)
+[2026-01-28 10:10:18] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:18] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:28] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:29] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 50696)
+[2026-01-28 10:10:29] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:29] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:38] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:38] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 87236)
+[2026-01-28 10:10:38] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:38] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:48] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:49] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 87216)
+[2026-01-28 10:10:49] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:49] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:10:58] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:10:58] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 90992)
+[2026-01-28 10:10:58] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:10:58] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:11:00] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:12:11] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:12:11] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:12:11] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:12:11] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:12:11] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:12:11] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:12:11] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:12:11] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:12:11] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:12:20] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:12:20] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:12:20] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:12:20] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:12:21] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:12:21] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:12:21] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language en
+[2026-01-28 10:12:21] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:12:21] [INFO ] [realtimetts.py::40 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:12:21] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:12:21] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:12:21] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:12:21] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:12:21] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:12:21] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:12:21] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:12:21] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:12:21] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:12:24] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:12:24] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:12:24] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:12:24] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:12:25] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:12:28] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:12:29] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 89604)
+[2026-01-28 10:12:29] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:12:38] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:12:38] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 87592)
+[2026-01-28 10:12:38] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:12:39] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:12:40] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:12:40] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:12:40] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:12:48] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:12:49] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 95872)
+[2026-01-28 10:12:49] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:12:52] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:12:52] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:12:52] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:12:55] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:12:55] [INFO ] [manager.py::55 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-28 10:12:55] [INFO ] [realtimetts.py::50 generate_audio]: [RealtimeTTS] Starting audio generation for text: OMG, CHECK THIS OUT! THEY'RE DROPPIING A MEGA_PROM...
+[2026-01-28 10:12:55] [INFO ] [realtimetts.py::55 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-28 10:12:55] [INFO ] [realtimetts.py::58 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-28 10:12:55] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:12:56] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:12:56] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.18s
+[2026-01-28 10:12:57] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:12:59] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:13:00] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:13:00] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:13:00] [INFO ] [realtimetts.py::66 generate_audio]: [RealtimeTTS] Audio chunks received: 133
+[2026-01-28 10:13:00] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Returning MP3 audio (133925 bytes)
+[2026-01-28 10:13:00] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(MEGA_PROMO)=300.0s
+[2026-01-28 10:13:00] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:00] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 88788)
+[2026-01-28 10:13:00] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:08] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:09] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 89524)
+[2026-01-28 10:13:09] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:09] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:13:09] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:13:09] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:09] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES SHOPPING
+[2026-01-28 10:13:09] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=SHOPPING
+[2026-01-28 10:13:10] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:10] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:13:10] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:13:18] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:19] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 90988)
+[2026-01-28 10:13:19] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:21] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:21] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:13:21] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:13:28] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:28] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 90656)
+[2026-01-28 10:13:28] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:31] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:31] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES SOCIAL
+[2026-01-28 10:13:31] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=SOCIAL
+[2026-01-28 10:13:38] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:39] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 90196)
+[2026-01-28 10:13:39] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:40] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:40] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:13:40] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:13:48] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:48] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 90336)
+[2026-01-28 10:13:48] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:13:51] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:13:51] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:13:51] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:13:58] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:13:59] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 94712)
+[2026-01-28 10:13:59] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:05] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:05] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:14:05] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:14:08] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:14:08] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 94012)
+[2026-01-28 10:14:08] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:10] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:10] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:14:10] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:14:18] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:14:18] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 93012)
+[2026-01-28 10:14:18] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:23] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:23] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES SHOPPING
+[2026-01-28 10:14:23] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=SHOPPING
+[2026-01-28 10:14:23] [INFO ] [utils.py::47 get_system_prompt]: [System Prompt] Injected 4 promotions into context
+[2026-01-28 10:14:24] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:26] [INFO ] [manager.py::55 _generate_realtimetts]: Generating audio with RealtimeTTS (Engine: elevenlabs)...
+[2026-01-28 10:14:26] [INFO ] [realtimetts.py::50 generate_audio]: [RealtimeTTS] Starting audio generation for text: Guys- Ui tapi Pantas! Kamu lagi bisnis apa bener n...
+[2026-01-28 10:14:26] [INFO ] [realtimetts.py::55 generate_audio]: [RealtimeTTS] Feeding text to stream...
+[2026-01-28 10:14:26] [INFO ] [realtimetts.py::58 generate_audio]: [RealtimeTTS] Playing stream (muted mode)...
+[2026-01-28 10:14:26] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:14:27] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:27] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.22s
+[2026-01-28 10:14:28] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:30] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:33] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:35] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:36] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:38] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:40] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:42] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:44] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:14:44] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:14:44] [INFO ] [realtimetts.py::66 generate_audio]: [RealtimeTTS] Audio chunks received: 806
+[2026-01-28 10:14:44] [INFO ] [realtimetts.py::75 generate_audio]: [RealtimeTTS] Returning MP3 audio (819227 bytes)
+[2026-01-28 10:14:44] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(SHOPPING)=300.0s
+[2026-01-28 10:14:44] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:14:44] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:14:44] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 93328)
+[2026-01-28 10:14:44] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:44] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 92872)
+[2026-01-28 10:14:44] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:46] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:46] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:14:46] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:14:46] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:46] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:14:46] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:14:48] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:14:48] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 92928)
+[2026-01-28 10:14:48] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:14:50] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:14:50] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:14:50] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:14:52] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:23:34] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:23:34] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:23:34] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:23:34] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:23:34] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:23:34] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:23:34] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:23:34] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:23:34] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:23:42] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:23:43] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:23:43] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:23:43] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:23:44] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:23:44] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:23:44] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 10:23:44] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:23:44] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:23:44] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:23:44] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:23:44] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:23:44] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:23:44] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:23:44] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:23:44] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:23:44] [INFO ] [service.py::22 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:23:44] [INFO ] [api_server.py::104 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:23:45] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:23:56] [ERROR] [websocket.py::155 _connect]: Websocket connection failure: Cannot connect to host irc-ws.chat.twitch.tv:443 ssl:default [getaddrinfo failed]:: Attempting reconnect in 1.4520282397783417 seconds.
+[2026-01-28 10:23:59] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:23:59] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:23:59] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:23:59] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:24:25] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:24:25] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 96404)
+[2026-01-28 10:24:25] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:24:27] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:24:27] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:24:27] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:24:34] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:24:34] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 95176)
+[2026-01-28 10:24:34] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:24:36] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:24:36] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:24:36] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:24:37] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:24:38] [ERROR] [service.py::127 process_heartbeat]: [Vision] TTS Generation failed: object async_generator can't be used in 'await' expression
+[2026-01-28 10:24:38] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(MEGA_PROMO)=300.0s
+[2026-01-28 10:24:45] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:24:45] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 101428)
+[2026-01-28 10:24:45] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:24:47] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:24:47] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:24:47] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:24:54] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:24:54] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 102816)
+[2026-01-28 10:24:54] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:24:57] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:24:57] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:24:57] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:25:05] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:05] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 106156)
+[2026-01-28 10:25:05] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:06] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:07] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:25:07] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:25:14] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:14] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 105896)
+[2026-01-28 10:25:14] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:17] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:17] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:25:17] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:25:25] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:25] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 106116)
+[2026-01-28 10:25:25] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:26] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:26] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:25:26] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:25:34] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:34] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 93348)
+[2026-01-28 10:25:34] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:38] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:38] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:25:38] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:25:44] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:45] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 99708)
+[2026-01-28 10:25:45] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:52] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:52] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:25:52] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=False, Category=none
+[2026-01-28 10:25:54] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:25:54] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 104776)
+[2026-01-28 10:25:54] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:25:56] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:25:56] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:25:56] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:26:04] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:26:04] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 104096)
+[2026-01-28 10:26:04] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:26:06] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:26:06] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:26:06] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:26:14] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:26:15] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 100724)
+[2026-01-28 10:26:15] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:26:16] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:26:17] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:26:17] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:26:24] [INFO ] [service.py::93 process_heartbeat]: [Vision] Attempting native screen capture...
+[2026-01-28 10:26:24] [INFO ] [service.py::103 process_heartbeat]: [Vision] Processing heartbeat (img size: 101132)
+[2026-01-28 10:26:24] [INFO ] [service.py::106 process_heartbeat]: [Vision] Analyzing image for interestingness...
+[2026-01-28 10:26:26] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:26:26] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:26:26] [INFO ] [service.py::38 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:26:26] [INFO ] [service.py::109 process_heartbeat]: [Vision] Check Result: Interesting=True, Category=MEGA_PROMO
+[2026-01-28 10:33:19] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:33:19] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:33:19] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:33:19] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:33:19] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:33:19] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:33:19] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:33:19] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:33:19] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:33:26] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:33:26] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:33:26] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:33:26] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:33:27] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:33:27] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:33:27] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 10:33:27] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:33:27] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:33:27] [INFO ] [api_server.py::58 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:33:27] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:33:27] [INFO ] [api_server.py::72 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:33:27] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:33:27] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:33:27] [INFO ] [api_server.py::83 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:33:27] [INFO ] [api_server.py::95 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:33:27] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:33:27] [INFO ] [api_server.py::110 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:33:27] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:33:29] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:33:29] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:33:29] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:33:29] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:33:35] [INFO ] [websocket.py::12 vision_websocket]: [Vision WS] Connection accepted
+[2026-01-28 10:33:45] [INFO ] [websocket.py::12 vision_websocket]: [Vision WS] Connection accepted
+[2026-01-28 10:33:52] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:41:11] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:41:11] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:41:11] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:41:11] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:41:11] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:41:11] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:41:11] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:41:11] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:41:11] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:41:24] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:41:24] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:41:24] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:41:24] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:41:25] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:41:25] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:41:25] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 10:41:26] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:41:26] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:41:26] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:41:26] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:41:26] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:41:26] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:41:26] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:41:26] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:41:26] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:41:26] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:41:26] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:41:27] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:41:28] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:41:28] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:41:28] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:41:28] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:41:46] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:41:46] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:41:56] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:41:56] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:41:56] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(MEGA_PROMO)=300.0s
+[2026-01-28 10:41:56] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:41:56] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:41:56] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:41:56] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:41:58] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:42:00] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:00] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 4.47s
+[2026-01-28 10:42:02] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:03] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:04] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:05] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:07] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:08] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:42:08] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:42:08] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:42:08] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 293 chunks
+[2026-01-28 10:42:10] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:42:10] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:42:14] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:42:14] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:42:25] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:42:25] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: NO
+[2026-01-28 10:42:35] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:42:35] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:42:38] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:44:31] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:44:31] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:44:31] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:44:31] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:44:31] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:44:31] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:44:31] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:44:31] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:44:31] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:44:38] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:44:38] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:44:38] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:44:38] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:44:39] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:44:39] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:44:39] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 10:44:39] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:44:39] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:44:39] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:44:39] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:44:39] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:44:39] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:44:39] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:44:39] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:44:39] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:44:39] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:44:39] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:44:39] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:44:41] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:44:41] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:44:41] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:44:41] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:44:45] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:44:45] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:44:45] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(MEGA_PROMO)=300.0s
+[2026-01-28 10:44:45] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:44:45] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:44:45] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:44:45] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:44:47] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:44:48] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:48] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.68s
+[2026-01-28 10:44:49] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:51] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:52] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:53] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:54] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:44:55] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:44:55] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:44:55] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 279 chunks
+[2026-01-28 10:44:57] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:44:57] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:44:57] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:57:10] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 10:57:10] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 10:57:10] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 10:57:10] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 10:57:10] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 10:57:10] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 10:57:10] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 10:57:10] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 10:57:10] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:57:17] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 10:57:17] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 10:57:17] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 10:57:17] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 10:57:18] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 10:57:18] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 10:57:18] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 10:57:18] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 10:57:18] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 10:57:18] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 10:57:18] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 10:57:18] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 10:57:18] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 10:57:18] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 10:57:18] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 10:57:18] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 10:57:18] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 10:57:18] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 10:57:21] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 10:57:21] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 10:57:21] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 10:57:21] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 10:57:22] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:57:32] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 10:57:35] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 10:57:51] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:57:51] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES FOOD
+[2026-01-28 10:57:51] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(FOOD)=300.0s
+[2026-01-28 10:57:51] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:57:51] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:57:51] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:57:51] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:57:52] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:57:53] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:53] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.50s
+[2026-01-28 10:57:54] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:55] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:56] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:58] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:59] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 10:57:59] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:57:59] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:57:59] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 162 chunks
+[2026-01-28 10:58:03] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:03] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:58:10] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:10] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:58:20] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:20] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:58:30] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:30] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:58:40] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:40] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:58:50] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:58:50] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:59:00] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 10:59:00] [INFO ] [service.py::39 _analyze_interestingness]: [Vision] Filter Response: YES MEGA_PROMO
+[2026-01-28 10:59:00] [INFO ] [cooldown.py::31 record_reaction]: [Vision] Reaction recorded. global_cd=60.0s, topic_lock(MEGA_PROMO)=300.0s
+[2026-01-28 10:59:00] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 10:59:00] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 10:59:00] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 10:59:00] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 10:59:00] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2026-01-28 10:59:00] [ERROR] [openrouter.py::132 generate_stream]: OpenRouter streaming error: 429
+[2026-01-28 10:59:01] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 10:59:01] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 10:59:01] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 0 chunks
+[2026-01-28 10:59:09] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[2026-01-28 10:59:09] [ERROR] [openrouter.py::74 generate]: OpenRouter API error: 429 - {"error":{"message":"Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day","code":429,"metadata":{"headers":{"X-RateLimit-Limit":"50","X-RateLimit-Remaining":"0","X-RateLimit-Reset":"1769644800000"},"provider_name":null}},"user_id":"user_31eneMifoRfmJnkUsVB2FutSVva"}
+[2026-01-28 10:59:12] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
+[2026-01-28 11:03:01] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 11:03:01] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 11:03:01] [INFO ] [check_models.py::13 check_models]: LLM Provider: openrouter
+[2026-01-28 11:03:01] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 11:03:01] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 11:03:01] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 11:03:01] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 11:03:01] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 11:03:01] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:03:07] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 11:03:08] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:03:08] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 11:03:08] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 11:03:08] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 11:03:08] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 11:03:08] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 11:03:08] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 11:03:08] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 11:03:08] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 11:03:08] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 11:03:08] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 11:03:09] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 11:03:09] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 11:03:09] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 11:03:09] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 11:03:09] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 11:03:09] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 11:03:11] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 11:03:11] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 11:03:11] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 11:03:11] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 11:03:44] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 11:03:44] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 11:03:44] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 11:03:44] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 11:03:44] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 11:03:44] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 11:03:44] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 11:03:44] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 11:03:44] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:03:50] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 11:03:50] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:03:50] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 11:03:50] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 11:03:50] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 11:03:50] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with elevenlabs engine...
+[2026-01-28 11:03:50] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 11:03:51] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine elevenlabs
+[2026-01-28 11:03:51] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with elevenlabs engine
+[2026-01-28 11:03:51] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 11:03:51] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 11:03:51] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 11:03:51] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 11:03:51] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 11:03:51] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 11:03:51] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 11:03:51] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 11:03:51] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 11:03:53] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 11:03:53] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 11:03:53] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 11:03:53] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 11:04:02] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.436s
+[2026-01-28 11:04:02] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 2.50)
+[2026-01-28 11:04:02] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 11:04:02] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: susu harganya berapa...
+[2026-01-28 11:04:02] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: susu harganya berapa...
+[2026-01-28 11:04:02] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 11:04:02] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 11:04:02] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 11:04:02] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 11:04:02] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 11:04:02] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 11:04:02] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 11:04:03] [INFO ] [utils.py::54 get_system_prompt]: [System Prompt] Injected 3 products into context
+[2026-01-28 11:04:03] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 11:04:05] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:05] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 3.03s
+[2026-01-28 11:04:07] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:08] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:08] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 11:04:08] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 11:04:08] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 200 chunks
+[2026-01-28 11:04:08] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, susu di Indomaret ada banyak banget jenisnya, guys! Tapi untuk Frisian Flag Kental Manis Putih 535g, harganya cuma Rp 19.200 aja lho! Perfect buat bikin kopi susu atau martabak manis~ (๑˃ᴗ˂)ﻭ
+[2026-01-28 11:04:08] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 196 chars
+[2026-01-28 11:04:08] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 5.92s
+[2026-01-28 11:04:08] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 5.97s
+[2026-01-28 11:04:35] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.419s
+[2026-01-28 11:04:35] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 11:04:35] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 11:04:35] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: klo promo harganya berapa...
+[2026-01-28 11:04:35] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: klo promo harganya berapa...
+[2026-01-28 11:04:35] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 11:04:35] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 11:04:35] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 11:04:35] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 11:04:35] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 11:04:35] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 11:04:35] [INFO ] [utils.py::47 get_system_prompt]: [System Prompt] Injected 4 promotions into context
+[2026-01-28 11:04:35] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 11:04:38] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:38] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.74s
+[2026-01-28 11:04:39] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:40] [INFO ] [_client.py::1025 _send_single_request]: HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/cgSgspJ2msm6clMCkdW9/stream "HTTP/1.1 200 OK"
+[2026-01-28 11:04:40] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 11:04:40] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 11:04:40] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 136 chunks
+[2026-01-28 11:04:40] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, tergantung promonya nih! Ada yang diskon kilat, ada juga promo mingguan. Cek langsung di Indomaret terdekat atau aplikasi IndoHome buat info lengkapnya!
+[2026-01-28 11:04:40] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 157 chars
+[2026-01-28 11:04:40] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 5.33s
+[2026-01-28 11:04:40] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 5.37s
+[2026-01-28 11:07:46] [INFO ] [logger.py::83 setup_logger]: Logger initialized. Log file: logs\2026-01-28.log
+[2026-01-28 11:07:46] [INFO ] [check_models.py::10 check_models]: Startup complete!
+[2026-01-28 11:07:46] [INFO ] [check_models.py::13 check_models]: LLM Provider: deepseek
+[2026-01-28 11:07:46] [INFO ] [check_models.py::16 check_models]: OpenRouter API configured with model: allenai/molmo-2-8b:free
+[2026-01-28 11:07:46] [INFO ] [check_models.py::18 check_models]: DeepSeek API configured with model: deepseek-chat
+[2026-01-28 11:07:46] [INFO ] [check_models.py::21 check_models]: Remote vLLM API configured: http://localhost:8001/v1/chat/completions (model: ./Qwen3-VL-8B-Instruct)
+[2026-01-28 11:07:46] [INFO ] [check_models.py::23 check_models]: TTS Provider: realtimetts
+[2026-01-28 11:07:46] [INFO ] [product_search.py::141 initialize_rag]: [RAG] Initializing RAG system...
+[2026-01-28 11:07:46] [INFO ] [SentenceTransformer.py::113 __init__]: Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:07:53] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cuda
+[2026-01-28 11:07:54] [INFO ] [embeddings.py::21 get_embedding_model]: [RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2
+[2026-01-28 11:07:54] [INFO ] [embeddings.py::46 create_product_embeddings]: [RAG] Loaded 24 product embeddings from cache
+[2026-01-28 11:07:54] [INFO ] [embeddings.py::144 precompute_detection_embeddings]: [RAG] Pre-computing detection embeddings...
+[2026-01-28 11:07:54] [INFO ] [product_search.py::156 initialize_rag]: [RAG] ✓ Ready! Model and 24 product embeddings loaded
+[2026-01-28 11:07:54] [INFO ] [realtimetts.py::21 __init__]: Initializing RealtimeTTS with system engine...
+[2026-01-28 11:07:54] [INFO ] [_code_cache.py::102 _create_comtypes_gen_package]: Imported existing <module 'comtypes.gen' from 'C:\\Users\\NIGGABALLS\\miniconda3\\envs\\yolo11\\lib\\site-packages\\comtypes\\gen\\__init__.py'>
+[2026-01-28 11:07:54] [INFO ] [_code_cache.py::83 _find_gen_dir]: Using writeable comtypes cache directory: 'C:\Users\NIGGABALLS\miniconda3\envs\yolo11\lib\site-packages\comtypes\gen'
+[2026-01-28 11:07:55] [INFO ] [text_to_stream.py::167 __init__]: Initializing tokenizer nltk for language id
+[2026-01-28 11:07:55] [INFO ] [text_to_stream.py::226 load_engine]: loaded engine system
+[2026-01-28 11:07:55] [INFO ] [realtimetts.py::41 __init__]: RealtimeTTS initialized with system engine
+[2026-01-28 11:07:55] [INFO ] [api_server.py::59 startup_event]: [Startup] TTS Manager initialized (Provider: realtimetts)
+[2026-01-28 11:07:55] [INFO ] [aggregator.py::43 start]: [ChatAggregator] Service started
+[2026-01-28 11:07:55] [INFO ] [api_server.py::73 startup_event]: [Startup] Chat aggregator initialized (enabled: True, duplicate expiry: 60.0s)
+[2026-01-28 11:07:55] [INFO ] [bot.py::20 __init__]: [TwitchBot] Initialized for channel: vincentmato1000
+[2026-01-28 11:07:55] [INFO ] [bot.py::118 start_twitch_bot]: [TwitchBot] Starting bot...
+[2026-01-28 11:07:55] [INFO ] [api_server.py::84 startup_event]: [Startup] Twitch bot initialized for channel: vincentmato1000
+[2026-01-28 11:07:55] [INFO ] [api_server.py::96 startup_event]: [Startup] Chat aggregator response callback configured
+[2026-01-28 11:07:55] [INFO ] [service.py::23 __init__]: [VisionHeartbeat] Initialized with CooldownManager
+[2026-01-28 11:07:55] [INFO ] [api_server.py::107 startup_event]: [Startup] Vision Heartbeat system initialized
+[2026-01-28 11:07:56] [INFO ] [manager.py::15 connect]: [WebSocket] New connection. Total: 1
+[2026-01-28 11:07:57] [INFO ] [websocket.py::374 _code]: Successfully logged onto Twitch WS: vincentmato1000
+[2026-01-28 11:07:57] [INFO ] [bot.py::24 event_ready]: [TwitchBot] Logged in as vincentmato1000
+[2026-01-28 11:07:57] [INFO ] [bot.py::25 event_ready]: [TwitchBot] Connected to channel: vincentmato1000
+[2026-01-28 11:07:57] [INFO ] [bot.py::26 event_ready]: [TwitchBot] Bot is ready!
+[2026-01-28 11:08:26] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.412s
+[2026-01-28 11:08:26] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
+[2026-01-28 11:08:26] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 11:08:26] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: test...
+[2026-01-28 11:08:26] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: test...
+[2026-01-28 11:08:26] [INFO ] [emotions.py::91 _get_emotion_embeddings]: [Emotions] Loaded embeddings from disk cache: C:\Users\NIGGABALLS\Documents\Intership\Vtuber Project\src\chat\data\emotion_embeddings.pkl
+[2026-01-28 11:08:26] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 11:08:26] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 11:08:26] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 11:08:26] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 11:08:27] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 11:08:27] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 11:08:27] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 11:08:29] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 2.16s
+[2026-01-28 11:08:29] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 11:08:29] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 11:08:29] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 10 chunks
+[2026-01-28 11:08:29] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Hai! Lumina di sini! Lagi live nih, ada yang mau cerita soal snack favorit di Indomaret? 😄
+[2026-01-28 11:08:29] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 90 chars
+[2026-01-28 11:08:29] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 2.67s
+[2026-01-28 11:08:29] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 2.73s
+[2026-01-28 11:08:45] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.419s
+[2026-01-28 11:08:45] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 2.50)
+[2026-01-28 11:08:45] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 11:08:45] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: klo susu harganya berapa...
+[2026-01-28 11:08:45] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: klo susu harganya berapa...
+[2026-01-28 11:08:45] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 11:08:45] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 11:08:45] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 11:08:45] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 11:08:45] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 11:08:45] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 11:08:45] [INFO ] [utils.py::54 get_system_prompt]: [System Prompt] Injected 3 products into context
+[2026-01-28 11:08:56] [ERROR] [deepseek.py::127 generate_stream]: DeepSeek streaming failed: ConnectError: [Errno 11001] getaddrinfo failed
+[2026-01-28 11:08:56] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 11:08:57] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 11:08:57] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 0 chunks
+[2026-01-28 11:08:57] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 0 chars
+[2026-01-28 11:08:57] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 11.27s
+[2026-01-28 11:08:57] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 11.30s
+[2026-01-28 11:09:16] [INFO ] [bot.py::48 event_message]: [TwitchBot] Message received from Twitch. Latency: 0.409s
+[2026-01-28 11:09:16] [INFO ] [aggregator.py::69 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 3.50)
+[2026-01-28 11:09:16] [INFO ] [aggregator.py::106 _process_batch]: [ChatAggregator] Processing batch of 1 messages:
+[2026-01-28 11:09:16] [INFO ] [aggregator.py::117 _process_batch]: [ChatAggregator] Generating AI response for: klo susu harganya?...
+[2026-01-28 11:09:16] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: klo susu harganya?...
+[2026-01-28 11:09:16] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: neutral
+[2026-01-28 11:09:16] [INFO ] [response_handler.py::110 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-01-28 11:09:16] [INFO ] [realtimetts.py::110 generate_audio_stream]: [RealtimeTTS] Starting streaming audio generation...
+[2026-01-28 11:09:16] [INFO ] [realtimetts.py::157 generate_audio_stream]: [RealtimeTTS] Feeding text generator to stream...
+[2026-01-28 11:09:16] [INFO ] [realtimetts.py::163 run_play]: [RealtimeTTS] Using play_async()...
+[2026-01-28 11:09:16] [INFO ] [text_to_stream.py::383 play]: stream start
+[2026-01-28 11:09:16] [INFO ] [utils.py::54 get_system_prompt]: [System Prompt] Injected 3 products into context
+[2026-01-28 11:09:16] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-01-28 11:09:18] [INFO ] [text_to_stream.py::735 _on_audio_stream_start]: Audio stream start, latency to first chunk: 1.91s
+[2026-01-28 11:09:20] [INFO ] [text_to_stream.py::617 play]: stream stop
+[2026-01-28 11:09:20] [INFO ] [realtimetts.py::173 run_play]: [RealtimeTTS] Playback completed
+[2026-01-28 11:09:20] [INFO ] [realtimetts.py::290 generate_audio_stream]: [RealtimeTTS] Complete. Yielded 20 chunks
+[2026-01-28 11:09:20] [INFO ] [bot.py::93 send_response]: [TwitchBot] Sent to chat: Wah, susu yang mana nih? Tapi kalo mau susu kental manis yang enak banget buat kopi atau bikin martabak, ada **Frisian Flag Kental Manis Putih 535g** cuma Rp 19,200 aja! Hemat banget kan? 😊
+[2026-01-28 11:09:20] [INFO ] [response_handler.py::182 handle_streaming_response]: [Response Handler] Streaming complete: 189 chars
+[2026-01-28 11:09:20] [INFO ] [response_handler.py::184 handle_streaming_response]: [Response Handler] Streaming took 4.13s
+[2026-01-28 11:09:20] [INFO ] [aggregator.py::123 _process_batch]: [ChatAggregator] Response processing took 4.18s
+[2026-01-28 11:09:40] [INFO ] [manager.py::21 disconnect]: [WebSocket] Connection closed. Total: 0
