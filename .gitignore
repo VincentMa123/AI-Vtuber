@@ -47,3 +47,14 @@ next-env.d.ts
 # python
 __pycache__/
 *.py[cod]
+
+# logs
+logs/
+*.log
+
+# tests
+.coverage
+htmlcov/
+pytest.ini
+test/
+tests/
