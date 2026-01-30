@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: #00FF00;
+  /* Transparent for OBS Browser Source */
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Electron green screen mode for OBS chroma key */
+html.electron-transparent,
+html.electron-transparent body {
+  background: #00FF00 !important;
+  /* Bright green for chroma key */
+}
+
+/* Make the Live2D canvas background green for chroma key */
+.electron-transparent canvas {
+  background: #00FF00 !important;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: rgba(51, 65, 85, 0.9);
+  border-radius: 5px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.95);
+  border-radius: 5px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 1);
+}
+
+/* Firefox scrollbar */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.95) rgba(51, 65, 85, 0.9);
+  overflow-y: scroll !important;
+  /* Always show scrollbar */
+}
+
+/* Force scrollbar to always be visible on WebKit */
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  min-height: 40px;
+}
