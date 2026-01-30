@@ -1,80 +1,73 @@
 import logging
 import asyncio
-from typing import Dict, Tuple
-
+from typing import Dict, Tuple, Optional, Callable, Any
 import core.config as config
 import core.state as state
 import core.utils as utils
-
 from .models import HeartbeatRequest, HeartbeatResponse
-from .cooldown import CooldownManager
+from .browser import BrowserController, get_browser_controller
 import mss
 import io
 import base64
 from PIL import Image
+import random
+import uuid
 
 class VisionHeartbeat:
     def __init__(self, llm_providers: Dict, text_to_speech_func, text_to_speech_stream_func=None):
         self.llm_providers = llm_providers
         self.text_to_speech_func = text_to_speech_func
         self.text_to_speech_stream_func = text_to_speech_stream_func
-        self.cooldown_manager = CooldownManager()
+        
+        # Browser automation
+        self.browser_controller: Optional[BrowserController] = None
+        self._browser_loop_task: Optional[asyncio.Task] = None
+        self._browser_loop_running = False
+        self._on_browser_update: Optional[Callable] = None  # Callback for WS updates
+        self._last_analysis_time = 0
         
         logging.info("[VisionHeartbeat] Initialized with CooldownManager")
 
-    async def _analyze_interestingness(self, image_base64: str) -> Tuple[bool, str]:
-            
-        provider = self.llm_providers.get(config.LLM_PROVIDER)
-        if not provider:
-             return False, "none"
-
-        prompt = utils.load_prompt_file("vision_filter.md")
-        try:
-            response = await provider.generate(prompt, [], image_base64, max_tokens=30)
-            
-            if not response:
-                return False, "none"
-            
-            clean_response = response.strip().upper()
-            logging.info(f"[Vision] Filter Response: {clean_response}")
-            
-            if clean_response.startswith("YES"):
-                # Extract category
-                parts = clean_response.split(" ", 1)
-                category = parts[1] if len(parts) > 1 else "GENERAL"
-                return True, category.strip()
-            
-            return False, "none"
-
-        except Exception as e:
-            logging.error(f"[Vision] Error in interestingness check: {e}")
-            return False, "error"
-
-    async def _generate_reaction(self, image_base64: str, category: str) -> str:
+    async def _generate_reaction(self, image_base64: str) -> str:
         provider_key = state.llm_provider
             
 
         provider = self.llm_providers.get(provider_key)
         try:
-
+            # Load specialized vision persona
+            system_prompt = utils.load_prompt_file("vision_reaction.md")
+            if not system_prompt:
+                system_prompt = utils.get_system_prompt() # Fallback
+                
             reaction = await provider.generate(
-                message=full_prompt,
-                history=[], # No history needed for One-shot reaction
-                image_base64=image_base64
+                message="React to this image.", # Short trigger
+                history=[], 
+                image_base64=image_base64,
+                system_prompt=system_prompt, # Override default system prompt
+                max_tokens=128 # Force brevity
             )
             return reaction
         except Exception as e:
             logging.error(f"[Vision] Error generating reaction: {e}")
 
-    async def _generate_reaction_stream(self, image_base64: str, category: str):
+    async def _generate_reaction_stream(self, image_base64: str):
         provider_key = state.llm_provider
         provider = self.llm_providers.get(provider_key)
         
-        system_prompt = utils.get_system_prompt()
-        prompt = f"{system_prompt}\n\nI see {category}. React to this screenshot!"
-        
+        # Load specialized vision persona
+        system_prompt = utils.load_prompt_file("vision_reaction.md")
+        if not system_prompt:
+             system_prompt = utils.get_system_prompt() # Fallback
+             logging.warning("Failed to load vision_reaction.md, using default system prompt")
+
         try:
-            async for token in provider.generate_stream(message=prompt, history=[], image_base64=image_base64):
+            async for token in provider.generate_stream(
+                message="React to this image.", 
+                history=[], 
+                image_base64=image_base64,
+                system_prompt=system_prompt, # Override default system prompt
+                max_tokens=128 # Adjusted to prevent cut-offs
+            ):
                 yield token
         except Exception as e:
             logging.error(f"[Vision] Error generating reaction stream: {e}")
@@ -116,22 +109,9 @@ class VisionHeartbeat:
              )
 
         logging.info(f"[Vision] Processing heartbeat (img size: {len(image_base64)})")
-        
-        # 1. Fast Check
-        logging.info("[Vision] Analyzing image for interestingness...")
-        is_interesting, category = await self._analyze_interestingness(image_base64)
-        
-        logging.info(f"[Vision] Check Result: Interesting={is_interesting}, Category={category}")
-
-        if not is_interesting:
-            return HeartbeatResponse(processed=True, action="ignore", debug_info="Not interesting")
-
-        # 2. Cooldown Check
-        if not self.cooldown_manager.can_react(category):
-             return HeartbeatResponse(processed=True, action="ignore", debug_info=f"Cooldown active for {category}")
 
         # 3. Generate Reaction
-        reaction_text = await self._generate_reaction(image_base64, category)
+        reaction_text = await self._generate_reaction(image_base64)
         
         # 4. Generate Audio (using shared logic if possible, or direct call)
         audio_base64 = None
@@ -141,14 +121,11 @@ class VisionHeartbeat:
             except Exception as e:
                 logging.error(f"[Vision] TTS Generation failed: {e}")
 
-        self.cooldown_manager.record_reaction(category)
-
         return HeartbeatResponse(
             processed=True,
             action="react",
             reaction_text=reaction_text,
             audio_base64=audio_base64,
-            category=category
         )
 
     async def process_heartbeat_stream(self, request: HeartbeatRequest):
@@ -163,41 +140,11 @@ class VisionHeartbeat:
              yield {"type": "status", "content": "Capture Failed"}
              yield {"type": "stop"}
              return
-
-        # 1. Fast Check
-        yield {"type": "status", "content": "Analyzing..."}
-        is_interesting, category = await self._analyze_interestingness(image_base64)
-        
-        if not is_interesting:
-             yield {"type": "status", "content": "Idle"}
-             yield {"type": "stop"}
-             return
-
-        # 2. Cooldown Check
-        if not self.cooldown_manager.can_react(category):
-             yield {"type": "status", "content": f"Cooldown ({category})"}
-             yield {"type": "stop"}
-             return
-
-        # 3. Generate Reaction & Audio
-        yield {"type": "status", "content": f"Reacting ({category})"}
-        self.cooldown_manager.record_reaction(category)
         
         # Create text generator
-        text_stream = self._generate_reaction_stream(image_base64, category)
+        text_stream = self._generate_reaction_stream(image_base64)
     
         full_text = ""
-        
-        async def tracking_text_stream():
-            nonlocal full_text
-            async for token in text_stream:
-                full_text += token
-                # Send text chunk to client for subtitles
-                yield token
-        
-        async def text_stream_wrapper():
-             async for token in text_stream:
-                 yield token 
 
         async def tee_text_generator():
             nonlocal full_text
@@ -212,5 +159,162 @@ class VisionHeartbeat:
             except Exception as e:
                 logging.error(f"[Vision] Streaming TTS error: {e}")
         
+        logging.info(f"[Vision Response] {full_text}")
         yield {"type": "text", "content": full_text}
         yield {"type": "stop"}
+
+    
+    async def start_browser(self) -> bool:
+
+        self.browser_controller = await get_browser_controller()
+        success = await self.browser_controller.start()
+        if success:
+            logging.info("[VisionHeartbeat] Browser started successfully")
+        return success
+    
+    async def stop_browser(self):
+
+        self._browser_loop_running = False
+        if self._browser_loop_task:
+            self._browser_loop_task.cancel()
+        if self.browser_controller:
+            await self.browser_controller.stop()
+        logging.info("[VisionHeartbeat] Browser stopped")
+    
+    async def start_browser_loop(self, on_update: Callable = None):
+
+        if self._browser_loop_task and not self._browser_loop_task.done():
+            logging.warning("[VisionHeartbeat] Cancelling existing browser loop before starting new one.")
+            self._browser_loop_task.cancel()
+            try:
+                await self._browser_loop_task
+            except asyncio.CancelledError:
+                pass
+            
+        self._on_browser_update = on_update
+        self._browser_loop_running = True
+        self._browser_loop_task = asyncio.create_task(self._orchestrate_browser_loops())
+
+    async def _orchestrate_browser_loops(self):
+        
+        # 1. Initialize browser
+        if not self.browser_controller or not self.browser_controller.is_running:
+            logging.info("[VisionHeartbeat] Orchestrator: Initializing browser...")
+            success = await self.start_browser()
+            if not success:
+                logging.error("[VisionHeartbeat] Failed to start browser. Stopping.")
+                self._browser_loop_running = False
+                return
+
+        logging.info("[VisionHeartbeat] Browser initialized. Starting concurrent Action and Vision loops...")
+
+        # Task: Synchronous Action/Vision Loop
+        action_task = asyncio.create_task(self._action_loop())
+
+        try:
+            # Wait for action loop (or cancellation)
+            await action_task
+        except asyncio.CancelledError:
+            logging.info("[VisionHeartbeat] Orchestrator cancelled. Stopping sub-tasks...")
+            action_task.cancel()
+            await action_task
+        except Exception as e:
+            logging.error(f"[VisionHeartbeat] Orchestrator error: {e}")
+            action_task.cancel()
+
+    async def _process_vision_cycle(self):
+
+        try:
+            # 1. Capture screenshot
+            screenshot = await self.browser_controller.get_screenshot()
+            if not screenshot:
+                return
+
+            # 2. Send screenshot to frontend immediately
+            if self._on_browser_update:
+                await self._on_browser_update({
+                    "type": "browser_screenshot",
+                    "image_base64": screenshot
+                })
+
+            # 3. Process through vision pipeline (AI Analysis)
+            request = HeartbeatRequest(
+                image_base64=screenshot,
+                timestamp=asyncio.get_event_loop().time(),
+                use_native_capture=False
+            )
+
+            # Use streaming for audio/response
+            captured_text = ""
+            async for chunk in self.process_heartbeat_stream(request):
+                if chunk.get("type") == "text":
+                    captured_text = chunk.get("content", "")
+                    
+                if self._on_browser_update:
+                    await self._on_browser_update(chunk)
+            
+            duration = max(0, len(captured_text) * 0.05)
+            logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
+            return duration
+                    
+        except Exception as e:
+            logging.error(f"[Vision Cycle] Error: {e}")
+            return 5.0 # Fallback duration
+
+
+
+    async def _action_loop(self):
+
+        loop_id = str(uuid.uuid4())[:8]
+        logging.info(f"[VisionHeartbeat] Sync Action Loop started. ID: {loop_id}")
+        
+        # Initialize timestamp if not already set
+        if not hasattr(self, '_last_analysis_time'):
+            self._last_analysis_time = 0
+            
+        while self._browser_loop_running:
+            try:
+                logging.debug(f"[Action Loop {loop_id}] Starting iteration...")
+                # 1. Perform random action
+                action = await self.browser_controller.perform_random_action()
+                logging.debug(f"[Action Loop] Performed: {action}")
+                
+                # Send action update
+                if self._on_browser_update:
+                    await self._on_browser_update({
+                        "type": "browser_action",
+                        "action": action,
+                        "url": await self.browser_controller.get_current_url()
+                    })
+
+                # 2. Check Triggers
+                current_time = asyncio.get_event_loop().time()
+                is_click = (action == "click_product")
+
+                is_overdue = (current_time - self._last_analysis_time) >= random.uniform(15, 25)
+                
+                should_analyze = is_click or is_overdue
+                
+                if should_analyze:
+                    logging.info(f"[Action Loop] Triggering Vision (Click={is_click}, Overdue={is_overdue})")
+                    
+                    if is_click:
+                        await asyncio.sleep(3.0) # Wait for page load
+                    
+                    # 3. Process Vision & Get Duration
+                    wait_duration = await self._process_vision_cycle()
+                    self._last_analysis_time = asyncio.get_event_loop().time()
+                    
+                    # 4. Wait for Speech (Dynamic)
+                    logging.info(f"[Action Loop] Waiting {wait_duration:.1f}s for speech to finish...")
+                    await asyncio.sleep(wait_duration)
+                else:
+                    # 5. Standard Action Cooldown (2-5s)
+                    delay = random.uniform(1.0, 3.0)
+                    await asyncio.sleep(delay)
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logging.error(f"[Action Loop] Error: {e}")
+                await asyncio.sleep(5)

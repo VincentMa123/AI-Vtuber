@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-LLM_PROVIDER = "deepseek"
+LLM_PROVIDER = "qwen"
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL ="allenai/molmo-2-8b:free"
@@ -13,14 +13,22 @@ DEEPSEEK_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1/chat/completions"
 
 # Remote vLLM Configuration
-REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "http://localhost:8001/v1/chat/completions")
-REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "./Qwen3-VL-8B-Instruct")  
+REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "https://uncomparably-unconceding-dino.ngrok-free.dev/v1/chat/completions")
+REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "Qwen3-VL-2B")  
 
-TTS_PROVIDER = "realtimetts"
+# Qwen (DashScope) Configuration
+QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
+QWEN_MODEL = os.getenv("QWEN_MODEL", "qwen3-vl-plus") 
+QWEN_BASE_URL = os.getenv("QWEN_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")  
+
+TTS_PROVIDER = "qwen"
 REALTIMETTS_ENGINE = "system" # Options: "system", "elevenlabs"
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE_ID = "cgSgspJ2msm6clMCkdW9"  
+
+QWEN_TTS_MODEL = "qwen3-tts-vc-realtime-2025-11-27"
+QWEN_TTS_VOICE_FILE = "voice.mp3"  
 
 
 CHAT_AGGREGATION_ENABLED = True

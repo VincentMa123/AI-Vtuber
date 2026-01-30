@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import core.check_models as check_models
-from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider
+from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenProvider
 from tts import TTSManager
 from rag import initialize_rag
 from vision import HeartbeatRequest, HeartbeatResponse, VisionHeartbeat
@@ -9,15 +9,16 @@ import core.config as config
 import uvicorn
 import logging
 import core.logger as logger
-
+from twitch.bot import start_twitch_bot
 from chat.aggregator import ChatAggregator
 from chat.models import (
     ChatMessage, AggregationConfig,
     BatchChatRequest,
 )
 from chat.response_handler import handle_aggregated_response
-from websocket.manager import ws_manager
+from ws.manager import ws_manager
 import json
+global vision_heartbeat
 
 app = FastAPI()
 
@@ -33,7 +34,8 @@ app.add_middleware(
 llm_providers = {
     "openrouter": OpenRouterProvider(),
     "deepseek": DeepSeekProvider(),
-    "remote": RemoteVLLMProvider()
+    "remote": RemoteVLLMProvider(),
+    "qwen": QwenProvider()
 }
 
 
@@ -56,6 +58,7 @@ async def startup_event():
 
     # Initialize TTS Manager
     tts_manager = TTSManager()
+    await tts_manager.initialize()
     logging.info(f"[Startup] TTS Manager initialized (Provider: {config.TTS_PROVIDER})")
     
     aggregator_config = AggregationConfig(
@@ -74,7 +77,6 @@ async def startup_event():
     
     # Initialize Twitch bot if enabled
     if config.TWITCH_ENABLED:
-        from twitch.bot import start_twitch_bot
         await start_twitch_bot(
             token=config.TWITCH_BOT_TOKEN,
             channel=config.TWITCH_CHANNEL,
@@ -96,7 +98,6 @@ async def startup_event():
     logging.info("[Startup] Chat aggregator response callback configured")
     
     # Initialize Vision Heartbeat
-    global vision_heartbeat
     
     vision_heartbeat = VisionHeartbeat(
         llm_providers=llm_providers,
@@ -105,6 +106,38 @@ async def startup_event():
     )
     
     logging.info("[Startup] Vision Heartbeat system initialized")
+    
+    async def broadcast_browser_update(data):
+        # Map internal vision types to frontend types
+        msg_type = data.get("type")
+        
+        if msg_type == "audio":
+            await ws_manager.broadcast({
+                "type": "audio_chunk",
+                "audio_base64": data.get("data"),
+                "complete": False
+            })
+        elif msg_type == "status":
+            await ws_manager.broadcast({
+                "type": "vision_status",
+                "content": data.get("content")
+            })
+        elif msg_type == "stop":
+            await ws_manager.broadcast({
+                "type": "audio_chunk",
+                "complete": True
+            })
+        elif msg_type == "text":
+             await ws_manager.broadcast({
+                "type": "text_chunk",
+                "chunk": data.get("content"),
+                "complete": True
+             })
+        else:
+            # Pass through other messages (browser_screenshot, etc.)
+            await ws_manager.broadcast(data)
+    await vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
+    logging.info("[Startup] Browser automation loop scheduled")
 
 @app.post("/api/chat/batch")
 async def batch_chat(request: BatchChatRequest):
@@ -141,61 +174,12 @@ async def websocket_chat(websocket: WebSocket):
     try:
         while True:
             raw_data = await websocket.receive_text()
-            
-            try:
-                data = json.loads(raw_data)
-                
-                # Handle Vision Frames
-                if data.get("type") == "vision_frame":
-                    if not vision_heartbeat:
-                        continue
-                        
-                    request = HeartbeatRequest(
-                        image_base64=data.get("image_base64"),
-                        timestamp=data.get("timestamp", 0),
-                        use_native_capture=data.get("use_native_capture", False)
-                    )
-                    
-                    async for chunk in vision_heartbeat.process_heartbeat_stream(request):
-                        # Map Vision types to Frontend types
-                        msg_type = chunk.get("type")
-                        
-                        if msg_type == "audio":
-                            await websocket.send_json({
-                                "type": "audio_chunk",
-                                "audio_base64": chunk.get("data"),
-                                "complete": False
-                            })
-                        elif msg_type == "status":
-                             # We can send status updates to debug UI
-                             await websocket.send_json({
-                                "type": "vision_status",
-                                "content": chunk.get("content")
-                             })
-                        elif msg_type == "stop":
-                            await websocket.send_json({
-                                "type": "audio_chunk",
-                                "complete": True
-                            })
-                            
-            except json.JSONDecodeError:
-                pass
-            except Exception as e:
-                logging.error(f"[WebSocket] processing error: {e}")
-                
+    
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
     except Exception as e:
         logging.error(f"[WebSocket] Error: {e}")
         ws_manager.disconnect(websocket)
-
-
-@app.post("/api/vision/heartbeat", response_model=HeartbeatResponse)
-async def vision_heartbeat_endpoint(request: HeartbeatRequest):
-    if not vision_heartbeat:
-        raise HTTPException(status_code=503, detail="Vision system not initialized")
-    
-    return await vision_heartbeat.process_heartbeat(request)
 
 
 if __name__ == "__main__":

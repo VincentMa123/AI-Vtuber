@@ -127,7 +127,7 @@ class ChatAggregator:
         except Exception as e:
             logging.error(f"[ChatAggregator] Error generating response: {e}", exc_info=True)
 
-    def get_batch_for_llm(self, batch: List[ChatMessage]) -> Tuple[str, List[ChatMessage]]:
+    def get_batch_for_llm(self, batch: List[ChatMessage]) -> str:
 
         top_messages = batch[:5] 
         
@@ -140,8 +140,7 @@ class ChatAggregator:
                 formatted_parts.append(f"{i}. {msg.username}: {msg.message}")
             formatted = "\n".join(formatted_parts)
         
-        return formatted
-    
+        return formatted    
     def get_status(self) -> Dict:
 
         return {

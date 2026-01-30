@@ -10,7 +10,7 @@ _model_cache = None
 
 
 def get_embedding_model():
-
+    
     global _model_cache
     
     if _model_cache is not None:
@@ -29,7 +29,15 @@ def get_embedding_model():
 
 
 def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarray]:
-
+    """
+    Create embeddings for all products and cache them.
+    
+    Args:
+        force_rebuild: If True, rebuild embeddings even if cache exists
+    
+    Returns:
+        Numpy array of embeddings, shape (num_products, embedding_dim)
+    """
     global _embeddings_cache
     
     if _embeddings_cache is not None and not force_rebuild:
@@ -116,7 +124,7 @@ _product_example_embeddings = None
 _promo_example_embeddings = None
 
 def get_product_query_embeddings():
-
+    """Get or compute embeddings for product query examples."""
     global _product_example_embeddings
     if _product_example_embeddings is not None:
         return _product_example_embeddings
@@ -128,7 +136,7 @@ def get_product_query_embeddings():
     return None
 
 def get_promotion_query_embeddings():
-
+    """Get or compute embeddings for promotion query examples."""
     global _promo_example_embeddings
     if _promo_example_embeddings is not None:
         return _promo_example_embeddings
@@ -140,7 +148,7 @@ def get_promotion_query_embeddings():
     return None
 
 def precompute_detection_embeddings():
-    
+    """Trigger computation of detection embeddings (call during init)."""
     logging.info("[RAG] Pre-computing detection embeddings...")
     get_product_query_embeddings()
     get_promotion_query_embeddings()

@@ -3,14 +3,6 @@ import os
 import asyncio
 import logging
 
-# Add 'src' to python path before importing project modules
-# Current file: src/test/manual_test/test_deepseek_stream.py
-# We need to go up 2 levels (manual_test -> test -> src) to find 'core' module inside 'src'
-# Actually, if we want to import 'core', 'src' must be in sys.path.
-# internal structure: src/core.
-# from src/test/manual_test:
-# dirname = .../src/test/manual_test
-# ../.. = .../src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 import core.config as config

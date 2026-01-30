@@ -23,14 +23,18 @@ class DeepSeekProvider(BaseLLMProvider):
         if not config.DEEPSEEK_API_KEY:
             return None
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+            system_prompt = utils.get_system_prompt(user_message=message)
+
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))
         
         messages.append({"role": "user", "content": message})
         
-        max_tokens = kwargs.get("max_tokens", 256)
+        max_tokens = kwargs.get("max_tokens", 100)
         
         try:
             timeout = 30.0
@@ -73,7 +77,11 @@ class DeepSeekProvider(BaseLLMProvider):
         if not config.DEEPSEEK_API_KEY:
             return
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+             system_prompt = utils.get_system_prompt(user_message=message)
+
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))

@@ -146,11 +146,10 @@ class RealtimeTTSProvider(BaseTTSProvider):
                         if token is None:
                             break
                         yield token
-                    except:
+                    except Exception:
                         if feed_complete:
                             break
-                        continue
-            
+                        continue            
             # Start feeding tokens in background
             feed_task = asyncio.create_task(feed_tokens_to_queue())
             

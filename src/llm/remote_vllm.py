@@ -36,6 +36,9 @@ class RemoteVLLMProvider(BaseLLMProvider):
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=30.0)
 
+    async def close(self):
+        await self.client.aclose()
+        
     async def generate(
         self, 
         message: str, 
@@ -63,7 +66,12 @@ class RemoteVLLMProvider(BaseLLMProvider):
             })
         current_human_msg.append({"type": "text", "text": message})
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        # Allow overriding system prompt
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+            system_prompt = utils.get_system_prompt(user_message=message)
+
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))
@@ -133,7 +141,12 @@ class RemoteVLLMProvider(BaseLLMProvider):
             })
         current_human_msg.append({"type": "text", "text": message})
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        # Allow overriding system prompt
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+            system_prompt = utils.get_system_prompt(user_message=message)
+            
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))
@@ -164,14 +177,13 @@ class RemoteVLLMProvider(BaseLLMProvider):
                     return
                 
                 async for line in response.aiter_lines():
-                    if not line or not line.startswith("data: "):
+        
+                    if not line.startswith("data: "):
                         continue
-                    
                     if line.strip() == "data: [DONE]":
                         break
-                    
                     try:
-                        data = json.loads(line[6:])  # Remove "data: " prefix
+                        data = json.loads(line[6:])  
                         if "choices" in data and len(data["choices"]) > 0:
                             delta = data["choices"][0].get("delta", {})
                             content = delta.get("content", "")

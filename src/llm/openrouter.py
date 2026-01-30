@@ -12,6 +12,9 @@ class OpenRouterProvider(BaseLLMProvider):
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=30.0)
 
+    async def close(self):
+        await self.client.aclose()
+        
     async def generate(
         self, 
         message: str, 
@@ -31,7 +34,11 @@ class OpenRouterProvider(BaseLLMProvider):
             })
         current_human_msg.append({"type": "text", "text": message})
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+             system_prompt = utils.get_system_prompt(user_message=message)
+
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))
@@ -45,7 +52,7 @@ class OpenRouterProvider(BaseLLMProvider):
         if image_base64:
             logging.debug(f"[DEBUG] image_base64 length: {len(image_base64)} chars")
 
-        max_tokens = kwargs.get("max_tokens", 256)
+        max_tokens = kwargs.get("max_tokens", 100)
         try:
             timeout = 60.0 if image_base64 else 30.0
             response = await self.client.post(
@@ -66,7 +73,7 @@ class OpenRouterProvider(BaseLLMProvider):
             
             if response.status_code == 200:
                 data = response.json()
-                if "choices" not in data:
+                if "choices" not in data or len(data["choices"]) == 0:
                     logging.error(f"OpenRouter API returned 200 but missing 'choices': {data}")
                     return None
                 return data["choices"][0]["message"]["content"]
@@ -97,7 +104,11 @@ class OpenRouterProvider(BaseLLMProvider):
             })
         current_human_msg.append({"type": "text", "text": message})
         
-        messages = [{"role": "system", "content": utils.get_system_prompt(user_message=message)}]
+        system_prompt = kwargs.get("system_prompt")
+        if not system_prompt:
+            system_prompt = utils.get_system_prompt(user_message=message)
+            
+        messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))

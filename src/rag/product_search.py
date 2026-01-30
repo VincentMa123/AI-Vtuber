@@ -49,6 +49,12 @@ def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float 
     dataset = load_product_dataset()
     products = dataset.get("products", [])
     
+    if len(products) != len(product_embeddings):
+        logging.warning("[RAG] Product count mismatch - embeddings may be stale, rebuilding...")
+        product_embeddings = create_product_embeddings(force_rebuild=True)
+        if product_embeddings is None:
+            return []
+
     results = []
     for idx in top_indices:
         if similarities[idx] >= similarity_threshold:

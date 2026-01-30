@@ -4,7 +4,7 @@ import time
 # 1. Setup Client
 print("Setup client...")
 try:
-    client = OpenAI(base_url="http://localhost:8001/v1", api_key="EMPTY", timeout=60)
+    client = OpenAI(base_url="https://uncomparably-unconceding-dino.ngrok-free.dev/v1", api_key="EMPTY", timeout=60)
     
     # 2. Get correct model name
     print("Get model name...")

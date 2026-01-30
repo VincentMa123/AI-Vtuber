@@ -10,6 +10,9 @@ class ElevenLabsProvider(BaseTTSProvider):
         if not config.ELEVENLABS_API_KEY:
             logging.error("ElevenLabs API key not set!")
             return None
+        if not config.ELEVENLABS_VOICE_ID:
+            logging.error("ElevenLabs voice ID not set!")
+            return None
             
         try:
             url = f"https://api.elevenlabs.io/v1/text-to-speech/{config.ELEVENLABS_VOICE_ID}"

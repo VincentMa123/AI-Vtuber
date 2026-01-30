@@ -9,7 +9,7 @@ class ChatMessage:
     message: str
     user_id: str
     username: str
-    timestamp: float
+    timestamp: float = field(default_factory=time.time)
     image_base64: Optional[str] = None
     priority_score: float = 0.0
     

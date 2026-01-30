@@ -60,22 +60,11 @@ class BaseLLMProvider(ABC):
     async def generate_stream(
         self, 
         message: str, 
-        history: List[Dict[str, Any]] = [], 
+        history: Optional[List[Dict[str, Any]]] = None, 
         image_base64: Optional[str] = None,
         **kwargs
-    ) -> AsyncGenerator[str, None]:
-        """
-        Stream tokens as they're generated from the LLM.
-        
-        Args:
-            message: The user's message
-            history: Conversation history
-            image_base64: Optional base64-encoded image
-            **kwargs: Additional arguments (e.g., max_tokens, temperature)
-            
-        Yields:
-            Text tokens as they're generated
-        """
+    ) -> AsyncGenerator[str, None]:        
+    
         # Default implementation: fallback to non-streaming and yield full response
         result = await self.generate(message, history, image_base64, **kwargs)
         if result:

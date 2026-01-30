@@ -5,9 +5,9 @@ import core.config as config
 import core.state as state
 import core.utils as utils
 from chat.emotions import detect_emotion
-from websocket.manager import ws_manager
+from ws.manager import ws_manager
 import asyncio
-
+from twitch.bot import get_twitch_bot
 
 # Emotion context mapping for LLM
 EMOTION_CONTEXT = {
@@ -64,7 +64,12 @@ async def handle_aggregated_response(
             if llm_provider != "deepseek":
                 logging.info("[Response Handler] Fallback: Trying DeepSeek...")
                 output_text = await llm_providers["deepseek"].generate(enhanced_message, [], None)
-                
+            
+
+            if llm_provider != "qwen":
+                logging.info("[Response Handler] Fallback: Trying Qwen...")
+                output_text = await llm_providers["qwen"].generate(enhanced_message, [], None)
+
             # 2. Fallback: OpenRouter
             if not output_text and llm_provider != "openrouter":
                 logging.info("[Response Handler] Fallback: Trying OpenRouter...")
@@ -174,7 +179,6 @@ async def handle_streaming_response(
         
         # Send to Twitch chat if bot is available
         if config.TWITCH_ENABLED and full_text:
-            from twitch.bot import get_twitch_bot
             bot = get_twitch_bot()
             if bot:
                 await bot.send_response(full_text)

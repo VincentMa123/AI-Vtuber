@@ -5,7 +5,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 from chat.aggregator import ChatMessage
-from websocket.manager import ws_manager
+from ws.manager import ws_manager
 
 
 class TwitchBot(commands.Bot):
@@ -114,7 +114,8 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
             aggregator=aggregator
         )
 
-        asyncio.create_task(twitch_bot.start())
+        task = asyncio.create_task(twitch_bot.start())
+        task.add_done_callback(lambda t: logging.error(f"[TwitchBot] Task failed: {t.exception()}") if t.exception() else None)
         logging.info("[TwitchBot] Starting bot...")
         
         return twitch_bot
@@ -122,7 +123,6 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
     except Exception as e:
         logging.error(f"[TwitchBot] Failed to start: {e}")
         return None
-
 
 def get_twitch_bot():
     return twitch_bot

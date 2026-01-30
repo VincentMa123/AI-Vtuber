@@ -214,11 +214,10 @@ class TestWebSocketEndpoint:
     
     def test_websocket_manager_methods_exist(self, mock_dependencies):
         """Should use ws_manager for connections"""
-        with patch('api_server.ws_manager') as mock_ws_manager:
-            # Should have connect and disconnect methods
-            assert hasattr(mock_ws_manager, 'connect')
-            assert hasattr(mock_ws_manager, 'disconnect')
-
+        from api_server import ws_manager
+        # Verify actual methods exist on ws_manager
+        assert hasattr(ws_manager, 'connect')
+        assert hasattr(ws_manager, 'disconnect')
 
 class TestVisionHeartbeatEndpoint:
 
@@ -288,8 +287,8 @@ class TestCORSMiddleware:
         )
         
 
-        assert response.status_code in [200, 204] or response.status_code != 403
-
+        # Verify CORS credentials header is present and set to true
+        assert response.headers.get("access-control-allow-credentials") == "true"
 
 class TestLLMProvidersInitialization:
     
@@ -316,10 +315,9 @@ class TestLLMProvidersInitialization:
             importlib.reload(api_server)
             
             # Providers should be instantiated
-            assert mock_openrouter.called or True
-            assert mock_deepseek.called or True
-            assert mock_remote.called or True
-
+            assert mock_openrouter.called, "OpenRouterProvider should be instantiated"
+            assert mock_deepseek.called, "DeepSeekProvider should be instantiated"
+            assert mock_remote.called, "RemoteVLLMProvider should be instantiated"
 
 class TestAggregationCallbackSetup:
     """Test aggregation callback configuration"""

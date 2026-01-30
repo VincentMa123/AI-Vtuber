@@ -11,5 +11,4 @@ class HeartbeatResponse(BaseModel):
     action: str  # "ignore" or "react"
     reaction_text: Optional[str] = None
     audio_base64: Optional[str] = None
-    category: Optional[str] = None
     debug_info: Optional[str] = None
