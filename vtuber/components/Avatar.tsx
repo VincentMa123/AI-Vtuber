@@ -62,7 +62,7 @@ const Avatar: React.FC<AvatarProps> = ({emotion, getCurrentVolume }) => {
                 });
                 appRef.current = app;
 
-                const modelUrl = 'model/hiyori/hiyori_pro_jp.model3.json';
+                const modelUrl = 'model/hiyori/hiyori_pro_t11.model3.json';
 
                 Live2DModel.from(modelUrl).then((loadedModel: any) => {
                     if (!mounted || !app) return;

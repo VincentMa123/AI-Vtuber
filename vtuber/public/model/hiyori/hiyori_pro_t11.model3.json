@@ -1,14 +1,14 @@
 {
 	"Version": 3,
 	"FileReferences": {
-		"Moc": "hiyori_pro_jp.moc3",
+		"Moc": "hiyori_pro_t11.moc3",
 		"Textures": [
-			"hiyori_pro_jp.2048/texture_00.png",
-			"hiyori_pro_jp.2048/texture_01.png"
+			"hiyori_pro_t11.2048/texture_00.png",
+			"hiyori_pro_t11.2048/texture_01.png"
 		],
-		"Physics": "hiyori_pro_jp.physics3.json",
-		"Pose": "hiyori_pro_jp.pose3.json",
-		"DisplayInfo": "hiyori_pro_jp.cdi3.json",
+		"Physics": "hiyori_pro_t11.physics3.json",
+		"Pose": "hiyori_pro_t11.pose3.json",
+		"DisplayInfo": "hiyori_pro_t11.cdi3.json",
 		"Motions": {
 			"Idle": [
 				{
