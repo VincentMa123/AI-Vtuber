@@ -21,60 +21,6 @@ class QwenProvider(BaseLLMProvider):
             )
         else:
             logging.warning("Qwen API key or Base URL not configured.")
-
-    async def generate(
-        self, 
-        message: str, 
-        history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None,
-        **kwargs
-    ) -> Optional[str]:
-
-        if not self.client:
-            logging.error("Qwen client not initialized. Check configuration.")
-            return None
-        
-        current_human_msg = []
-        if image_base64:
-            current_human_msg.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{image_base64}"} 
-            })
-        current_human_msg.append({"type": "text", "text": message})
-        
-        system_prompt = kwargs.get("system_prompt")
-        if not system_prompt:
-             system_prompt = utils.get_system_prompt(user_message=message)
-
-        messages = [{"role": "system", "content": system_prompt}]
-        
-        if history:
-            messages.extend(sanitize_history(history))
-            
-        messages.append({
-            "role": "user", 
-            "content": current_human_msg if image_base64 else message
-        })
-        
-        logging.debug(f"[DEBUG] Qwen - image_base64 provided: {image_base64 is not None}")
-        
-        max_tokens = kwargs.get("max_tokens", 1500)
-        
-        try:
-            completion = await self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=max_tokens,
-            )
-            
-            return completion.choices[0].message.content
-                    
-        except APIError as e:
-            logging.error(f"Qwen API error: {e}")
-            return None
-        except Exception as e:
-            logging.error(f"Qwen API call failed: {type(e).__name__}: {e}")
-            return None
     
     async def generate_stream(
         self, 

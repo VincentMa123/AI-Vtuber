@@ -182,15 +182,6 @@ class QwenTTSProvider(BaseTTSProvider):
             self.stream_client = None
             raise e
 
-    async def generate_audio(self, text: str) -> Optional[bytes]:
-        """One-shot generation."""
-        chunks = []
-        async def text_gen():
-            yield text
-        async for chunk in self.generate_audio_stream(text_gen()):
-            chunks.append(chunk)
-        return b"".join(chunks) if chunks else None
-
     async def generate_audio_stream(self, text_stream: AsyncGenerator[str, None]) -> AsyncGenerator[bytes, None]:
         
         async with self.processing_lock:

@@ -10,7 +10,6 @@ _model_cache = None
 
 
 def get_embedding_model():
-    
     global _model_cache
     
     if _model_cache is not None:
@@ -29,15 +28,7 @@ def get_embedding_model():
 
 
 def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarray]:
-    """
-    Create embeddings for all products and cache them.
-    
-    Args:
-        force_rebuild: If True, rebuild embeddings even if cache exists
-    
-    Returns:
-        Numpy array of embeddings, shape (num_products, embedding_dim)
-    """
+
     global _embeddings_cache
     
     if _embeddings_cache is not None and not force_rebuild:

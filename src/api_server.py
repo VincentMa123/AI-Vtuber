@@ -101,7 +101,6 @@ async def startup_event():
     
     vision_heartbeat = VisionHeartbeat(
         llm_providers=llm_providers,
-        text_to_speech_func=tts_manager.generate_audio,
         text_to_speech_stream_func=tts_manager.generate_audio_stream
     )
     

@@ -9,7 +9,6 @@ from ws.manager import ws_manager
 import asyncio
 from twitch.bot import get_twitch_bot
 
-# Emotion context mapping for LLM
 EMOTION_CONTEXT = {
     "happy": "The viewer seems happy and positive! Match their energy with enthusiasm.",
     "sad": "The viewer seems sad or down. Be gentle, supportive, and comforting.",
@@ -17,7 +16,6 @@ EMOTION_CONTEXT = {
     "excited": "The viewer is super excited! Match their hype and be energetic!",
     "neutral": ""
 }
-
 
 async def handle_aggregated_response(
     message: str, 
@@ -55,49 +53,6 @@ async def handle_aggregated_response(
                 return
             except Exception as e:
                 logging.warning(f"[Response Handler] Streaming failed: {e}, falling back to non-streaming")
-
-        output_text = await provider.generate(enhanced_message, [], None)
-        
-        if not output_text:
-            logging.warning(f"[Response Handler] Primary provider '{llm_provider}' failed, trying fallbacks...")
-            
-            if llm_provider != "deepseek":
-                logging.info("[Response Handler] Fallback: Trying DeepSeek...")
-                output_text = await llm_providers["deepseek"].generate(enhanced_message, [], None)
-            
-
-            if llm_provider != "qwen":
-                logging.info("[Response Handler] Fallback: Trying Qwen...")
-                output_text = await llm_providers["qwen"].generate(enhanced_message, [], None)
-
-            # 2. Fallback: OpenRouter
-            if not output_text and llm_provider != "openrouter":
-                logging.info("[Response Handler] Fallback: Trying OpenRouter...")
-                output_text = await llm_providers["openrouter"].generate(enhanced_message, [], None)
-                
-            # 3. Fallback: Remote vLLM
-            if not output_text and llm_provider != "remote":
-                logging.info("[Response Handler] Fallback: Trying Remote vLLM...")
-                output_text = await llm_providers["remote"].generate(enhanced_message, [], None)
-        
-        if output_text:
-            logging.info(f"[Response Handler] Generated response: {output_text[:100]}...")
-            
-            # Generate Audio for TTS via Manager
-            audio_base64 = await tts_manager.generate_audio(output_text)
-
-            # Use the USER's detected emotion for avatar animation
-            logging.info(f"[Response Handler] Using emotion for avatar: {user_emotion}")
-
-            await ws_manager.broadcast_ai_response(output_text, audio_base64, user_emotion)
-            
-            if config.TWITCH_ENABLED:
-                from twitch.bot import get_twitch_bot
-                bot = get_twitch_bot()
-                if bot:
-                    await bot.send_response(output_text)
-        else:
-            logging.warning("[Response Handler] No response generated")
             
     except Exception as e:
         logging.error(f"[Response Handler] Error: {e}", exc_info=True)

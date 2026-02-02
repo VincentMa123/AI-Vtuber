@@ -5,18 +5,6 @@ from typing import Optional, AsyncGenerator
 class BaseTTSProvider(ABC):
     
     @abstractmethod
-    async def generate_audio(self, text: str) -> Optional[bytes]:
-        """
-        Generate audio from text.
-        
-        Args:
-            text: The text to convert to speech
-            
-        Returns:
-            Audio bytes (WAV or MP3 format), or None if failed
-        """
-        pass
-    
     async def generate_audio_stream(
         self, 
         text_stream: AsyncGenerator[str, None]

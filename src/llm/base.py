@@ -36,27 +36,6 @@ def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 class BaseLLMProvider(ABC):
     
     @abstractmethod
-    async def generate(
-        self, 
-        message: str, 
-        history: List[Dict[str, Any]] = [], 
-        image_base64: Optional[str] = None,
-        **kwargs
-    ) -> Optional[str]:
-        """
-        Generate a response from the LLM.
-        
-        Args:
-            message: The user's message
-            history: Conversation history
-            image_base64: Optional base64-encoded image
-            **kwargs: Additional arguments (e.g., max_tokens, temperature)
-            
-        Returns:
-            Generated text response, or None if failed
-        """
-        pass
-    
     async def generate_stream(
         self, 
         message: str, 
