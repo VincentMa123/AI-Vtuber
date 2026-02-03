@@ -188,7 +188,7 @@ class VisionHeartbeat:
             # Mark speech ended for cooldown
             state.mark_speech_ended()
             
-            duration = max(0, len(captured_text) * 0.1)
+            duration = max(0, len(captured_text) * 0.075)
             logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
             return duration
                     
