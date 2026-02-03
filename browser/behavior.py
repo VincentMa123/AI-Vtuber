@@ -4,7 +4,6 @@ import random
 
 
 class Behavior:
-    """Utilities for simulating natural, human-like input patterns."""
     
     @staticmethod
     async def sleep(min_sec: float, max_sec: float):
@@ -25,8 +24,7 @@ class Behavior:
             # Calculate step size (more in the middle)
             base_step = total_amount / steps
             variation = random.uniform(0.7, 1.3)
-            step = int(base_step * variation)
-            
+            step = int(base_step * variation * (0.5 + eased))            
             await page.evaluate(f"window.scrollBy(0, {step * direction})")
             # Variable delay between scroll steps
             await asyncio.sleep(random.uniform(0.03, 0.12))
