@@ -4,18 +4,18 @@ This project consists of a Python-based backend (FastAPI) and a Next.js frontend
 
 https://github.com/user-attachments/assets/7fa66717-6485-4ab1-84f9-e7ba645a2ed7
 
+
+## ⚠️ Important Notes
+
+- **Inference Speed**: The response time for LLM and TTS may vary significantly depending on your internet connection speed, especially when using remote providers.
+- **Voice Cloning**: The current TTS implementation uses voice cloning technology. You may notice some imperfections in the voice generation.
+    - *Tip*: If audio quality is critical, you can switch to a TTS engine that doesn't use voice cloning (configurable in `TTS_PROVIDER`), though this may limit your options for custom character voices.
+
+
 ## Prerequisites
 
 - **Python 3.10+** (Recommend 3.11 or 3.12)
 - **Node.js 18+**
-- **Git**
-
-## Project Structure
-
-- `src/`: Backend application code (FastAPI, LLM integration, TTS, Vision).
-- `vtuber/`: Frontend application code (Next.js, Live2D display).
-
----
 
 ## 🚀 Backend Setup (src)
 
@@ -116,3 +116,6 @@ TWITCH_CHANNEL=mychannelname
 - **Vision**: Analyzes browser screenshots/audio to react to content.
 - **Live2D Frontend**: Displays the VTuber model using PixiJS.
 - **Twitch Integration**: Optional bot for Twitch chat interaction.
+
+
+
