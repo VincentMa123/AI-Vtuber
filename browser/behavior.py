@@ -8,20 +8,15 @@ class Behavior:
     
     @staticmethod
     async def sleep(min_sec: float, max_sec: float):
-        """Sleep for a random duration between min and max seconds."""
         await asyncio.sleep(random.uniform(min_sec, max_sec))
     
     @staticmethod
     def ease_in_out(t: float) -> float:
-        """Easing function for smooth acceleration/deceleration."""
         return t * t * (3 - 2 * t)  # Smoothstep
     
     @staticmethod
     async def smooth_scroll(page, total_amount: int, direction: int = 1):
-        """
-        Scroll with natural acceleration and deceleration.
-        direction: 1 for down, -1 for up
-        """
+        
         steps = random.randint(8, 15)
         for i in range(steps):
             progress = i / steps

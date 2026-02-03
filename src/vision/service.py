@@ -1,11 +1,19 @@
 import logging
 import asyncio
 from typing import Dict, Tuple, Optional, Callable, Any
+import sys
+import os
+
+# Add project root to path for browser module import
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 import core.config as config
 import core.state as state
 import core.utils as utils
 from .models import HeartbeatRequest, HeartbeatResponse
-from .browser import BrowserController, get_browser_controller, Behavior
+from browser import BrowserController, get_browser_controller, Behavior
 import mss
 import io
 import base64
@@ -180,7 +188,7 @@ class VisionHeartbeat:
             # Mark speech ended for cooldown
             state.mark_speech_ended()
             
-            duration = max(0, len(captured_text) * 0.05)
+            duration = max(0, len(captured_text) * 0.1)
             logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
             return duration
                     
@@ -232,7 +240,7 @@ class VisionHeartbeat:
                     await asyncio.sleep(wait_duration)
                 else:
                     # Natural variable delay between actions
-                    await Behavior.sleep(1.2, 3.5)
+                    await Behavior.sleep(1, 3)
 
             except asyncio.CancelledError:
                 break

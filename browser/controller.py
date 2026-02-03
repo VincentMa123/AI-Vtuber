@@ -6,6 +6,7 @@ from typing import Optional
 from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
 
+
 class BrowserController:
     
     BASE_URL = "https://www.klikindomaret.com/"
@@ -18,6 +19,7 @@ class BrowserController:
         self._loop_task: Optional[asyncio.Task] = None
         
     async def start(self) -> bool:
+        
         try:
             self.playwright = await async_playwright().start()
             
@@ -61,6 +63,7 @@ class BrowserController:
             return False
     
     async def stop(self):
+        
         self.is_running = False
         
         if self._loop_task:
@@ -75,6 +78,7 @@ class BrowserController:
         logging.info("[Browser] Stopped")
     
     async def get_screenshot(self) -> Optional[str]:
+        
         if not self.page:
             return None
             
@@ -88,11 +92,13 @@ class BrowserController:
             return None
     
     async def get_current_url(self) -> str:
+       
         if self.page:
             return self.page.url
         return ""
 
     async def scroll_down(self, amount: int = 400):
+        
         if not self.page:
             return
             
@@ -103,6 +109,7 @@ class BrowserController:
             logging.error(f"[Browser] Scroll failed: {e}")
     
     async def scroll_up(self, amount: int = 400):
+        
         if not self.page:
             return
             
@@ -112,7 +119,64 @@ class BrowserController:
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
     
+    async def is_in_viewport(self, element) -> bool:
+        """Check if element is currently visible in the viewport."""
+        try:
+            box = await element.bounding_box()
+            if not box:
+                return False
+            
+            viewport = await self.page.evaluate("""() => ({
+                width: window.innerWidth,
+                height: window.innerHeight,
+                scrollY: window.scrollY
+            })""")
+            
+            # Check if element is within visible viewport
+            element_top = box['y']
+            element_bottom = box['y'] + box['height']
+            viewport_height = viewport['height']
+            
+            # Element is in viewport if it's between 0 and viewport height
+            return element_top >= 0 and element_bottom <= viewport_height
+        except:
+            return False
+    
+    async def click_load_more(self) -> bool:
+        """Click 'Load More' / 'Muat Lebih Banyak' button if visible."""
+        if not self.page:
+            return False
+            
+        try:
+            load_more_selectors = [
+                'button:has-text("Muat Lebih Banyak")',
+                'button:has-text("Load More")',
+                'a:has-text("Muat Lebih Banyak")',
+                'a:has-text("Load More")',
+                '[class*="load-more"]',
+                '[class*="loadmore"]',
+            ]
+            
+            for selector in load_more_selectors:
+                try:
+                    button = await self.page.query_selector(selector)
+                    if button and await button.is_visible():
+                        await button.scroll_into_view_if_needed()
+                        await asyncio.sleep(0.5)
+                        await button.click()
+                        logging.info("[Browser] Clicked 'Load More' button")
+                        await asyncio.sleep(2)  # Wait for content to load
+                        return True
+                except:
+                    continue
+            
+            return False
+        except Exception as e:
+            logging.debug(f"[Browser] No load more button found: {e}")
+            return False
+    
     async def click_random_product(self) -> bool:
+        
         if not self.page:
             return False
             
@@ -121,7 +185,6 @@ class BrowserController:
                 '.item',                  
                 'div[class*="product"]',  
                 '.card',                
-                'div:has-text("Rp")',   
                 'a[href*="/product/"]',
                 '.product-card',
                 '.product-item a',
@@ -129,16 +192,26 @@ class BrowserController:
             ]
             
             for attempt in range(3):
-                products = []
+                products_in_viewport = []
+                all_products = []
+                
                 for selector in product_selectors:
                     try:
                         found = await self.page.query_selector_all(selector)
                         if found:
-                            products.extend([p for p in found if await p.is_visible()])
-                            if products: 
+                            for p in found:
+                                if await p.is_visible():
+                                    all_products.append(p)
+                                    # Check if in viewport
+                                    if await self.is_in_viewport(p):
+                                        products_in_viewport.append(p)
+                            if products_in_viewport:
                                 break
                     except:
                         continue
+                
+                # Prefer products in viewport, fallback to all visible
+                products = products_in_viewport if products_in_viewport else all_products[:10]
                 
                 if not products:
                     if attempt == 2: 
@@ -146,13 +219,13 @@ class BrowserController:
                     await asyncio.sleep(1)
                     continue
                 
-                # Click random product
-                product = random.choice(products[:10]) 
+                # Click random product from viewport
+                product = random.choice(products[:5])  # Top 5 in viewport
                 try:
                     await product.click(timeout=3000)
-                    logging.info("[Browser] Clicked on a product")
+                    logging.info(f"[Browser] Clicked product (from viewport: {len(products_in_viewport) > 0})")
                     # Wait for page to load before screenshot
-                    await asyncio.sleep(random.randint(2.0, 3.0))
+                    await asyncio.sleep(random.randint(2, 3))
                     return True
                 except Exception as e:
                     if "attached" in str(e) or "target closed" in str(e):
@@ -170,7 +243,7 @@ class BrowserController:
             return False
     
     async def go_back(self):
-        """Navigate back to previous page"""
+        
         if not self.page:
             return
             
@@ -182,7 +255,7 @@ class BrowserController:
             logging.error(f"[Browser] Go back failed: {e}")
     
     async def go_home(self):
-        """Navigate to homepage"""
+        
         if not self.page:
             return
             
@@ -205,32 +278,118 @@ class BrowserController:
                 logging.info(f"[Browser] Clicked category: {category_name}")
         except Exception as e:
             logging.error(f"[Browser] Click category failed: {e}")
+    async def get_scroll_position(self) -> dict:
+        """Get current scroll position and page dimensions."""
+        if not self.page:
+            return {"scrollY": 0, "scrollHeight": 1, "viewportHeight": 1, "atBottom": False, "atTop": True}
+        
+        try:
+            pos = await self.page.evaluate("""() => {
+                const scrollY = window.scrollY;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const viewportHeight = window.innerHeight;
+                const maxScroll = scrollHeight - viewportHeight;
+                const scrollPercent = maxScroll > 0 ? scrollY / maxScroll : 0;
+                return {
+                    scrollY: scrollY,
+                    scrollHeight: scrollHeight,
+                    viewportHeight: viewportHeight,
+                    scrollPercent: scrollPercent,
+                    atBottom: scrollPercent > 0.85,
+                    atTop: scrollPercent < 0.15
+                };
+            }""")
+            return pos
+        except:
+            return {"scrollY": 0, "scrollHeight": 1, "viewportHeight": 1, "scrollPercent": 0, "atBottom": False, "atTop": True}
+    
+    async def is_load_more_visible(self) -> bool:
+        """Check if load more button is visible in viewport."""
+        if not self.page:
+            return False
+            
+        try:
+            load_more_selectors = [
+                'button:has-text("Muat Lebih Banyak")',
+                'button:has-text("Load More")',
+                'a:has-text("Muat Lebih Banyak")',
+            ]
+            
+            for selector in load_more_selectors:
+                try:
+                    button = await self.page.query_selector(selector)
+                    if button and await button.is_visible():
+                        # Check if in viewport
+                        if await self.is_in_viewport(button):
+                            return True
+                except:
+                    continue
+            return False
+        except:
+            return False
     
     async def perform_random_action(self) -> str:
-        # Weighted actions: more scrolling/reading, less clicking
-        actions = ['scroll', 'scroll', 'scroll', 'scroll', 'scroll', 'click_product', 'back']
-        action = random.choice(actions)
-        
         if not self.page:
-            actions = ['back', 'scroll']
-            action = random.choice(actions)
+            return "no_page"
+        
+        current_url = await self.get_current_url()
+        is_product_page = "/product/" in current_url
+        is_homepage = current_url.rstrip('/') == self.BASE_URL.rstrip('/')
+        
+        # Get current scroll position
+        scroll_pos = await self.get_scroll_position()
+        at_bottom = scroll_pos.get("atBottom", False)
+        at_top = scroll_pos.get("atTop", True)
+        
+        # On product page: high chance to go back after viewing
+        if is_product_page:
 
-        if action == 'scroll':
-            direction = random.choice(['down', 'down', 'down', 'up'])
-            if direction == 'down':
-                await self.scroll_down(random.randint(150, 600))
+            if at_top:
+                # First scroll down to see the product
+                await self.scroll_down(random.randint(200, 400))
+                return "scroll_down"
             else:
-                await self.scroll_up(random.randint(80, 400))
-            return f"scroll_{direction}"
+                # After viewing, 70% chance to go back
+                if random.random() < 0.7:
+                    await Behavior.sleep(0.5, 1.5)
+                    await self.go_back()
+                    return "go_back"
+                else:
+                    # 30% chance to scroll more
+                    await self.scroll_down(random.randint(100, 300))
+                    return "scroll_down"
+        
+        # Check if load more button is visible
+        if await self.is_load_more_visible():
+            success = await self.click_load_more()
+            if success:
+                return "load_more"
+        
+        # Weighted actions based on scroll position (for listing pages)
+        if at_bottom:
+            actions = ['scroll_up', 'scroll_up', 'scroll_up', 'click_product', 'back']
+        elif at_top:
+            actions = ['scroll_down', 'scroll_down', 'scroll_down', 'scroll_down', 'click_product']
+        else:
+            actions = ['scroll_down', 'scroll_down', 'scroll_down', 'scroll_up', 'click_product', 'back']
+        
+        action = random.choice(actions)
+
+        if action == 'scroll_down':
+            await self.scroll_down(random.randint(150, 600))
+            return "scroll_down"
+        
+        elif action == 'scroll_up':
+            await self.scroll_up(random.randint(150, 600))
+            return "scroll_up"
             
         elif action == 'click_product':
             success = await self.click_random_product()
             return "click_product" if success else "click_failed"
             
         elif action == 'back':
-            current_url = await self.get_current_url()
-            if current_url.rstrip('/') != self.BASE_URL.rstrip('/'):
-                await Behavior.sleep(0.5, 1.5)  # Hesitation before going back
+            if not is_homepage:
+                await Behavior.sleep(0.5, 1.5)
                 await self.go_back()
                 return "go_back"
             return "already_home"
