@@ -5,7 +5,7 @@ import core.config as config
 import core.state as state
 import core.utils as utils
 from .models import HeartbeatRequest, HeartbeatResponse
-from .browser import BrowserController, get_browser_controller
+from .browser import BrowserController, get_browser_controller, Behavior
 import mss
 import io
 import base64
@@ -144,6 +144,11 @@ class VisionHeartbeat:
     async def _process_vision_cycle(self):
 
         try:
+            # Wait for speech cooldown to prevent overlap with chat
+            wait_time = await state.wait_for_speech_cooldown()
+            if wait_time > 0:
+                logging.debug(f"[Vision Cycle] Waited {wait_time:.1f}s for speech cooldown")
+            
             # 1. Capture screenshot
             screenshot = await self.browser_controller.get_screenshot()
             if not screenshot:
@@ -171,6 +176,9 @@ class VisionHeartbeat:
                     
                 if self._on_browser_update:
                     await self._on_browser_update(chunk)
+            
+            # Mark speech ended for cooldown
+            state.mark_speech_ended()
             
             duration = max(0, len(captured_text) * 0.05)
             logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
@@ -215,7 +223,7 @@ class VisionHeartbeat:
                     logging.info(f"[Action Loop] Triggering Vision (Click={is_click}, Overdue={is_overdue})")
                     
                     if is_click:
-                        await asyncio.sleep(2.0) # Wait for page load
+                        await asyncio.sleep(2.0) 
                     
                     wait_duration = await self._process_vision_cycle()
                     self._last_analysis_time = asyncio.get_event_loop().time()
@@ -223,11 +231,11 @@ class VisionHeartbeat:
                     logging.info(f"[Action Loop] Waiting {wait_duration:.1f}s for speech to finish...")
                     await asyncio.sleep(wait_duration)
                 else:
-                    delay = random.uniform(1.0, 3.0)
-                    await asyncio.sleep(delay)
+                    # Natural variable delay between actions
+                    await Behavior.sleep(1.2, 3.5)
 
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logging.error(f"[Action Loop] Error: {e}")
-                await asyncio.sleep(5)
+                await Behavior.sleep(4, 7)

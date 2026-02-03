@@ -15,6 +15,7 @@ import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
 from .base import BaseTTSProvider
+from .text_normalizer import normalize_indonesian_text
 import core.config as config
 
 class QwenTTSCallback(QwenTtsRealtimeCallback):
@@ -186,7 +187,10 @@ class QwenTTSProvider(BaseTTSProvider):
         
         async with self.processing_lock:
             try:
+                start_time = time.time()
                 await self._ensure_connected()
+                end_time = time.time()
+                logging.info(f"[QwenTTS] Connected in {end_time - start_time} seconds.")
             except Exception as e:
                 logging.error(f"[QwenTTS] Could not connect: {e}")
                 return
@@ -196,14 +200,67 @@ class QwenTTSProvider(BaseTTSProvider):
                 try: self.audio_queue.get_nowait()
                 except: pass
 
-            # Background task to feed text
+            # Background task to feed text with sentence buffering for normalization
             async def feed_text():
                 try:
-                    async for text_chunk in text_stream:
-                        if text_chunk and self.stream_client:
-                             await asyncio.to_thread(self.stream_client.append_text, text_chunk)
+                    # Buffer to accumulate text until sentence boundary
+                    text_buffer = ""
                     
-                    # Must call finish to signal end of turn
+                    def is_sentence_boundary(text, idx):
+                        char = text[idx]
+                        
+                        if char == '\n':
+                            return True
+                        
+                        # ! and ? are always sentence endings
+                        if char in {'!', '?'}:
+                            return True
+                        
+                        # For period, check if it's between digits (number separator)
+                        if char == '.':
+                            # Check character before: if digit, might be number
+                            if idx > 0 and text[idx - 1].isdigit():
+                                # If at end of buffer AND preceded by digit, DON'T break
+                                # (might be incomplete like "14." waiting for "000")
+                                if idx + 1 >= len(text):
+                                    return False  # Wait for more text
+                                # Check character after: if digit, it's a number separator
+                                if text[idx + 1].isdigit():
+                                    return False  # "16.000" - not a sentence boundary
+                            
+                            # Period followed by space or uppercase = sentence end
+                            if idx + 1 >= len(text):  
+                                return True  # End of stream
+                            next_char = text[idx + 1]
+                            if next_char == ' ' or next_char.isupper():
+                                return True
+
+                            return False 
+                        
+                        return False
+                    
+                    async for text_chunk in text_stream:
+                        if not text_chunk or not self.stream_client:
+                            continue
+                        
+                        text_buffer += text_chunk
+                        
+                        last_boundary_idx = -1
+                        for i in range(len(text_buffer)):
+                            if is_sentence_boundary(text_buffer, i):
+                                last_boundary_idx = i
+                        
+                        if last_boundary_idx >= 0:
+                            complete_text = text_buffer[:last_boundary_idx + 1]
+                            text_buffer = text_buffer[last_boundary_idx + 1:]
+                
+                            normalized = normalize_indonesian_text(complete_text)
+                            await asyncio.to_thread(self.stream_client.append_text, normalized)
+                    
+                    if text_buffer and self.stream_client:
+                        normalized = normalize_indonesian_text(text_buffer)
+                        await asyncio.to_thread(self.stream_client.append_text, normalized)
+                    
                     if self.stream_client:
                         await asyncio.to_thread(self.stream_client.finish)
                     
@@ -212,7 +269,6 @@ class QwenTTSProvider(BaseTTSProvider):
 
             feed_task = asyncio.create_task(feed_text())
 
-            # Audio Processing Loop
             audio_chunk_buffer = []
             chunks_yielded = 0
             

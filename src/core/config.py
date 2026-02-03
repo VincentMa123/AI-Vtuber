@@ -21,8 +21,8 @@ QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
 QWEN_MODEL = os.getenv("QWEN_MODEL", "qwen3-vl-plus") 
 QWEN_BASE_URL = os.getenv("QWEN_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")  
 
-TTS_PROVIDER = "qwen"
-REALTIMETTS_ENGINE = "system" # Options: "system", "elevenlabs"
+TTS_PROVIDER = "qwen" #qwen, realtimetts
+REALTIMETTS_ENGINE = "system" #system, elevenlabs
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE_ID = "cgSgspJ2msm6clMCkdW9"  

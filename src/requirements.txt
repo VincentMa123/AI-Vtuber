@@ -7,10 +7,14 @@ soundfile
 numpy
 scipy
 kokoro
-RealtimeTTS[system]
+RealtimeTTS[all]
 PyAudio
 twitchio>=2.9.0
 pytest
 pytest-cov
 pytest-asyncio
 httpx
+playwright
+mss
+Pillow
+python-dotenv

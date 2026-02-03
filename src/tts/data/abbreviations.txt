@@ -1,0 +1,30 @@
+# Indonesian Text Normalization Mappings
+# Format: abbreviation=replacement (case-insensitive matching is handled by code)
+
+# Weight/Mass Units
+kg=kilogram
+g=gram
+mg=miligram
+ton=ton
+
+# Volume Units
+l=liter
+ml=mililiter
+
+# Length Units
+km=kilometer
+m=meter
+cm=sentimeter
+mm=milimeter
+
+# Common Abbreviations
+pcs=pieces
+pc=piece
+dll=dan lain lain
+dsb=dan sebagainya
+yg=yang
+utk=untuk
+dr=dari
+tdk=tidak
+sdh=sudah
+blm=belum

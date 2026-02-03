@@ -25,6 +25,11 @@ async def handle_aggregated_response(
 ) -> None:
 
     try:
+        # Wait for speech cooldown to prevent audio overlap
+        wait_time = await state.wait_for_speech_cooldown()
+        if wait_time > 0:
+            logging.debug(f"[Response Handler] Waited {wait_time:.1f}s for speech cooldown")
+        
         logging.info(f"[Response Handler] Generating response for: {message[:100]}...")
         
         user_emotion = detect_emotion(message)
@@ -132,6 +137,9 @@ async def handle_streaming_response(
         await ws_manager.broadcast_audio_chunk("", is_complete=True)
         await ws_manager.broadcast_stream_end()
         
+        # Mark speech ended for cooldown
+        state.mark_speech_ended()
+        
         # Send to Twitch chat if bot is available
         if config.TWITCH_ENABLED and full_text:
             bot = get_twitch_bot()
@@ -144,5 +152,6 @@ async def handle_streaming_response(
         
     except Exception as e:
         logging.error(f"[Response Handler] Streaming error: {e}", exc_info=True)
+        state.mark_speech_ended()  # Also mark ended on error
         await ws_manager.broadcast_stream_end()
         raise
