@@ -2,6 +2,8 @@
 
 This project consists of a Python-based backend (FastAPI) and a Next.js frontend (React), creating an interactive AI VTuber with LLM (Large Language Model), TTS (Text-to-Speech), and Vision capabilities.
 
+https://github.com/user-attachments/assets/7fa66717-6485-4ab1-84f9-e7ba645a2ed7
+
 ## Prerequisites
 
 - **Python 3.10+** (Recommend 3.11 or 3.12)
