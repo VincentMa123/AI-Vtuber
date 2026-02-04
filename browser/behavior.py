@@ -16,19 +16,23 @@ class Behavior:
     @staticmethod
     async def smooth_scroll(page, total_amount: int, direction: int = 1):
         
-        steps = random.randint(8, 15)
-        for i in range(steps):
-            progress = i / steps
-            # Ease in-out: slow start, fast middle, slow end
-            eased = Behavior.ease_in_out(progress)
-            # Calculate step size (more in the middle)
-            base_step = total_amount / steps
-            variation = random.uniform(0.7, 1.3)
-            step = int(base_step * variation * (0.5 + eased))            
-            await page.evaluate(f"window.scrollBy(0, {step * direction})")
-            # Variable delay between scroll steps
-            await asyncio.sleep(random.uniform(0.03, 0.12))
+        # Higher steps for smoother animation
+        steps = random.randint(20, 30)
+        current_scroll = 0
         
-        # Occasional micro-pause (simulates reading)
-        if random.random() < 0.3:
-            await asyncio.sleep(random.uniform(0.2, 0.6))
+        for i in range(steps):
+            progress = (i + 1) / steps
+            eased_progress = Behavior.ease_in_out(progress)
+            
+            # Calculate absolute target position for this frame
+            target_pos = int(total_amount * eased_progress)
+            
+            # Calculate delta to scroll
+            step = target_pos - current_scroll
+            
+            if step != 0:
+                await page.evaluate(f"window.scrollBy(0, {step * direction})")
+                current_scroll += step
+            
+            # Consistent frame time (approx 60fps)
+            await asyncio.sleep(0.016)

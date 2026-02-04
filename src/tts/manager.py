@@ -20,10 +20,10 @@ class TTSManager:
         self.providers["qwen"] = QwenTTSProvider()
 
     async def initialize(self):
-   
+
         if self.providers.get("qwen"):
             await self.providers["qwen"].initialize()
-
+            
     async def generate_audio_stream(
         self, 
         text_stream: AsyncGenerator[str, None],

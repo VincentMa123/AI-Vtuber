@@ -63,13 +63,17 @@ async def parse_sse_stream(response) -> AsyncGenerator[str, None]:
         except json.JSONDecodeError:
             continue
 
-def build_user_content(message: str, image_base64: Optional[str] = None) -> List[Dict[str, Any]]:
-    """Build user message content with optional image."""
+def build_user_content(message: str, image_base64: Optional[str] = None, mime_type: str = "image/jpeg") -> List[Dict[str, Any]]:
+    """Build user message content with optional image.
+    
+    Args:
+        mime_type: Image MIME type (default jpeg since compress_image_for_vlm outputs JPEG)
+    """
     content = []
     if image_base64:
         content.append({
             "type": "image_url",
-            "image_url": {"url": f"data:image/png;base64,{image_base64}"}
+            "image_url": {"url": f"data:{mime_type};base64,{image_base64}"}
         })
     content.append({"type": "text", "text": message})
     return content

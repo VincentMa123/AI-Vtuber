@@ -58,9 +58,8 @@ class DeepSeekProvider(BaseLLMProvider):
                     logging.error(f"DeepSeek streaming error: {response.status_code}")
                     return
                 
-                async for chunk in BaseLLMProvider.parse_sse_stream(response):
+                async for chunk in parse_sse_stream(response):
                     yield chunk
-
                         
         except Exception as e:
             logging.error(f"DeepSeek streaming failed: {type(e).__name__}: {e}")
