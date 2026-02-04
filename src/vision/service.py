@@ -161,31 +161,27 @@ class VisionHeartbeat:
             if not screenshot:
                 return 1.0
 
-            # 2. Send screenshot to frontend immediately (use original for display)
             if self._on_browser_update:
                 await self._on_browser_update({
                     "type": "browser_screenshot",
                     "image_base64": screenshot
                 })
 
-            # 3. Check if image is similar to last - skip VLM if unchanged
-            if is_similar_to_last(screenshot):
-                logging.debug("[Vision Cycle] Screenshot similar to last, skipping VLM")
-                return 2.0  # Short wait before next check
 
-            # 4. Compress image for VLM (reduces latency)
+            if is_similar_to_last(screenshot):
+                logging.info("[Vision Cycle] Screenshot similar to last, skipping VLM")
+                return 2.0  
+
+
             compressed_screenshot = compress_image_for_vlm(screenshot)
 
-            # Use acquire_speech_slot only when we have something to say
             async with state.acquire_speech_slot("vision"):
-                # 5. Process through vision pipeline (AI Analysis)
                 request = HeartbeatRequest(
                     image_base64=compressed_screenshot,
                     timestamp=asyncio.get_event_loop().time(),
                     use_native_capture=False
                 )
-
-                # Use streaming for audio/response
+                
                 captured_text = ""
                 async for chunk in self.process_heartbeat_stream(request):
                     if chunk.get("type") == "text":
@@ -196,9 +192,11 @@ class VisionHeartbeat:
                 
                 # mark_speech_ended is handled by context manager
                 
-                duration = max(0, len(captured_text) * 0.075)
-                logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
-                return duration
+                # Wait for frontend to signal audio playback is complete
+                await state.wait_for_audio_complete(timeout=30.0)
+                
+                logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
+                return 2.0  # Short wait before next vision check
                         
         except Exception as e:
             logging.error(f"[Vision Cycle] Error: {e}")
@@ -237,9 +235,6 @@ class VisionHeartbeat:
                 
                 if should_analyze:
                     logging.info(f"[Action Loop] Triggering Vision (Click={is_click}, Overdue={is_overdue})")
-                    
-                    if is_click:
-                        await asyncio.sleep(2.0) 
                     
                     wait_duration = await self._process_vision_cycle()
                     self._last_analysis_time = asyncio.get_event_loop().time()

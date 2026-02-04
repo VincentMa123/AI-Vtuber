@@ -10,6 +10,39 @@ llm_provider = None
 
 _response_processing_lock = asyncio.Lock()
 
+
+SPEECH_GAP_SECONDS = 2.5
+
+MAX_HISTORY_MESSAGES = 20
+_chat_history: List[Dict[str, Any]] = []
+
+# Audio playback signaling
+_audio_complete_event = asyncio.Event()
+_waiting_for_audio = False
+
+def signal_audio_complete():
+    """Called by WebSocket handler when frontend signals audio playback complete."""
+    global _waiting_for_audio
+    if _waiting_for_audio:
+        logging.info("[State] Received audio_playback_complete signal from frontend")
+        _audio_complete_event.set()
+
+async def wait_for_audio_complete(timeout: float = 30.0) -> bool:
+    """Wait for frontend to signal audio playback is complete, with timeout fallback."""
+    global _waiting_for_audio
+    _audio_complete_event.clear()
+    _waiting_for_audio = True
+    try:
+        await asyncio.wait_for(_audio_complete_event.wait(), timeout=timeout)
+        logging.debug("[State] Audio complete signal received")
+        return True
+    except asyncio.TimeoutError:
+        logging.warning(f"[State] Audio complete wait timed out after {timeout}s")
+        return False
+    finally:
+        _waiting_for_audio = False
+
+
 @asynccontextmanager
 async def acquire_speech_slot(source: str = "unknown"):
 
@@ -19,30 +52,26 @@ async def acquire_speech_slot(source: str = "unknown"):
         try:
             yield
         finally:
+            if SPEECH_GAP_SECONDS > 0:
+                logging.debug(f"[State] Adding {SPEECH_GAP_SECONDS}s gap after speech")
+                await asyncio.sleep(SPEECH_GAP_SECONDS)
             logging.info(f"[State] {source} released speech slot")
 
-
-# ============ Chat History (Short-Term Memory) ============
-
-MAX_HISTORY_MESSAGES = 20  # 10 exchanges (user + assistant pairs)
-_chat_history: List[Dict[str, Any]] = []
-
 def add_to_history(role: str, content: str):
-    """Add a message to chat history."""
+
     global _chat_history
     _chat_history.append({"role": role, "content": content})
-    logging.debug(f"[State] History now has {len(_chat_history)} messages")
     # Keep only last N messages
     if len(_chat_history) > MAX_HISTORY_MESSAGES:
         _chat_history = _chat_history[-MAX_HISTORY_MESSAGES:]
     logging.debug(f"[State] History now has {len(_chat_history)} messages")
 
 def get_history() -> List[Dict[str, Any]]:
-    """Get a copy of chat history."""
+
     return _chat_history.copy()
 
 def clear_history():
-    """Clear chat history."""
+
     global _chat_history
     _chat_history = []
     logging.info("[State] Chat history cleared")

@@ -136,7 +136,7 @@ class QwenTTSProvider(BaseTTSProvider):
             return self.cached_voice_id
             
     async def initialize(self):
-        
+
         try:
              logging.info("[QwenTTS] Initializing... Enrolling/Checking voice.")
              await self.get_voice_id()
@@ -292,8 +292,6 @@ class QwenTTSProvider(BaseTTSProvider):
                         chunk = data
                         audio_chunk_buffer.append(chunk)
 
-                        # Buffer ~24KB (1s at 24kHz 16bit mono is 48kB/s? No 24000 * 2 = 48000 bytes/s)
-                        # 24000 bytes = 0.5s. 
                         if sum(len(c) for c in audio_chunk_buffer) >= 32000:
                             full_audio = b''.join(audio_chunk_buffer)
                             audio_chunk_buffer = []

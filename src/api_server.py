@@ -173,6 +173,18 @@ async def websocket_chat(websocket: WebSocket):
     try:
         while True:
             raw_data = await websocket.receive_text()
+            # Handle incoming messages from frontend
+            try:
+                data = json.loads(raw_data)
+                msg_type = data.get("type")
+                
+                if msg_type == "audio_playback_complete":
+                    # Frontend signals that audio playback has finished
+                    from core import state
+                    state.signal_audio_complete()
+                    
+            except json.JSONDecodeError:
+                pass  # Non-JSON message, ignore
     
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)

@@ -2,6 +2,10 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 
 export type EmotionType = 'happy' | 'sad' | 'angry' | 'excited' | 'neutral';
 
+interface UseAudioPlayerOptions {
+    onPlaybackComplete?: () => void;
+}
+
 interface UseAudioPlayerReturn {
     isSpeaking: boolean;
     audioEnabled: boolean;
@@ -12,7 +16,8 @@ interface UseAudioPlayerReturn {
     getCurrentVolume: () => number;
 }
 
-export function useAudioPlayer(): UseAudioPlayerReturn {
+export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPlayerReturn {
+    const { onPlaybackComplete } = options;
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [audioEnabled, setAudioEnabled] = useState(false);
 
@@ -300,14 +305,24 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
                     // Check again if we are really done
                     if (sourceNodesRef.current.length === 0) {
                         setSpeakingSafe(false);
+                        // Signal backend that playback is complete
+                        if (onPlaybackComplete) {
+                            console.log('[Audio] Playback complete, signaling backend');
+                            onPlaybackComplete();
+                        }
                     }
                 }, (remainingTime * 1000) + 100); // 100ms buffer
             } else {
                 setSpeakingSafe(false);
+                // Signal backend that playback is complete
+                if (onPlaybackComplete) {
+                    console.log('[Audio] Playback complete (no ctx), signaling backend');
+                    onPlaybackComplete();
+                }
             }
         }
 
-    }, [audioEnabled, setSpeakingSafe]);
+    }, [audioEnabled, setSpeakingSafe, onPlaybackComplete]);
 
     const getCurrentVolume = useCallback(() => {
         if (!analyserRef.current || !dataArrayRef.current) {

@@ -32,10 +32,13 @@ class BrowserController:
                         '--start-maximized',
                         '--disable-blink-features=AutomationControlled',
                         '--disable-gpu',
-                        '--disable-software-rasterizer'
+                        '--disable-software-rasterizer',
+                        '--disable-accelerated-2d-canvas',
+                        '--disable-gpu-compositing',
+                        '--disable-d3d11'
                     ]
                 )
-                logging.info("[Browser] Launched Google Chrome (channel='chrome')")
+                logging.info("[Browser] Launched Google Chrome (channel='chrome') with GPU disabled")
             except Exception as e:
                 logging.warning(f"[Browser] Failed to launch Chrome: {e}. Falling back to bundled Chromium.")
                 self.browser = await self.playwright.chromium.launch(
@@ -44,7 +47,10 @@ class BrowserController:
                         '--start-maximized',
                         '--disable-blink-features=AutomationControlled',
                         '--disable-gpu',
-                        '--disable-software-rasterizer'
+                        '--disable-software-rasterizer',
+                        '--disable-accelerated-2d-canvas',
+                        '--disable-gpu-compositing',
+                        '--disable-d3d11'
                     ]
                 )
             
@@ -219,13 +225,24 @@ class BrowserController:
                     await asyncio.sleep(1)
                     continue
                 
-                # Click random product from viewport
-                product = random.choice(products[:5])  # Top 5 in viewport
+                selection_pool = products[:8]  # Top 8 products
+                
+                if hasattr(self, '_last_clicked_index') and len(selection_pool) > 1:
+                    available_indices = [i for i in range(len(selection_pool)) if i != self._last_clicked_index]
+                    if available_indices:
+                        chosen_index = random.choice(available_indices)
+                    else:
+                        chosen_index = random.randrange(len(selection_pool))
+                else:
+                    chosen_index = random.randrange(len(selection_pool))
+                
+                product = selection_pool[chosen_index]
+                self._last_clicked_index = chosen_index
+                
                 try:
                     await product.click(timeout=3000)
-                    logging.info(f"[Browser] Clicked product (from viewport: {len(products_in_viewport) > 0})")
-                    # Wait for page to load before screenshot
-                    await asyncio.sleep(random.randint(2, 3))
+                    logging.info(f"[Browser] Clicked product #{chosen_index} (from viewport: {len(products_in_viewport) > 0})")
+                    await asyncio.sleep(random.uniform(1.0, 1.5))
                     return True
                 except Exception as e:
                     if "attached" in str(e) or "target closed" in str(e):
@@ -249,7 +266,7 @@ class BrowserController:
             
         try:
             await self.page.go_back()
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             logging.debug("[Browser] Navigated back")
         except Exception as e:
             logging.error(f"[Browser] Go back failed: {e}")
@@ -333,7 +350,8 @@ class BrowserController:
             return "no_page"
         
         current_url = await self.get_current_url()
-        is_product_page = "/product/" in current_url
+        # klikindomaret uses /xpress/ or /product/ for product pages
+        is_product_page = "/xpress/" in current_url
         is_homepage = current_url.rstrip('/') == self.BASE_URL.rstrip('/')
         
         # Get current scroll position
@@ -343,21 +361,14 @@ class BrowserController:
         
         # On product page: high chance to go back after viewing
         if is_product_page:
-
-            if at_top:
-                # First scroll down to see the product
-                await self.scroll_down(random.randint(200, 400))
-                return "scroll_down"
+            if random.random() < 0.8:
+                await Behavior.sleep(0.5, 1.5)
+                await self.go_back()
+                return "go_back"
             else:
-                # After viewing, 70% chance to go back
-                if random.random() < 0.7:
-                    await Behavior.sleep(0.5, 1.5)
-                    await self.go_back()
-                    return "go_back"
-                else:
-                    # 30% chance to scroll more
-                    await self.scroll_down(random.randint(100, 300))
-                    return "scroll_down"
+                # 20% chance to scroll more
+                await self.scroll_down(random.randint(100, 300))
+                return "scroll_down"
         
         # Check if load more button is visible
         if await self.is_load_more_visible():

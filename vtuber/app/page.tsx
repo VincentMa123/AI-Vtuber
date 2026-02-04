@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useDraggable } from '../hooks/useDraggable';
 import { useAudioPlayer, EmotionType } from '../hooks/useAudioPlayer';
@@ -16,8 +16,21 @@ const ScreenCapture = dynamic(() => import('../components/ScreenCapture'), { ssr
 const VTuberPage = () => {
   const [emotion, setEmotion] = useState<EmotionType>('neutral');
 
+  // Track WebSocket sender ref for audio callback
+  const sendMessageRef = React.useRef<((msg: object) => void) | null>(null);
+
+  // Callback when audio playback completes
+  const handlePlaybackComplete = useCallback(() => {
+    if (sendMessageRef.current) {
+      console.log('[VTuber] Signaling audio_playback_complete to backend');
+      sendMessageRef.current({ type: 'audio_playback_complete' });
+    }
+  }, []);
+
   // Custom hooks
-  const { isSpeaking, audioEnabled, enableAudio, playAudio, playAudioChunk, getCurrentVolume } = useAudioPlayer();
+  const { isSpeaking, audioEnabled, enableAudio, playAudio, playAudioChunk, getCurrentVolume } = useAudioPlayer({
+    onPlaybackComplete: handlePlaybackComplete
+  });
   const { position: avatarPosition, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: 0, y: 0 }
   });
@@ -68,6 +81,11 @@ const VTuberPage = () => {
   };
 
   const { isConnected, sendMessage } = useChatWebSocket(handleMessage);
+
+  // Keep sendMessageRef updated for audio playback callback
+  React.useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   // Handle Vision Reactions
   const handleVisionReaction = (text: string, audioBase64: string, category: string) => {

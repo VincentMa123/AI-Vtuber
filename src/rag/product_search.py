@@ -22,7 +22,7 @@ def load_product_dataset() -> Dict:
         return {"products": [], "categories": [], "promotions": []}
 
 
-def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float = 0.3) -> List[Dict]:
+def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float = 0.5) -> List[Dict]:
 
     if not query or not query.strip():
         return []
@@ -76,7 +76,7 @@ def get_all_promotions() -> List[Dict]:
     return dataset.get("promotions", [])
 
 
-def detect_product_query(message: str, threshold: float = 0.4) -> bool:
+def detect_product_query(message: str, threshold: float = 0.6) -> bool:
 
     if not message or len(message.strip()) < 3:
         return False
@@ -108,7 +108,7 @@ def detect_product_query(message: str, threshold: float = 0.4) -> bool:
         return False
 
 
-def detect_promotion_query(message: str, threshold: float = 0.4) -> bool:
+def detect_promotion_query(message: str, threshold: float = 0.6) -> bool:
 
     if not message or len(message.strip()) < 3:
         return False

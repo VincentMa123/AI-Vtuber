@@ -115,7 +115,18 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
         )
 
         task = asyncio.create_task(twitch_bot.start())
-        task.add_done_callback(lambda t: logging.error(f"[TwitchBot] Task failed: {t.exception()}") if t.exception() else None)
+        
+        def on_task_done(t):
+            try:
+                exc = t.exception()
+                if exc:
+                    logging.error(f"[TwitchBot] Task failed: {exc}")
+            except asyncio.CancelledError:
+                logging.info("[TwitchBot] Task was cancelled")
+            except Exception as e:
+                logging.error(f"[TwitchBot] Error in done callback: {e}")
+        
+        task.add_done_callback(on_task_done)
         logging.info("[TwitchBot] Starting bot...")
         
         return twitch_bot

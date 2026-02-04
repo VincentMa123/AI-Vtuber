@@ -6,7 +6,7 @@ def format_products_for_prompt(products: List[Dict]) -> str:
     if not products:
         return ""
     
-    formatted = "\n## Relevant Indomaret Products:\n"
+    formatted = "\n## Product Reference (DO NOT copy this format - use natural speech):\n"
     
     for i, product in enumerate(products, 1):
         name = product.get("name", "Unknown Product")
@@ -15,10 +15,11 @@ def format_products_for_prompt(products: List[Dict]) -> str:
         
         price_formatted = f"Rp {price:,}"
         
-        formatted += f"{i}. {name} - {price_formatted}\n"
-        formatted += f"   {description}\n"
+        formatted += f"- {name}: {price_formatted}\n"
+        if description:
+            formatted += f"  ({description})\n"
     
-    formatted += "\nFeel free to recommend these products naturally in your response!\n"
+    formatted += "\n[IMPORTANT: Mention products conversationally, e.g. 'Coba Wong Coco, enak dan murah!' - NEVER copy the format above]\n"
     
     return formatted
 

@@ -140,6 +140,10 @@ async def handle_streaming_response(
         await ws_manager.broadcast_audio_chunk("", is_complete=True)
         await ws_manager.broadcast_stream_end()
         
+        # Wait for frontend to signal audio playback is complete
+        # This replaces the estimated playback wait with actual signaling
+        await state.wait_for_audio_complete(timeout=30.0)
+        
         # Store AI response in history
         if full_text:
             state.add_to_history("assistant", full_text)

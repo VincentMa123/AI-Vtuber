@@ -13,13 +13,13 @@ DEEPSEEK_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1/chat/completions"
 
 # Remote vLLM Configuration
-REMOTE_VLLM_BASE_URL = os.getenv("REMOTE_VLLM_BASE_URL", "https://uncomparably-unconceding-dino.ngrok-free.dev/v1/chat/completions")
-REMOTE_VLLM_MODEL = os.getenv("REMOTE_VLLM_MODEL", "Qwen3-VL-2B")  
+REMOTE_VLLM_BASE_URL = "https://uncomparably-unconceding-dino.ngrok-free.dev/v1/chat/completions"
+REMOTE_VLLM_MODEL = "Qwen3-VL-2B"  
 
 # Qwen (DashScope) Configuration
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
-QWEN_MODEL = os.getenv("QWEN_MODEL", "qwen3-vl-plus") 
-QWEN_BASE_URL = os.getenv("QWEN_BASE_URL", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1")  
+QWEN_MODEL = "qwen3-vl-flash-2026-01-22" 
+QWEN_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"  
 
 TTS_PROVIDER = "qwen" #qwen, realtimetts
 REALTIMETTS_ENGINE = "system" #system, elevenlabs
@@ -32,7 +32,7 @@ QWEN_TTS_VOICE_FILE = "voice.mp3"
 
 
 CHAT_AGGREGATION_ENABLED = True
-AGGREGATION_WINDOW_SECONDS = 0.5
+AGGREGATION_WINDOW_SECONDS = 5.0
 MIN_RESPONSE_INTERVAL_SECONDS = 5.0
 MAX_MESSAGES_PER_USER_PER_WINDOW = 3
 MIN_MESSAGE_LENGTH = 2
