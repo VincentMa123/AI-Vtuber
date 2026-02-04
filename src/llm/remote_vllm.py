@@ -3,7 +3,7 @@ import logging
 from typing import Optional, List, Dict, Any, AsyncGenerator
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history
+from .base import BaseLLMProvider, sanitize_history, parse_sse_stream, build_user_content
 import json
 
 
@@ -42,13 +42,15 @@ class RemoteVLLMProvider(BaseLLMProvider):
     async def generate_stream(
         self, 
         message: str, 
-        history: List[Dict[str, Any]] = [], 
+        history: Optional[List[Dict[str, Any]]] = None, 
         image_base64: Optional[str] = None,
         **kwargs
     ) -> AsyncGenerator[str, None]:
 
         if not config.REMOTE_VLLM_BASE_URL:
             return
+            
+        history = history or []
         
         model_name = config.REMOTE_VLLM_MODEL
         if not model_name:
@@ -56,14 +58,6 @@ class RemoteVLLMProvider(BaseLLMProvider):
             if not model_name:
                 logging.error("[RemoteVLLM] Could not determine model name for streaming")
                 return
-        
-        current_human_msg = []
-        if image_base64:
-            current_human_msg.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{image_base64}"}
-            })
-        current_human_msg.append({"type": "text", "text": message})
         
         # Allow overriding system prompt
         system_prompt = kwargs.get("system_prompt")
@@ -75,9 +69,10 @@ class RemoteVLLMProvider(BaseLLMProvider):
         if history:
             messages.extend(sanitize_history(history))
         
+        user_content = build_user_content(message, image_base64)
         messages.append({
             "role": "user", 
-            "content": current_human_msg if image_base64 else message
+            "content": user_content
         })
         
         max_tokens = kwargs.get("max_tokens", 100)
@@ -100,24 +95,8 @@ class RemoteVLLMProvider(BaseLLMProvider):
                     logging.error(f"Remote vLLM streaming error: {response.status_code}")
                     return
                 
-                async for line in response.aiter_lines():
-        
-                    if not line.startswith("data: "):
-                        continue
-                    if line.strip() == "data: [DONE]":
-                        break
-                    try:
-                        data = json.loads(line[6:])  
-                        if "choices" in data and len(data["choices"]) > 0:
-                            delta = data["choices"][0].get("delta", {})
-                            content = delta.get("content", "")
-                            if content:
-                                yield content
-                    except json.JSONDecodeError:
-                        continue
-                    except Exception as e:
-                        logging.error(f"Error parsing streaming response: {e}")
-                        continue
+                async for chunk in parse_sse_stream(response):
+                    yield chunk
                         
         except Exception as e:
             logging.error(f"Remote vLLM streaming failed: {type(e).__name__}: {e}")

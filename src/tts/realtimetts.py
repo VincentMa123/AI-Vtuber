@@ -3,7 +3,7 @@ import wave
 import threading
 import asyncio
 from typing import Optional, AsyncGenerator
-from .base import BaseTTSProvider
+from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 from queue import Queue as ThreadQueue
@@ -193,15 +193,10 @@ class RealtimeTTSProvider(BaseTTSProvider):
                             audio_chunk_buffer = []
                             chunks_yielded += 1
                             
-                            wav_buffer = io.BytesIO()
-                            with wave.open(wav_buffer, 'wb') as wf:
-                                wf.setnchannels(1)
-                                wf.setsampwidth(2)
-                                wf.setframerate(self.sample_rate)
-                                wf.writeframes(full_audio)
+                            wav_bytes = create_wav_buffer(full_audio, self.sample_rate)
                             
                             logging.debug(f"[RealtimeTTS] Yielding large WAV chunk #{chunks_yielded} ({len(full_audio)} bytes)")
-                            yield wav_buffer.getvalue()
+                            yield wav_bytes
                 
                 except Exception as e:
                     logging.error(f"[RealtimeTTS] Error: {e}")
@@ -217,15 +212,10 @@ class RealtimeTTSProvider(BaseTTSProvider):
             # Yield remaining audio
             if audio_chunk_buffer:
                 full_audio = b''.join(audio_chunk_buffer)
-                wav_buffer = io.BytesIO()
-                with wave.open(wav_buffer, 'wb') as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(self.sample_rate)
-                    wf.writeframes(full_audio)
+                wav_bytes = create_wav_buffer(full_audio, self.sample_rate)
                 chunks_yielded += 1
                 logging.debug(f"[RealtimeTTS] Yielding final WAV chunk #{chunks_yielded} ({len(full_audio)} bytes)")
-                yield wav_buffer.getvalue()
+                yield wav_bytes
             
             if play_error:
                 logging.error(f"[RealtimeTTS] Play error: {play_error}")

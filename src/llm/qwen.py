@@ -1,10 +1,10 @@
 import logging
-import os
+
 from typing import Optional, List, Dict, Any, AsyncGenerator
 from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history
+from .base import BaseLLMProvider, sanitize_history, build_user_content
 
 class QwenProvider(BaseLLMProvider):
     
@@ -25,7 +25,7 @@ class QwenProvider(BaseLLMProvider):
     async def generate_stream(
         self, 
         message: str, 
-        history: List[Dict[str, Any]] = [], 
+        history: Optional[List[Dict[str, Any]]] = None, 
         image_base64: Optional[str] = None,
         **kwargs
     ) -> AsyncGenerator[str, None]:
@@ -33,14 +33,10 @@ class QwenProvider(BaseLLMProvider):
         if not self.client:
             logging.error("Qwen client not initialized.")
             return
+
+        history = history or []
         
-        current_human_msg = []
-        if image_base64:
-             current_human_msg.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{image_base64}"}
-            })
-        current_human_msg.append({"type": "text", "text": message})
+        user_content = build_user_content(message, image_base64)
         
         system_prompt = utils.get_system_prompt(user_message=message)
         messages = [{"role": "system", "content": system_prompt}]
@@ -50,7 +46,7 @@ class QwenProvider(BaseLLMProvider):
         
         messages.append({
             "role": "user", 
-            "content": current_human_msg if image_base64 else message
+            "content": user_content
         })
         
         max_tokens = kwargs.get("max_tokens", 128)

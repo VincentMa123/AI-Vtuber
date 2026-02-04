@@ -28,3 +28,15 @@ class BaseTTSProvider(ABC):
             audio = await self.generate_audio(full_text)
             if audio:
                 yield audio
+
+def create_wav_buffer(audio_data: bytes, sample_rate: int = 24000) -> bytes:
+    """Create a WAV buffer from raw PCM audio data."""
+    import io
+    import wave
+    wav_buffer = io.BytesIO()
+    with wave.open(wav_buffer, 'wb') as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(audio_data)
+    return wav_buffer.getvalue()

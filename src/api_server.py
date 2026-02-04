@@ -4,7 +4,7 @@ import core.check_models as check_models
 from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenProvider
 from tts import TTSManager
 from rag import initialize_rag
-from vision import HeartbeatRequest, HeartbeatResponse, VisionHeartbeat
+from vision import HeartbeatRequest, VisionHeartbeat
 import core.config as config
 import uvicorn
 import logging
@@ -18,7 +18,6 @@ from chat.models import (
 from chat.response_handler import handle_aggregated_response
 from ws.manager import ws_manager
 import json
-global vision_heartbeat
 
 app = FastAPI()
 
@@ -133,7 +132,7 @@ async def startup_event():
                 "complete": True
              })
         else:
-            # Pass through other messages (browser_screenshot, etc.)
+
             await ws_manager.broadcast(data)
     await vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
     logging.info("[Startup] Browser automation loop scheduled")

@@ -14,7 +14,7 @@ from typing import Optional, AsyncGenerator
 import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
-from .base import BaseTTSProvider
+from .base import BaseTTSProvider, create_wav_buffer
 from .text_normalizer import normalize_indonesian_text, normalize_for_tts
 import core.config as config
 
@@ -154,7 +154,7 @@ class QwenTTSProvider(BaseTTSProvider):
         # Reset queue
         while not self.audio_queue.empty():
             try: self.audio_queue.get_nowait()
-            except: pass
+            except queue.Empty: pass
 
         callback = QwenTTSCallback(self)
         self.stream_client = QwenTtsRealtime(
@@ -297,15 +297,10 @@ class QwenTTSProvider(BaseTTSProvider):
                             audio_chunk_buffer = []
                             chunks_yielded += 1
                             
-                            wav_buffer = io.BytesIO()
-                            with wave.open(wav_buffer, 'wb') as wf:
-                                wf.setnchannels(1)
-                                wf.setsampwidth(2)
-                                wf.setframerate(24000)
-                                wf.writeframes(full_audio)
+                            wav_bytes = create_wav_buffer(full_audio)
                             
                             logging.info(f"[QwenTTS] Yielding WAV #{chunks_yielded}")
-                            yield wav_buffer.getvalue()
+                            yield wav_bytes
                             
                     elif msg_type == 'done':
                         logging.info("[QwenTTS] Turn complete signal received.")
@@ -327,13 +322,8 @@ class QwenTTSProvider(BaseTTSProvider):
             # Yield remaining audio
             if audio_chunk_buffer:
                 full_audio = b''.join(audio_chunk_buffer)
-                wav_buffer = io.BytesIO()
-                with wave.open(wav_buffer, 'wb') as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(24000)
-                    wf.writeframes(full_audio)
-                yield wav_buffer.getvalue()
+                wav_bytes = create_wav_buffer(full_audio)
+                yield wav_bytes
                 logging.info(f"[QwenTTS] Yielded final WAV.")
 
             await feed_task

@@ -25,8 +25,7 @@ def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             else:
                 clean_msg["content"] = new_content
         
-        if clean_msg["role"] == "assistant":
-            pass
+
             
         clean_history.append(clean_msg)
     
@@ -43,8 +42,34 @@ class BaseLLMProvider(ABC):
         image_base64: Optional[str] = None,
         **kwargs
     ) -> AsyncGenerator[str, None]:        
-    
-        # Default implementation: fallback to non-streaming and yield full response
-        result = await self.generate(message, history, image_base64, **kwargs)
-        if result:
-            yield result
+        # Abstract method, must be implemented by subclasses
+        yield ""
+
+async def parse_sse_stream(response) -> AsyncGenerator[str, None]:
+    """Parse SSE streaming responses from OpenAI-compatible APIs."""
+    import json
+    async for line in response.aiter_lines():
+        if not line or not line.startswith("data: "):
+            continue
+        if line.strip() == "data: [DONE]":
+            break
+        try:
+            data = json.loads(line[6:])
+            if "choices" in data and len(data["choices"]) > 0:
+                delta = data["choices"][0].get("delta", {})
+                content = delta.get("content", "")
+                if content:
+                    yield content
+        except json.JSONDecodeError:
+            continue
+
+def build_user_content(message: str, image_base64: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Build user message content with optional image."""
+    content = []
+    if image_base64:
+        content.append({
+            "type": "image_url",
+            "image_url": {"url": f"data:image/png;base64,{image_base64}"}
+        })
+    content.append({"type": "text", "text": message})
+    return content

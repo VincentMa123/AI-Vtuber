@@ -21,14 +21,14 @@ _audio_complete_event = asyncio.Event()
 _waiting_for_audio = False
 
 def signal_audio_complete():
-    """Called by WebSocket handler when frontend signals audio playback complete."""
+
     global _waiting_for_audio
     if _waiting_for_audio:
         logging.info("[State] Received audio_playback_complete signal from frontend")
         _audio_complete_event.set()
 
 async def wait_for_audio_complete(timeout: float = 30.0) -> bool:
-    """Wait for frontend to signal audio playback is complete, with timeout fallback."""
+
     global _waiting_for_audio
     _audio_complete_event.clear()
     _waiting_for_audio = True

@@ -155,8 +155,7 @@ async def handle_streaming_response(
                 await bot.send_response(full_text)
         
         logging.info(f"[Response Handler] Streaming complete: {len(full_text)} chars")
-        if 'start_time' in locals():
-             logging.info(f"[Response Handler] Streaming took {time.time() - start_time:.2f}s")
+        logging.info(f"[Response Handler] Streaming took {time.time() - start_time:.2f}s")
         
     except Exception as e:
         logging.error(f"[Response Handler] Streaming error: {e}", exc_info=True)

@@ -1,7 +1,7 @@
 import logging
 import base64
 import core.config as config
-import core.utils as utils
+
 from typing import Optional, Dict, AsyncGenerator
 from .realtimetts import RealtimeTTSProvider
 from .qwen_tts import QwenTTSProvider
@@ -20,7 +20,7 @@ class TTSManager:
         self.providers["qwen"] = QwenTTSProvider()
 
     async def initialize(self):
-        """Initialize all providers"""
+   
         if self.providers.get("qwen"):
             await self.providers["qwen"].initialize()
 

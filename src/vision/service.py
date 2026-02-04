@@ -4,10 +4,7 @@ from typing import Dict, Tuple, Optional, Callable, Any
 import sys
 import os
 
-# Add project root to path for browser module import
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+
 
 import core.config as config
 import core.state as state
@@ -15,10 +12,7 @@ import core.utils as utils
 from core.utils import compress_image_for_vlm, is_similar_to_last, reset_similarity_state
 from .models import HeartbeatRequest, HeartbeatResponse
 from browser import BrowserController, get_browser_controller, Behavior
-import mss
-import io
-import base64
-from PIL import Image
+
 import random
 import uuid
 
