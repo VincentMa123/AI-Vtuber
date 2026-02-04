@@ -15,7 +15,7 @@ import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
 from .base import BaseTTSProvider
-from .text_normalizer import normalize_indonesian_text
+from .text_normalizer import normalize_indonesian_text, normalize_for_tts
 import core.config as config
 
 class QwenTTSCallback(QwenTtsRealtimeCallback):
@@ -136,7 +136,7 @@ class QwenTTSProvider(BaseTTSProvider):
             return self.cached_voice_id
             
     async def initialize(self):
-        """Pre-fetch voice ID on startup"""
+        
         try:
              logging.info("[QwenTTS] Initializing... Enrolling/Checking voice.")
              await self.get_voice_id()
@@ -254,12 +254,18 @@ class QwenTTSProvider(BaseTTSProvider):
                             complete_text = text_buffer[:last_boundary_idx + 1]
                             text_buffer = text_buffer[last_boundary_idx + 1:]
                 
-                            normalized = normalize_indonesian_text(complete_text)
-                            await asyncio.to_thread(self.stream_client.append_text, normalized)
+                            normalized = normalize_for_tts(complete_text)
+                            if normalized:  # Only send if not empty after cleaning
+                                logging.info(f"[QwenTTS] Sending to TTS: '{normalized[:80]}{'...' if len(normalized) > 80 else ''}'")
+                                await asyncio.to_thread(self.stream_client.append_text, normalized)
+                            else:
+                                logging.debug(f"[QwenTTS] Skipped empty/short chunk: '{complete_text[:50]}'")
                     
                     if text_buffer and self.stream_client:
-                        normalized = normalize_indonesian_text(text_buffer)
-                        await asyncio.to_thread(self.stream_client.append_text, normalized)
+                        normalized = normalize_for_tts(text_buffer)
+                        if normalized:
+                            logging.info(f"[QwenTTS] Sending final to TTS: '{normalized[:80]}{'...' if len(normalized) > 80 else ''}'")
+                            await asyncio.to_thread(self.stream_client.append_text, normalized)
                     
                     if self.stream_client:
                         await asyncio.to_thread(self.stream_client.finish)

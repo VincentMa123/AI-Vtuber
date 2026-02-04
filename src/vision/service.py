@@ -12,6 +12,7 @@ if project_root not in sys.path:
 import core.config as config
 import core.state as state
 import core.utils as utils
+from core.utils import compress_image_for_vlm, is_similar_to_last, reset_similarity_state
 from .models import HeartbeatRequest, HeartbeatResponse
 from browser import BrowserController, get_browser_controller, Behavior
 import mss
@@ -152,46 +153,50 @@ class VisionHeartbeat:
     async def _process_vision_cycle(self):
 
         try:
-            # Wait for speech cooldown to prevent overlap with chat
-            wait_time = await state.wait_for_speech_cooldown()
-            if wait_time > 0:
-                logging.debug(f"[Vision Cycle] Waited {wait_time:.1f}s for speech cooldown")
-            
             # 1. Capture screenshot
             screenshot = await self.browser_controller.get_screenshot()
             if not screenshot:
-                return
+                return 0
 
-            # 2. Send screenshot to frontend immediately
+            # 2. Send screenshot to frontend immediately (use original for display)
             if self._on_browser_update:
                 await self._on_browser_update({
                     "type": "browser_screenshot",
                     "image_base64": screenshot
                 })
 
-            # 3. Process through vision pipeline (AI Analysis)
-            request = HeartbeatRequest(
-                image_base64=screenshot,
-                timestamp=asyncio.get_event_loop().time(),
-                use_native_capture=False
-            )
+            # 3. Check if image is similar to last - skip VLM if unchanged
+            if is_similar_to_last(screenshot):
+                logging.debug("[Vision Cycle] Screenshot similar to last, skipping VLM")
+                return 2.0  # Short wait before next check
 
-            # Use streaming for audio/response
-            captured_text = ""
-            async for chunk in self.process_heartbeat_stream(request):
-                if chunk.get("type") == "text":
-                    captured_text = chunk.get("content", "")
-                    
-                if self._on_browser_update:
-                    await self._on_browser_update(chunk)
-            
-            # Mark speech ended for cooldown
-            state.mark_speech_ended()
-            
-            duration = max(0, len(captured_text) * 0.075)
-            logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
-            return duration
-                    
+            # 4. Compress image for VLM (reduces latency)
+            compressed_screenshot = compress_image_for_vlm(screenshot)
+
+            # Use acquire_speech_slot only when we have something to say
+            async with state.acquire_speech_slot("vision"):
+                # 5. Process through vision pipeline (AI Analysis)
+                request = HeartbeatRequest(
+                    image_base64=compressed_screenshot,
+                    timestamp=asyncio.get_event_loop().time(),
+                    use_native_capture=False
+                )
+
+                # Use streaming for audio/response
+                captured_text = ""
+                async for chunk in self.process_heartbeat_stream(request):
+                    if chunk.get("type") == "text":
+                        captured_text = chunk.get("content", "")
+                        
+                    if self._on_browser_update:
+                        await self._on_browser_update(chunk)
+                
+                # mark_speech_ended is handled by context manager
+                
+                duration = max(0, len(captured_text) * 0.075)
+                logging.info(f"[Vision Cycle] Text length: {len(captured_text)}, Calculated wait: {duration:.1f}s")
+                return duration
+                        
         except Exception as e:
             logging.error(f"[Vision Cycle] Error: {e}")
             return 5.0 # Fallback duration
@@ -223,7 +228,7 @@ class VisionHeartbeat:
                 current_time = asyncio.get_event_loop().time()
                 is_click = (action == "click_product")
 
-                is_overdue = (current_time - self._last_analysis_time) >= random.uniform(15, 25)
+                is_overdue = (current_time - self._last_analysis_time) >= random.uniform(20, 25)
                 
                 should_analyze = is_click or is_overdue
                 

@@ -371,7 +371,7 @@ class BrowserController:
         elif at_top:
             actions = ['scroll_down', 'scroll_down', 'scroll_down', 'scroll_down', 'click_product']
         else:
-            actions = ['scroll_down', 'scroll_down', 'scroll_down', 'scroll_up', 'click_product', 'back']
+            actions = ['scroll_down', 'scroll_down', 'scroll_up', 'click_product', 'click_product', 'back']
         
         action = random.choice(actions)
 

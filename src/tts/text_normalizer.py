@@ -100,9 +100,53 @@ class IndonesianTextNormalizer:
             logging.debug(f"[TextNormalizer] '{original_text}' -> '{text}'")
         
         return text
+    
+    def clean_for_tts(self, text: str) -> str:
+        if not text:
+            return text
+        
+        # Remove emojis and special Unicode characters
+        # Keep: letters (any language), digits, basic punctuation, spaces
+        cleaned = ""
+        for char in text:
+            # Keep alphanumeric (including Indonesian/international chars)
+            if char.isalnum():
+                cleaned += char
+            # Keep basic punctuation and spaces
+            elif char in ' .,!?;:\'"()-\n':
+                cleaned += char
+            # Skip everything else (emojis, symbols, etc.)
+        
+        # Clean up multiple spaces
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        
+        # Remove standalone punctuation (like just "..." or "!!!")
+        cleaned = re.sub(r'^[.,!?;:\'"()\-\s]+$', '', cleaned)
+        
+        return cleaned
+    
+    def normalize_for_tts(self, text: str, min_length: int = 3) -> str:
+        if not text:
+            return ""
+        
+        # First normalize (currency, units, abbreviations)
+        normalized = self.normalize(text)
+        
+        # Then clean non-speakable characters
+        cleaned = self.clean_for_tts(normalized)
+        
+        # Check minimum length (avoid tiny fragments that cause static)
+        if len(cleaned.strip()) < min_length:
+            logging.debug(f"[TextNormalizer] Skipping short fragment: '{cleaned}'")
+            return ""
+        
+        return cleaned
 
 # Global instance
 _normalizer = IndonesianTextNormalizer()
 
 def normalize_indonesian_text(text: str) -> str:
     return _normalizer.normalize(text)
+
+def normalize_for_tts(text: str, min_length: int = 3) -> str:
+    return _normalizer.normalize_for_tts(text, min_length)

@@ -24,43 +24,40 @@ async def handle_aggregated_response(
     use_streaming: bool = True,
 ) -> None:
 
-    try:
-        # Wait for speech cooldown to prevent audio overlap
-        wait_time = await state.wait_for_speech_cooldown()
-        if wait_time > 0:
-            logging.debug(f"[Response Handler] Waited {wait_time:.1f}s for speech cooldown")
-        
-        logging.info(f"[Response Handler] Generating response for: {message[:100]}...")
-        
-        user_emotion = detect_emotion(message)
-        logging.info(f"[Response Handler] User emotion detected: {user_emotion}")
-        
-        emotion_instruction = EMOTION_CONTEXT.get(user_emotion, "")
-        enhanced_message = message
-        if emotion_instruction:
-            enhanced_message = f"[EMOTION CONTEXT: {emotion_instruction}]\n\nUser message: {message}"
-        
-        llm_provider = state.llm_provider
-        provider = llm_providers.get(llm_provider)
-        
-        if not provider:
-            logging.error(f"[Response Handler] Error: Invalid LLM provider: {llm_provider}")
-            return
-
-        if use_streaming:
-            try:
-                await handle_streaming_response(
-                    enhanced_message=enhanced_message,
-                    provider=provider,
-                    tts_manager=tts_manager,
-                    user_emotion=user_emotion
-                )
-                return
-            except Exception as e:
-                logging.warning(f"[Response Handler] Streaming failed: {e}, falling back to non-streaming")
+    # Use acquire_speech_slot to ensure exclusive access during response
+    async with state.acquire_speech_slot("chat"):
+        try:
+            logging.info(f"[Response Handler] Generating response for: {message[:100]}...")
             
-    except Exception as e:
-        logging.error(f"[Response Handler] Error: {e}", exc_info=True)
+            user_emotion = detect_emotion(message)
+            logging.info(f"[Response Handler] User emotion detected: {user_emotion}")
+            
+            emotion_instruction = EMOTION_CONTEXT.get(user_emotion, "")
+            enhanced_message = message
+            if emotion_instruction:
+                enhanced_message = f"[EMOTION CONTEXT: {emotion_instruction}]\n\nUser message: {message}"
+            
+            llm_provider = state.llm_provider
+            provider = llm_providers.get(llm_provider)
+            
+            if not provider:
+                logging.error(f"[Response Handler] Error: Invalid LLM provider: {llm_provider}")
+                return
+
+            if use_streaming:
+                try:
+                    await handle_streaming_response(
+                        enhanced_message=enhanced_message,
+                        provider=provider,
+                        tts_manager=tts_manager,
+                        user_emotion=user_emotion
+                    )
+                    return
+                except Exception as e:
+                    logging.warning(f"[Response Handler] Streaming failed: {e}, falling back to non-streaming")
+            
+        except Exception as e:
+            logging.error(f"[Response Handler] Error: {e}", exc_info=True)
 
 
 async def handle_streaming_response(
