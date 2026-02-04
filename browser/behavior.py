@@ -34,5 +34,5 @@ class Behavior:
                 await page.evaluate(f"window.scrollBy(0, {step * direction})")
                 current_scroll += step
             
-            # Consistent frame time (approx 60fps)
+            # Consistent frame time
             await asyncio.sleep(0.016)

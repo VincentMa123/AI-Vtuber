@@ -242,7 +242,7 @@ class BrowserController:
                 try:
                     await product.click(timeout=3000)
                     logging.info(f"[Browser] Clicked product #{chosen_index} (from viewport: {len(products_in_viewport) > 0})")
-                    await asyncio.sleep(random.uniform(1.0, 1.5))
+                    await asyncio.sleep(random.uniform(1.5, 2.5))
                     return True
                 except Exception as e:
                     if "attached" in str(e) or "target closed" in str(e):
