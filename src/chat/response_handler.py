@@ -54,7 +54,7 @@ async def handle_aggregated_response(
                     )
                     return
                 except Exception as e:
-                    logging.warning(f"[Response Handler] Streaming failed: {e}, falling back to non-streaming")
+                    logging.warning(f"[Response Handler] Streaming failed: {e}")
             
         except Exception as e:
             logging.error(f"[Response Handler] Error: {e}", exc_info=True)
@@ -78,7 +78,13 @@ async def handle_streaming_response(
     full_text = ""
     
     try:
-        text_stream = provider.generate_stream(enhanced_message, [], None)
+        # Get chat history for context
+        history = state.get_history()
+        
+        # Store user message in history
+        state.add_to_history("user", enhanced_message)
+        
+        text_stream = provider.generate_stream(enhanced_message, history, None)
         
         text_queue = asyncio.Queue()
         min_tts_chunk = 1  
@@ -134,8 +140,9 @@ async def handle_streaming_response(
         await ws_manager.broadcast_audio_chunk("", is_complete=True)
         await ws_manager.broadcast_stream_end()
         
-        # Mark speech ended for cooldown
-        state.mark_speech_ended()
+        # Store AI response in history
+        if full_text:
+            state.add_to_history("assistant", full_text)
         
         # Send to Twitch chat if bot is available
         if config.TWITCH_ENABLED and full_text:
@@ -149,6 +156,5 @@ async def handle_streaming_response(
         
     except Exception as e:
         logging.error(f"[Response Handler] Streaming error: {e}", exc_info=True)
-        state.mark_speech_ended()  # Also mark ended on error
         await ws_manager.broadcast_stream_end()
         raise

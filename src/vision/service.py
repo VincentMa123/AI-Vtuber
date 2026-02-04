@@ -48,9 +48,12 @@ class VisionHeartbeat:
              logging.warning("Failed to load vision_reaction.md, using default system prompt")
 
         try:
+            # Use shared history for context
+            history = state.get_history()
+            
             async for token in provider.generate_stream(
                 message="React to this image.", 
-                history=[], 
+                history=history, 
                 image_base64=image_base64,
                 system_prompt=system_prompt, # Override default system prompt
                 max_tokens=128 # Adjusted to prevent cut-offs
@@ -156,7 +159,7 @@ class VisionHeartbeat:
             # 1. Capture screenshot
             screenshot = await self.browser_controller.get_screenshot()
             if not screenshot:
-                return 0
+                return 1.0
 
             # 2. Send screenshot to frontend immediately (use original for display)
             if self._on_browser_update:
