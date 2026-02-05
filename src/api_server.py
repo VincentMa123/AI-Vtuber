@@ -9,6 +9,7 @@ import core.config as config
 import uvicorn
 import logging
 import core.logger as logger
+from core import state
 from twitch.bot import start_twitch_bot
 from chat.aggregator import ChatAggregator
 from chat.models import (
@@ -137,33 +138,6 @@ async def startup_event():
     await vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
     logging.info("[Startup] Browser automation loop scheduled")
 
-@app.post("/api/chat/batch")
-async def batch_chat(request: BatchChatRequest):
-
-    if not chat_aggregator:
-        raise HTTPException(status_code=503, detail="Chat aggregator not initialized")
-    
-    if not chat_aggregator.config.enabled:
-        raise HTTPException(status_code=400, detail="Chat aggregation is disabled")
-    
-    # Create chat message
-    chat_msg = ChatMessage(
-        message=request.message,
-        user_id=request.user_id,
-        username=request.username,
-        timestamp=request.timestamp,
-        image_base64=request.image_base64
-    )
-    
-    # Submit to aggregator
-    accepted = await chat_aggregator.submit_message(chat_msg)
-    
-    return {
-        "accepted": accepted,
-        "queue_size": chat_aggregator.message_queue.qsize(),
-        "message": "Message queued for processing" if accepted else "Message filtered"
-    }
-
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):
@@ -179,7 +153,6 @@ async def websocket_chat(websocket: WebSocket):
                 
                 if msg_type == "audio_playback_complete":
                     # Frontend signals that audio playback has finished
-                    from core import state
                     state.signal_audio_complete()
                     
             except json.JSONDecodeError:

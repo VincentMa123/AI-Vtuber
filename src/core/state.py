@@ -11,7 +11,7 @@ llm_provider = None
 _response_processing_lock = asyncio.Lock()
 
 
-SPEECH_GAP_SECONDS = 1.5
+SPEECH_GAP_SECONDS = 1.0
 
 MAX_HISTORY_MESSAGES = 20
 _chat_history: List[Dict[str, Any]] = []

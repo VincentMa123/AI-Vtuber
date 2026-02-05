@@ -1,8 +1,3 @@
-"""
-Chat Aggregation Service for AI VTuber
-Handles message batching, priority scoring, and spam filtering
-"""
-
 import asyncio
 import time
 import logging
@@ -10,6 +5,8 @@ from typing import List, Dict, Optional, Tuple
 from .models import ChatMessage, AggregationConfig
 from .scoring import ChatScorer
 from .filters import ChatFilter
+from chat.emotions import detect_emotion
+from collections import Counter
 
 class ChatAggregator:
     def __init__(self, config: AggregationConfig = None):
@@ -99,7 +96,6 @@ class ChatAggregator:
                 logging.error(f"[ChatAggregator] Error in processing loop: {e}", exc_info=True)
     
     async def _process_batch(self, batch: List[ChatMessage]):
-        """Process a batch of messages and generate AI response"""
 
         batch.sort(key=lambda m: m.priority_score, reverse=True)
         
@@ -114,11 +110,29 @@ class ChatAggregator:
         try:
             formatted_message = self.get_batch_for_llm(batch)
             
-            logging.info(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}...")
+            # Determine dominant emotion from the batch
+            emotions = []
+            for msg in batch:
+                # Use raw message content for better emotion detection
+                clean_msg = msg.message.replace("[TEST] ", "") # distinct for test messages
+                emotions.append(detect_emotion(clean_msg))
+
+            if emotions:
+                dominant_emotion = Counter(emotions).most_common(1)[0][0]
+                           
+            logging.info(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}... (Emotion: {dominant_emotion})")
             
             start_time = time.time()
             if self.response_callback:
-                await self.response_callback(formatted_message)
+                if asyncio.iscoroutinefunction(self.response_callback):
+                    try:
+                        # Try passing emotion if supported
+                        await self.response_callback(formatted_message, dominant_emotion)
+                    except TypeError:
+                        # Fallback for callbacks that don't accept emotion yet
+                        await self.response_callback(formatted_message)
+                else:
+                    self.response_callback(formatted_message)
                 end_time = time.time()
                 logging.info(f"[ChatAggregator] Response processing took {end_time - start_time:.2f}s")
             else:

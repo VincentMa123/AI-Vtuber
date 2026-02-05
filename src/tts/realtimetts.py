@@ -7,6 +7,7 @@ from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 from queue import Queue as ThreadQueue
+from .text_normalizer import normalize_indonesian_text, normalize_for_tts
 import logging
 
 class RealtimeTTSProvider(BaseTTSProvider):
@@ -70,13 +71,73 @@ class RealtimeTTSProvider(BaseTTSProvider):
             feed_complete = False
             
             async def feed_tokens_to_queue():
-                """Feed tokens from async generator to sync queue"""
+
                 nonlocal feed_complete
+                text_buffer = ""
+
+                def is_sentence_boundary(text, idx):
+                    
+                    char = text[idx]
+                        
+                    if char == '\n':
+                        return True
+                    
+                    # ! and ? are always sentence endings
+                    if char in {'!', '?'}:
+                        return True
+                    
+                    # For period, check if it's between digits (number separator)
+                    if char == '.':
+                        # Check character before: if digit, might be number
+                        if idx > 0 and text[idx - 1].isdigit():
+                            # If at end of buffer AND preceded by digit, DON'T break
+                            # (might be incomplete like "14." waiting for "000")
+                            if idx + 1 >= len(text):
+                                return False  # Wait for more text
+                            # Check character after: if digit, it's a number separator
+                            if text[idx + 1].isdigit():
+                                return False  # "16.000" - not a sentence boundary
+                        
+                        # Period followed by space or uppercase = sentence end
+                        if idx + 1 >= len(text):  
+                            return True  # End of stream
+                        next_char = text[idx + 1]
+                        if next_char == ' ' or next_char.isupper():
+                            return True
+
+                        return False 
+                    
+                    return False
+
                 try:
                     async for token in text_stream:
-                        text_queue.put(token)
+                        if not token: continue
+                        text_buffer += token
+                        
+                        last_boundary_idx = -1
+                        for i in range(len(text_buffer)):
+                            if is_sentence_boundary(text_buffer, i):
+                                last_boundary_idx = i
+                        
+                        if last_boundary_idx >= 0:
+                            complete_text = text_buffer[:last_boundary_idx + 1]
+                            text_buffer = text_buffer[last_boundary_idx + 1:]
+                            
+                            normalized = normalize_for_tts(complete_text)
+                            if normalized:
+                                logging.debug(f"[RealtimeTTS] Normalized segment: '{normalized}'")
+                                text_queue.put(normalized)
+                    
+                    # Flush remaining buffer
+                    if text_buffer:
+                        normalized = normalize_for_tts(text_buffer)
+                        if normalized:
+                            logging.debug(f"[RealtimeTTS] Normalized final segment: '{normalized}'")
+                            text_queue.put(normalized)
+                            
                     text_queue.put(None)  # Signal end
                     feed_complete = True
+                    
                 except Exception as e:
                     logging.error(f"[RealtimeTTS] Error feeding tokens: {e}")
                     text_queue.put(None)
@@ -226,4 +287,5 @@ class RealtimeTTSProvider(BaseTTSProvider):
             logging.error(f"[RealtimeTTS] Streaming failed: {e}")
             import traceback
             traceback.print_exc()
+
 

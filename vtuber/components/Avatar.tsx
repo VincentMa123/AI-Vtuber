@@ -227,19 +227,6 @@ const Avatar: React.FC<AvatarProps> = ({emotion, getCurrentVolume }) => {
     return (
         <div className="w-full h-full flex items-center justify-center overflow-visible relative">
             <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-
-            {/* Debug Motion Buttons */}
-            <div className="absolute bottom-4 right-4 flex flex-col gap-2 pointer-events-auto">
-                {MOTION_GROUPS.map(group => (
-                    <button
-                        key={group}
-                        onClick={() => playMotion(group)}
-                        className="bg-black/50 hover:bg-black/70 text-white text-xs px-2 py-1 rounded"
-                    >
-                        {group}
-                    </button>
-                ))}
-            </div>
         </div>
     );
 };

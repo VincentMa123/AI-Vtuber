@@ -187,7 +187,7 @@ class VisionHeartbeat:
                 # mark_speech_ended is handled by context manager
                 
                 # Wait for frontend to signal audio playback is complete
-                await state.wait_for_audio_complete(timeout=30.0)
+                await state.wait_for_audio_complete(timeout=15.0)
                 
                 logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
                 return 2.0  # Short wait before next vision check
