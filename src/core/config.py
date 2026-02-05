@@ -22,10 +22,10 @@ QWEN_MODEL = "qwen3-vl-flash-2026-01-22"
 QWEN_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"  
 
 TTS_PROVIDER = "realtimetts" #qwen, realtimetts
-REALTIMETTS_ENGINE = "elevenlabs" #system, elevenlabs
+REALTIMETTS_ENGINE = "system" #system, elevenlabs
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
-ELEVENLABS_VOICE_ID = "cgSgspJ2msm6clMCkdW9"  
+ELEVENLABS_VOICE_ID = "jqPbtJasUGU5J3qH8a14"  
 
 QWEN_TTS_MODEL = "qwen3-tts-vc-realtime-2025-11-27"
 QWEN_TTS_VOICE_FILE = "voice.mp3"  

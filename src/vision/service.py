@@ -152,8 +152,6 @@ class VisionHeartbeat:
         try:
             # 1. Capture screenshot
             screenshot = await self.browser_controller.get_screenshot()
-            if not screenshot:
-                return 1.0
 
             if self._on_browser_update:
                 await self._on_browser_update({
@@ -164,8 +162,6 @@ class VisionHeartbeat:
 
             if is_similar_to_last(screenshot):
                 logging.info("[Vision Cycle] Screenshot similar to last, skipping VLM")
-                return 2.0  
-
 
             compressed_screenshot = compress_image_for_vlm(screenshot)
 
@@ -184,17 +180,13 @@ class VisionHeartbeat:
                     if self._on_browser_update:
                         await self._on_browser_update(chunk)
                 
-                # mark_speech_ended is handled by context manager
-                
                 # Wait for frontend to signal audio playback is complete
-                await state.wait_for_audio_complete(timeout=15.0)
+                await state.wait_for_audio_complete(timeout=10.0)
                 
                 logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
-                return 2.0  # Short wait before next vision check
                         
         except Exception as e:
             logging.error(f"[Vision Cycle] Error: {e}")
-            return 5.0 # Fallback duration
 
 
 
@@ -230,14 +222,12 @@ class VisionHeartbeat:
                 if should_analyze:
                     logging.info(f"[Action Loop] Triggering Vision (Click={is_click}, Overdue={is_overdue})")
                     
-                    wait_duration = await self._process_vision_cycle()
+                    await self._process_vision_cycle()
                     self._last_analysis_time = asyncio.get_event_loop().time()
                     
-                    logging.info(f"[Action Loop] Waiting {wait_duration:.1f}s for speech to finish...")
-                    await asyncio.sleep(wait_duration)
                 else:
-                    # Natural variable delay between actions
-                    await Behavior.sleep(1, 3)
+                    # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
+                    await Behavior.guarded_sleep(self.browser_controller.page, 1, 3)
 
             except asyncio.CancelledError:
                 break

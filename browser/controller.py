@@ -58,8 +58,9 @@ class BrowserController:
             context = await self.browser.new_context(no_viewport=True)
             self.page = await context.new_page()
 
-            await self.page.goto(self.BASE_URL, wait_until='domcontentloaded', timeout=60000) 
+            await self.page.goto(self.BASE_URL, wait_until='domcontentloaded', timeout=60000)
             
+
             self.is_running = True
             logging.info(f"[Browser] Started and navigated to {self.BASE_URL}")
             return True
@@ -167,8 +168,7 @@ class BrowserController:
                 try:
                     button = await self.page.query_selector(selector)
                     if button and await button.is_visible():
-                        await button.scroll_into_view_if_needed()
-                        await asyncio.sleep(0.5)
+                        await asyncio.sleep(0.3)
                         await button.click()
                         logging.info("[Browser] Clicked 'Load More' button")
                         await asyncio.sleep(2)  # Wait for content to load
@@ -295,6 +295,7 @@ class BrowserController:
                 logging.info(f"[Browser] Clicked category: {category_name}")
         except Exception as e:
             logging.error(f"[Browser] Click category failed: {e}")
+            
     async def get_scroll_position(self) -> dict:
         """Get current scroll position and page dimensions."""
         if not self.page:
@@ -361,13 +362,12 @@ class BrowserController:
         
         # On product page: high chance to go back after viewing
         if is_product_page:
-            if random.random() < 0.8:
+            if random.random() < 0.7:
                 await Behavior.sleep(0.5, 1.5)
                 await self.go_back()
                 return "go_back"
             else:
-                # 20% chance to scroll more
-                await self.scroll_down(random.randint(100, 300))
+                await self.scroll_down(random.randint(100, 400))
                 return "scroll_down"
         
         # Check if load more button is visible

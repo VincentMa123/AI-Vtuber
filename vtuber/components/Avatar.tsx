@@ -12,7 +12,7 @@ interface AvatarProps {
     getCurrentVolume?: () => number;
 }
 
-const Avatar: React.FC<AvatarProps> = ({emotion, getCurrentVolume }) => {
+const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [model, setModel] = useState<any>(null);
     const appRef = useRef<PIXI.Application | null>(null);
@@ -53,8 +53,8 @@ const Avatar: React.FC<AvatarProps> = ({emotion, getCurrentVolume }) => {
                     view: canvasRef.current!,
                     autoStart: true,
                     backgroundAlpha: 0,
-                    width: 1300,
-                    height: 1100,
+                    width: 1400,
+                    height: 1300,
                     sharedTicker: true,
                     sharedLoader: true,
                     antialias: false,
