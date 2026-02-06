@@ -5,6 +5,12 @@ This project consists of a Python-based backend (FastAPI) and a Next.js frontend
 
 https://github.com/user-attachments/assets/e4bc5f36-722c-4fec-aa6d-5ace986f217a
 
+
+
+https://github.com/user-attachments/assets/47b6d141-8189-4df5-acd7-29233ee855d2
+
+
+
 More VODs can be check on: https://www.twitch.tv/vincentmato1000
 
 ## ⚠️ Important Notes
