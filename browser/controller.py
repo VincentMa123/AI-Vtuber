@@ -90,7 +90,7 @@ class BrowserController:
             return None
             
         try:
-            screenshot_bytes = await self.page.screenshot(type='jpeg', quality=70)
+            screenshot_bytes = await self.page.screenshot(type='jpeg', quality=80)
             encoded = base64.b64encode(screenshot_bytes).decode('utf-8')
             logging.debug(f"[Browser] Screenshot captured. Size: {len(encoded)}")
             return encoded
@@ -295,7 +295,7 @@ class BrowserController:
                 logging.info(f"[Browser] Clicked category: {category_name}")
         except Exception as e:
             logging.error(f"[Browser] Click category failed: {e}")
-            
+
     async def get_scroll_position(self) -> dict:
         """Get current scroll position and page dimensions."""
         if not self.page:

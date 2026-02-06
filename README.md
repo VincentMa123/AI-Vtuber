@@ -110,6 +110,14 @@ TWITCH_CHANNEL=mychannelname
 4.  **Access the Application:**
     Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## 🎥 OBS Setup
+
+To use the Vtuber in OBS with transparency:
+1. Add the frontend URL (`http://localhost:3000`) as a **Browser Source**.
+2. Right-click the source -> **Filters**.
+3. Add a **Chroma Key** filter.
+4. The frontend uses a green background, so the default Green key color will work automatically to make the background transparent.
+
 ## Features
 
 - **LLM Integration**: Supports OpenRouter, DeepSeek, Qwen and Remote VLLM.

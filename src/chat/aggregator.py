@@ -113,8 +113,8 @@ class ChatAggregator:
             # Determine dominant emotion from the batch
             emotions = []
             for msg in batch:
-                # Use raw message content for better emotion detection
-                clean_msg = msg.message.replace("[TEST] ", "") # distinct for test messages
+                # Remove [TEST] prefix to detect emotion (only for testing)
+                clean_msg = msg.message.replace("[TEST] ", "") 
                 emotions.append(detect_emotion(clean_msg))
 
             if emotions:
