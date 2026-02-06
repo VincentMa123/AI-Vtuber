@@ -38,29 +38,32 @@ llm_providers = {
     "qwen": QwenProvider()
 }
 
-
-tts_manager = None 
-chat_aggregator = None
-vision_heartbeat = None
-
 @app.on_event("startup")
 async def startup_event():
+    """Application startup: Initialize all services."""
     logger.setup_logger()
-    global chat_aggregator
-    global tts_manager
     
+    # 1. Initialize Models & RAG
     await check_models.check_models()
-    
     try:
         initialize_rag()
     except Exception as e:
         logging.warning(f"[Startup] Warning: Could not initialize RAG: {e}")
 
-    # Initialize TTS Manager
-    tts_manager = TTSManager()
-    await tts_manager.initialize()
+    # 2. Initialize Services used by API
+    await init_services()
+    
+    logging.info("[Startup] System fully initialized")
+
+async def init_services():
+    """Initialize core services: TTS, Aggregator, Twitch, Vision."""
+    
+    # TTS Manager
+    state.tts_manager = TTSManager()
+    await state.tts_manager.initialize()
     logging.info(f"[Startup] TTS Manager initialized (Provider: {config.TTS_PROVIDER})")
     
+    # Chat Aggregator
     aggregator_config = AggregationConfig(
         enabled=config.CHAT_AGGREGATION_ENABLED,
         window_seconds=config.AGGREGATION_WINDOW_SECONDS,
@@ -70,73 +73,68 @@ async def startup_event():
         similarity_threshold=config.SIMILARITY_THRESHOLD,
         max_batch_size=config.MAX_BATCH_SIZE
     )
-    chat_aggregator = ChatAggregator(aggregator_config)
-    chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
-    await chat_aggregator.start()
-    logging.info(f"[Startup] Chat aggregator initialized (enabled: {config.CHAT_AGGREGATION_ENABLED}, duplicate expiry: {config.DUPLICATE_EXPIRY_SECONDS}s)")
+    state.chat_aggregator = ChatAggregator(aggregator_config)
+    state.chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
+    await state.chat_aggregator.start()
+    logging.info(f"[Startup] Chat aggregator initialized")
     
-    # Initialize Twitch bot if enabled
+    # Twitch Bot
     if config.TWITCH_ENABLED:
         await start_twitch_bot(
             token=config.TWITCH_BOT_TOKEN,
             channel=config.TWITCH_CHANNEL,
             prefix=config.TWITCH_BOT_PREFIX,
-            aggregator=chat_aggregator
+            aggregator=state.chat_aggregator
         )
         logging.info(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
     else:
         logging.info("[Startup] Twitch integration disabled")
     
+    # Configure Aggregator Callback
     async def aggregation_callback(message: str):
         await handle_aggregated_response(
             message=message,
             llm_providers=llm_providers,
-            tts_manager=tts_manager
+            tts_manager=state.tts_manager
         )
+    state.chat_aggregator.response_callback = aggregation_callback
     
-    chat_aggregator.response_callback = aggregation_callback
-    logging.info("[Startup] Chat aggregator response callback configured")
-    
-    # Initialize Vision Heartbeat
-    
-    vision_heartbeat = VisionHeartbeat(
+    # Vision Heartbeat
+    state.vision_heartbeat = VisionHeartbeat(
         llm_providers=llm_providers,
-        text_to_speech_stream_func=tts_manager.generate_audio_stream
+        text_to_speech_stream_func=state.tts_manager.generate_audio_stream
     )
     
-    logging.info("[Startup] Vision Heartbeat system initialized")
-    
-    async def broadcast_browser_update(data):
-        # Map internal vision types to frontend types
-        msg_type = data.get("type")
-        
-        if msg_type == "audio":
-            await ws_manager.broadcast({
-                "type": "audio_chunk",
-                "audio_base64": data.get("data"),
-                "complete": False
-            })
-        elif msg_type == "status":
-            await ws_manager.broadcast({
-                "type": "vision_status",
-                "content": data.get("content")
-            })
-        elif msg_type == "stop":
-            await ws_manager.broadcast({
-                "type": "audio_chunk",
-                "complete": True
-            })
-        elif msg_type == "text":
-             await ws_manager.broadcast({
-                "type": "text_chunk",
-                "chunk": data.get("content"),
-                "complete": True
-             })
-        else:
-
-            await ws_manager.broadcast(data)
-    await vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
-    logging.info("[Startup] Browser automation loop scheduled")
+    # # Browser Loop
+    # async def broadcast_browser_update(data):
+    #     msg_type = data.get("type")
+    #     if msg_type == "audio":
+    #         await ws_manager.broadcast({
+    #             "type": "audio_chunk",
+    #             "audio_base64": data.get("data"),
+    #             "complete": False
+    #         })
+    #     elif msg_type == "status":
+    #         await ws_manager.broadcast({
+    #             "type": "vision_status",
+    #             "content": data.get("content")
+    #         })
+    #     elif msg_type == "stop":
+    #         await ws_manager.broadcast({
+    #             "type": "audio_chunk",
+    #             "complete": True
+    #         })
+    #     elif msg_type == "text":
+    #          await ws_manager.broadcast({
+    #             "type": "text_chunk",
+    #             "chunk": data.get("content"),
+    #             "complete": True
+    #          })
+    #     else:
+    #         await ws_manager.broadcast(data)
+            
+    # await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
+    # logging.info("[Startup] Vision Heartbeat & Browser loop scheduled")
 
 
 @app.websocket("/ws/chat")

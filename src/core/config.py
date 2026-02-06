@@ -45,3 +45,29 @@ TWITCH_ENABLED = True
 TWITCH_BOT_TOKEN = os.getenv("TWITCH_BOT_TOKEN", "")
 TWITCH_CHANNEL = os.getenv("TWITCH_CHANNEL", "")
 TWITCH_BOT_PREFIX = "!"
+
+# Browser Automation
+BROWSER_BASE_URL = "https://www.klikindomaret.com/"
+BROWSER_HEADLESS = False
+BROWSER_SELECTORS = {
+    "load_more": [
+        'button:has-text("Muat Lebih Banyak")',
+        'button:has-text("Load More")',
+        'a:has-text("Muat Lebih Banyak")',
+        'a:has-text("Load More")',
+        '[class*="load-more"]',
+        '[class*="loadmore"]',
+    ],
+    "product": [
+        '.item',                  
+        'div[class*="product"]',  
+        '.card',                
+        'a[href*="/product/"]',
+        '.product-card',
+        '.product-item a',
+        '[data-testid="product-card"]'
+    ],
+    "category_link": 'a:has-text("{name}")'
+}
+BROWSER_SCROLL_AMOUNT_MIN = 150
+BROWSER_SCROLL_AMOUNT_MAX = 600

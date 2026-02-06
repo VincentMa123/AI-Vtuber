@@ -16,8 +16,8 @@ def get_embedding_model():
         return _model_cache
     
     try:
-        _model_cache = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-        logging.info("[RAG] Loaded embedding model: paraphrase-multilingual-MiniLM-L12-v2")
+        _model_cache = SentenceTransformer('LazarusNLP/all-indo-e5-small-v4')
+        logging.info("[RAG] Loaded embedding model: LazarusNLP/all-indo-e5-small-v4")
         return _model_cache
     except ImportError:
         logging.error("[RAG] Error: sentence-transformers not installed. Run: pip install sentence-transformers")
@@ -58,7 +58,7 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
     
     # Get the rag/data directory path
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    cache_file = os.path.join(base_dir, "data", "product_embeddings.pkl")
+    cache_file = os.path.join(base_dir, "data", "product_embeddings.pkl") # Changed filename to avoid conflict/stale cache
     
     if os.path.exists(cache_file) and not force_rebuild:
         try:
@@ -84,7 +84,9 @@ def create_product_embeddings(force_rebuild: bool = False) -> Optional[np.ndarra
     
     product_texts = []
     for product in products:
-        text = f"{product.get('name', '')} {product.get('description', '')} {' '.join(product.get('keywords', []))}"
+        # E5 requires "passage: " prefix for documents
+        # Proposed format: passage: Category Subcategory Name Description Keywords
+        text = f"passage: {product.get('category', '')} {product.get('subcategory', '')} {product.get('name', '')} {product.get('description', '')} {' '.join(product.get('keywords', []))}"
         product_texts.append(text)
     
     logging.info(f"[RAG] Creating embeddings for {len(product_texts)} products...")
@@ -117,7 +119,10 @@ def get_product_query_embeddings():
         
     model = get_embedding_model()
     if model:
-        _product_example_embeddings = model.encode(examples, convert_to_numpy=True, show_progress_bar=False)
+        # Symmetric semantic search (query vs query), usually uses 'query: ' for both or no prefix.
+        # For E5, standard recommendation for STS is "query: " for both.
+        prefixed_examples = [f"query: {ex}" for ex in examples]
+        _product_example_embeddings = model.encode(prefixed_examples, convert_to_numpy=True, show_progress_bar=False)
         return _product_example_embeddings
     return None
 
@@ -133,7 +138,8 @@ def get_promotion_query_embeddings():
         
     model = get_embedding_model()
     if model:
-        _promo_example_embeddings = model.encode(examples, convert_to_numpy=True, show_progress_bar=False)
+        prefixed_examples = [f"query: {ex}" for ex in examples]
+        _promo_example_embeddings = model.encode(prefixed_examples, convert_to_numpy=True, show_progress_bar=False)
         return _promo_example_embeddings
     return None
 

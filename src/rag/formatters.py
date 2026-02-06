@@ -19,7 +19,7 @@ def format_products_for_prompt(products: List[Dict]) -> str:
         if description:
             formatted += f"  ({description})\n"
     
-    formatted += "\n[IMPORTANT: Mention products conversationally, e.g. 'Coba Wong Coco, enak dan murah!' - NEVER copy the format above]\n"
+    formatted += "\n[IMPORTANT: Mention products conversationally, NEVER copy the format above]\n"
     
     return formatted
 

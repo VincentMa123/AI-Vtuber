@@ -3,6 +3,7 @@ import os
 import numpy as np
 import logging
 from typing import List, Dict, Optional
+import re
 from .embeddings import (
     get_embedding_model, create_product_embeddings, 
     precompute_detection_embeddings, get_product_query_embeddings,
@@ -22,11 +23,8 @@ def load_product_dataset() -> Dict:
         return {"products": [], "categories": [], "promotions": []}
 
 
-def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float = 0.5) -> List[Dict]:
+def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float = 0.4) -> List[Dict]:
 
-    if not query or not query.strip():
-        return []
-    
     model = get_embedding_model()
     if model is None:
         logging.error("[RAG] Error: Embedding model not available")
@@ -37,7 +35,9 @@ def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float 
         logging.error("[RAG] Error: Product embeddings not available")
         return []
     
-    query_embedding = model.encode([query], convert_to_numpy=True)[0]
+    # E5 requires "query: " prefix for queries
+    query_param = f"query: {query}"
+    query_embedding = model.encode([query_param], convert_to_numpy=True)[0]
     
     query_norm = query_embedding / np.linalg.norm(query_embedding)
     product_norms = product_embeddings / np.linalg.norm(product_embeddings, axis=1, keepdims=True)
@@ -56,11 +56,31 @@ def search_products_rag(query: str, top_k: int = 3, similarity_threshold: float 
             return []
 
     results = []
+    
+    # Pre-process query terms for keyword boosting
+    query_terms = set(re.findall(r'\w+', query.lower()))
+    
     for idx in top_indices:
-        if similarities[idx] >= similarity_threshold:
-            product = products[idx].copy()
-            product['_similarity_score'] = float(similarities[idx])
+        base_score = float(similarities[idx])
+        product = products[idx].copy()
+        
+        # Check if any query term appears in product keywords
+        product_keywords = set([k.lower() for k in product.get('keywords', [])])
+        boost = 0.0
+        # If we have a direct keyword match, give a significant boost
+        if not query_terms.isdisjoint(product_keywords):
+            boost = 0.3
+            if os.environ.get('RAG_VERBOSE') == '1':
+                logging.debug(f"[RAG] Boosting '{product['name']}' by {boost} (keyword match)")
+        
+        final_score = base_score + boost
+        product['_similarity_score'] = final_score
+        
+        if final_score >= similarity_threshold:
             results.append(product)
+            
+    # Re-sort based on boosted scores
+    results.sort(key=lambda x: x['_similarity_score'], reverse=True)
     
     if os.environ.get('RAG_VERBOSE') == '1':
         logging.debug(f"[RAG] Query: '{query}' -> Found {len(results)} products (threshold: {similarity_threshold})")
@@ -76,7 +96,7 @@ def get_all_promotions() -> List[Dict]:
     return dataset.get("promotions", [])
 
 
-def detect_product_query(message: str, threshold: float = 0.6) -> bool:
+def detect_product_query(message: str, threshold: float = 0.4) -> bool:
 
     if not message or len(message.strip()) < 3:
         return False
@@ -90,7 +110,9 @@ def detect_product_query(message: str, threshold: float = 0.6) -> bool:
              return False
 
         # show_progress_bar=False to prevent terminal spam
-        message_embedding = model.encode([message], convert_to_numpy=True, show_progress_bar=False)[0]
+        # E5 requires "query: " prefix
+        query_param = f"query: {message}"
+        message_embedding = model.encode([query_param], convert_to_numpy=True, show_progress_bar=False)[0]
         
         message_norm = message_embedding / np.linalg.norm(message_embedding)
         example_norms = example_embeddings / np.linalg.norm(example_embeddings, axis=1, keepdims=True)
@@ -108,10 +130,7 @@ def detect_product_query(message: str, threshold: float = 0.6) -> bool:
         return False
 
 
-def detect_promotion_query(message: str, threshold: float = 0.6) -> bool:
-
-    if not message or len(message.strip()) < 3:
-        return False
+def detect_promotion_query(message: str, threshold: float = 0.4) -> bool:
     
     model = get_embedding_model()
     if model is None:
@@ -123,7 +142,9 @@ def detect_promotion_query(message: str, threshold: float = 0.6) -> bool:
              return False
 
         # show_progress_bar=False to prevent terminal spam
-        message_embedding = model.encode([message], convert_to_numpy=True, show_progress_bar=False)[0]
+        # E5 requires "query: " prefix
+        query_param = f"query: {message}"
+        message_embedding = model.encode([query_param], convert_to_numpy=True, show_progress_bar=False)[0]
         
         message_norm = message_embedding / np.linalg.norm(message_embedding)
         
@@ -137,6 +158,7 @@ def detect_promotion_query(message: str, threshold: float = 0.6) -> bool:
             logging.debug(f"[RAG] Promotion query detection: '{message}' -> similarity: {max_similarity:.3f}")
         
         return max_similarity >= threshold
+
     except Exception as e:
         logging.error(f"[RAG] Error in semantic promotion detection: {e}")
         return False

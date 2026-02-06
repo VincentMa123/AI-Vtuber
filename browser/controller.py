@@ -2,14 +2,13 @@ import logging
 import asyncio
 import random
 import base64
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
+import src.core.config as config
 
 
 class BrowserController:
-    
-    BASE_URL = "https://www.klikindomaret.com/"
     
     def __init__(self):
         self.playwright: Optional[Playwright] = None
@@ -17,52 +16,47 @@ class BrowserController:
         self.page: Optional[Page] = None
         self.is_running = False
         self._loop_task: Optional[asyncio.Task] = None
+        self.base_url = config.BROWSER_BASE_URL
         
     async def start(self) -> bool:
         
         try:
             self.playwright = await async_playwright().start()
             
+            # Common launch args
+            launch_args = [
+                '--start-maximized',
+                '--disable-blink-features=AutomationControlled',
+                '--disable-gpu',
+                '--disable-software-rasterizer',
+                '--disable-accelerated-2d-canvas',
+                '--disable-gpu-compositing',
+                '--disable-d3d11'
+            ]
+
             try:
                 # Try launching real Chrome (better for OBS)
                 self.browser = await self.playwright.chromium.launch(
                     channel="chrome",
-                    headless=False,
-                    args=[
-                        '--start-maximized',
-                        '--disable-blink-features=AutomationControlled',
-                        '--disable-gpu',
-                        '--disable-software-rasterizer',
-                        '--disable-accelerated-2d-canvas',
-                        '--disable-gpu-compositing',
-                        '--disable-d3d11'
-                    ]
+                    headless=config.BROWSER_HEADLESS,
+                    args=launch_args
                 )
                 logging.info("[Browser] Launched Google Chrome (channel='chrome') with GPU disabled")
             except Exception as e:
                 logging.warning(f"[Browser] Failed to launch Chrome: {e}. Falling back to bundled Chromium.")
                 self.browser = await self.playwright.chromium.launch(
-                    headless=False,
-                    args=[
-                        '--start-maximized',
-                        '--disable-blink-features=AutomationControlled',
-                        '--disable-gpu',
-                        '--disable-software-rasterizer',
-                        '--disable-accelerated-2d-canvas',
-                        '--disable-gpu-compositing',
-                        '--disable-d3d11'
-                    ]
+                    headless=config.BROWSER_HEADLESS,
+                    args=launch_args
                 )
             
             # Create context with no_viewport=True to respect window size
             context = await self.browser.new_context(no_viewport=True)
             self.page = await context.new_page()
 
-            await self.page.goto(self.BASE_URL, wait_until='domcontentloaded', timeout=60000)
+            await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=60000)
             
-
             self.is_running = True
-            logging.info(f"[Browser] Started and navigated to {self.BASE_URL}")
+            logging.info(f"[Browser] Started and navigated to {self.base_url}")
             return True
             
         except Exception as e:
@@ -104,21 +98,25 @@ class BrowserController:
             return self.page.url
         return ""
 
-    async def scroll_down(self, amount: int = 400):
-        
+    async def scroll_down(self, amount: Optional[int] = None):
         if not self.page:
             return
-            
+        
+        if amount is None:
+            amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, config.BROWSER_SCROLL_AMOUNT_MAX)
+
         try:
             await Behavior.smooth_scroll(self.page, amount, direction=1)
             logging.debug(f"[Browser] Scrolled down ~{amount}px (smooth)")
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
     
-    async def scroll_up(self, amount: int = 400):
-        
+    async def scroll_up(self, amount: Optional[int] = None):
         if not self.page:
             return
+
+        if amount is None:
+            amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, config.BROWSER_SCROLL_AMOUNT_MAX)
             
         try:
             await Behavior.smooth_scroll(self.page, amount, direction=-1)
@@ -127,7 +125,7 @@ class BrowserController:
             logging.error(f"[Browser] Scroll failed: {e}")
     
     async def is_in_viewport(self, element) -> bool:
-        """Check if element is currently visible in the viewport."""
+
         try:
             box = await element.bounding_box()
             if not box:
@@ -150,21 +148,14 @@ class BrowserController:
             return False
     
     async def click_load_more(self) -> bool:
-        """Click 'Load More' / 'Muat Lebih Banyak' button if visible."""
+
         if not self.page:
             return False
             
         try:
-            load_more_selectors = [
-                'button:has-text("Muat Lebih Banyak")',
-                'button:has-text("Load More")',
-                'a:has-text("Muat Lebih Banyak")',
-                'a:has-text("Load More")',
-                '[class*="load-more"]',
-                '[class*="loadmore"]',
-            ]
+            selectors = config.BROWSER_SELECTORS.get("load_more", [])
             
-            for selector in load_more_selectors:
+            for selector in selectors:
                 try:
                     button = await self.page.query_selector(selector)
                     if button and await button.is_visible():
@@ -187,15 +178,7 @@ class BrowserController:
             return False
             
         try:
-            product_selectors = [
-                '.item',                  
-                'div[class*="product"]',  
-                '.card',                
-                'a[href*="/product/"]',
-                '.product-card',
-                '.product-item a',
-                '[data-testid="product-card"]'
-            ]
+            product_selectors = config.BROWSER_SELECTORS.get("product", [])
             
             for attempt in range(3):
                 products_in_viewport = []
@@ -277,7 +260,7 @@ class BrowserController:
             return
             
         try:
-            await self.page.goto(self.BASE_URL, wait_until='domcontentloaded')
+            await self.page.goto(self.base_url, wait_until='domcontentloaded')
             await asyncio.sleep(2)
             logging.info("[Browser] Navigated to homepage")
         except Exception as e:
@@ -288,7 +271,11 @@ class BrowserController:
             return
             
         try:
-            category_link = await self.page.query_selector(f'a:has-text("{category_name}")')
+            # Note: This is an example selector pattern, can be moved to config too if needed
+            selector_template = config.BROWSER_SELECTORS.get("category_link", 'a:has-text("{name}")')
+            selector = selector_template.format(name=category_name)
+            
+            category_link = await self.page.query_selector(selector)
             if category_link:
                 await category_link.click()
                 await asyncio.sleep(2)
@@ -327,13 +314,9 @@ class BrowserController:
             return False
             
         try:
-            load_more_selectors = [
-                'button:has-text("Muat Lebih Banyak")',
-                'button:has-text("Load More")',
-                'a:has-text("Muat Lebih Banyak")',
-            ]
+            selectors = config.BROWSER_SELECTORS.get("load_more", [])
             
-            for selector in load_more_selectors:
+            for selector in selectors:
                 try:
                     button = await self.page.query_selector(selector)
                     if button and await button.is_visible():
@@ -351,9 +334,9 @@ class BrowserController:
             return "no_page"
         
         current_url = await self.get_current_url()
-        # klikindomaret uses /xpress/ or /product/ for product pages
-        is_product_page = "/xpress/" in current_url
-        is_homepage = current_url.rstrip('/') == self.BASE_URL.rstrip('/')
+        # klikindomaret specific check, relies on URL structure containing /xpress/ or /product/
+        is_product_page = "/xpress/" in current_url or "/product/" in current_url
+        is_homepage = current_url.rstrip('/') == self.base_url.rstrip('/')
         
         # Get current scroll position
         scroll_pos = await self.get_scroll_position()
@@ -367,7 +350,7 @@ class BrowserController:
                 await self.go_back()
                 return "go_back"
             else:
-                await self.scroll_down(random.randint(100, 400))
+                await self.scroll_down(random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, config.BROWSER_SCROLL_AMOUNT_MAX))
                 return "scroll_down"
         
         # Check if load more button is visible
@@ -387,11 +370,11 @@ class BrowserController:
         action = random.choice(actions)
 
         if action == 'scroll_down':
-            await self.scroll_down(random.randint(150, 600))
+            await self.scroll_down()
             return "scroll_down"
         
         elif action == 'scroll_up':
-            await self.scroll_up(random.randint(150, 600))
+            await self.scroll_up()
             return "scroll_up"
             
         elif action == 'click_product':

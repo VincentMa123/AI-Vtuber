@@ -63,6 +63,9 @@ def get_system_prompt(user_message: str = ""):
                 if products:
                     product_context = format_products_for_prompt(products)
                     logging.info(f"[System Prompt] Injected {len(products)} products into context")
+            else:
+                product_context = "No products found. Please don't make up any products or promotions."
+                
         except Exception as e:
             logging.error(f"[System Prompt] Error loading product context: {e}", exc_info=True)
 

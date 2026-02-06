@@ -7,6 +7,9 @@ model = None
 processor = None
 local_model_available = False
 llm_provider = None
+tts_manager = None
+chat_aggregator = None
+vision_heartbeat = None
 
 _response_processing_lock = asyncio.Lock()
 
