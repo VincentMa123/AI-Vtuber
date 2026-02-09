@@ -104,36 +104,36 @@ async def init_services():
         text_to_speech_stream_func=state.tts_manager.generate_audio_stream
     )
     
-    # # Browser Loop
-    # async def broadcast_browser_update(data):
-    #     msg_type = data.get("type")
-    #     if msg_type == "audio":
-    #         await ws_manager.broadcast({
-    #             "type": "audio_chunk",
-    #             "audio_base64": data.get("data"),
-    #             "complete": False
-    #         })
-    #     elif msg_type == "status":
-    #         await ws_manager.broadcast({
-    #             "type": "vision_status",
-    #             "content": data.get("content")
-    #         })
-    #     elif msg_type == "stop":
-    #         await ws_manager.broadcast({
-    #             "type": "audio_chunk",
-    #             "complete": True
-    #         })
-    #     elif msg_type == "text":
-    #          await ws_manager.broadcast({
-    #             "type": "text_chunk",
-    #             "chunk": data.get("content"),
-    #             "complete": True
-    #          })
-    #     else:
-    #         await ws_manager.broadcast(data)
+    # Browser Loop
+    async def broadcast_browser_update(data):
+        msg_type = data.get("type")
+        if msg_type == "audio":
+            await ws_manager.broadcast({
+                "type": "audio_chunk",
+                "audio_base64": data.get("data"),
+                "complete": False
+            })
+        elif msg_type == "status":
+            await ws_manager.broadcast({
+                "type": "vision_status",
+                "content": data.get("content")
+            })
+        elif msg_type == "stop":
+            await ws_manager.broadcast({
+                "type": "audio_chunk",
+                "complete": True
+            })
+        elif msg_type == "text":
+             await ws_manager.broadcast({
+                "type": "text_chunk",
+                "chunk": data.get("content"),
+                "complete": True
+             })
+        else:
+            await ws_manager.broadcast(data)
             
-    # await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
-    # logging.info("[Startup] Vision Heartbeat & Browser loop scheduled")
+    await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
+    logging.info("[Startup] Vision Heartbeat & Browser loop scheduled")
 
 
 @app.websocket("/ws/chat")

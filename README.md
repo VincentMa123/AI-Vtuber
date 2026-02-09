@@ -56,7 +56,7 @@ More VODs can be check on: https://www.twitch.tv/vincentmato1000
 
 ## ⚙️ Configuration
 
-The application uses environment variables for configuration. Create a `.env` file in the `src/` directory (or ensure your environment has these variables set).
+Create a `.env` file in the `src/` directory (or ensure your environment has these variables set).
 
 ### Required API Keys
 
@@ -67,20 +67,12 @@ The application uses environment variables for configuration. Create a `.env` fi
 | `QWEN_API_KEY` | API key for Qwen/DashScope (get from [Alibaba Cloud](https://www.alibabacloud.com/en/product/modelstudio?_p_lc=1)). |
 | `ELEVENLABS_API_KEY` | API key for ElevenLabs (if using ElevenLabs TTS). |
 
-### Twitch Integration (Optional)
+### Twitch Integration
 
 | Variable | Description |
 | :--- | :--- |
 | `TWITCH_BOT_TOKEN` | OAuth token for the Twitch bot (get from [twitchtokengenerator.com](https://twitchtokengenerator.com/)). |
 | `TWITCH_CHANNEL` | The Twitch channel name for the bot to join. |
-
-### Other Configuration (Optional/Defaults)
-
-| Variable | Default | Description |
-| :--- | :--- | :--- |
-| `TTS_PROVIDER` | `realtimetts` | Choose between `realtimetts` or `qwen`. |
-| `REALTIMETTS_ENGINE` | `system` | Turbo-charged local TTS (`system`) or `elevenlabs`. |
-| `REMOTE_VLLM_BASE_URL` | *(Pre-configured)* | URL for remote vLLM instance. |
 
 **Example `.env` file:**
 
@@ -94,6 +86,10 @@ TWITCH_CHANNEL=mychannelname
 ```
 
 ---
+
+### Other Configurations 
+Project configurations can be found in `src/config.py`.
+
 
 ## 🎨 Frontend Setup (vtuber)
 

@@ -6,13 +6,12 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from .models import HeartbeatRequest, HeartbeatResponse
+from .models import HeartbeatRequest
 from .service import VisionHeartbeat
 from browser import BrowserController, get_browser_controller
 
 __all__ = [
     "HeartbeatRequest",
-    "HeartbeatResponse",
     "VisionHeartbeat",
     "BrowserController",
     "get_browser_controller"

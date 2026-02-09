@@ -1,13 +1,12 @@
 import logging
 import asyncio
 from typing import Dict, Tuple, Optional, Callable, Any
-import sys
-import os
+
 import core.config as config
 import core.state as state
 import core.utils as utils
-from core.utils import compress_image_for_vlm, is_similar_to_last, reset_similarity_state
-from .models import HeartbeatRequest, HeartbeatResponse
+from core.utils import compress_image_for_vlm, is_similar_to_last
+from .models import HeartbeatRequest
 from browser import BrowserController, get_browser_controller, Behavior
 
 import random
@@ -46,8 +45,8 @@ class VisionHeartbeat:
                 message="React to this image.", 
                 history=history, 
                 image_base64=image_base64,
-                system_prompt=system_prompt, # Override default system prompt
-                max_tokens=128 # Adjusted to prevent cut-offs
+                system_prompt=system_prompt,
+                max_tokens=128
             ):
                 yield token
         except Exception as e:

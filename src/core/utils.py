@@ -174,9 +174,5 @@ def _compute_image_hash(image_data: bytes) -> int:
         return 0
 
 
-def reset_similarity_state():
 
-    global _last_image_hash, _last_image_bytes
-    _last_image_hash = None
-    _last_image_bytes = None
 
