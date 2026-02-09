@@ -76,8 +76,7 @@ async def init_services():
     state.chat_aggregator = ChatAggregator(aggregator_config)
     state.chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
     await state.chat_aggregator.start()
-    logging.info(f"[Startup] Chat aggregator initialized")
-    
+    logging.info("[Startup] Chat aggregator initialized")    
     # Twitch Bot
     if config.TWITCH_ENABLED:
         await start_twitch_bot(

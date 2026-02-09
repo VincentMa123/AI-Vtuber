@@ -64,7 +64,7 @@ The application uses environment variables for configuration. Create a `.env` fi
 | :--- | :--- |
 | `OPENROUTER_API_KEY` | API key for OpenRouter (if using OpenRouter provider). |
 | `DEEPSEEK_API_KEY` | API key for DeepSeek (if using DeepSeek provider). |
-| `QWEN_API_KEY` | API key for Qwen/DashScope (if using Qwen provider). |
+| `QWEN_API_KEY` | API key for Qwen/DashScope (get from [Alibaba Cloud](https://www.alibabacloud.com/en/product/modelstudio?_p_lc=1)). |
 | `ELEVENLABS_API_KEY` | API key for ElevenLabs (if using ElevenLabs TTS). |
 
 ### Twitch Integration (Optional)
