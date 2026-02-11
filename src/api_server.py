@@ -10,7 +10,7 @@ import uvicorn
 import logging
 import core.logger as logger
 from core import state
-from twitch.bot import start_twitch_bot
+from twitch.bot import start_twitch_bot, get_twitch_bot
 from chat.aggregator import ChatAggregator
 from chat.models import (
     ChatMessage, AggregationConfig,
@@ -19,13 +19,16 @@ from chat.models import (
 from chat.response_handler import handle_aggregated_response
 from ws.manager import ws_manager
 import json
+import asyncio
+import base64
+import struct
 
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS - allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # Allow all origins for dev/streaming
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,8 +58,29 @@ async def startup_event():
     
     logging.info("[Startup] System fully initialized")
 
+@app.on_event("shutdown")
+async def shutdown_event():
+
+    logging.info("[Shutdown] Stopping services...")
+    
+    if hasattr(state, 'vision_heartbeat') and state.vision_heartbeat:
+        await state.vision_heartbeat.stop_browser()
+        
+    if hasattr(state, 'chat_aggregator') and state.chat_aggregator:
+        await state.chat_aggregator.stop()
+    
+    twitch_bot = get_twitch_bot()
+    if twitch_bot:
+        try:
+            await twitch_bot.close()
+            logging.info("[Shutdown] Twitch bot closed")
+        except Exception as e:
+            logging.error(f"[Shutdown] Error closing Twitch bot: {e}")
+        
+    logging.info("[Shutdown] Services stopped")
+
 async def init_services():
-    """Initialize core services: TTS, Aggregator, Twitch, Vision."""
+
     
     # TTS Manager
     state.tts_manager = TTSManager()
@@ -83,22 +107,111 @@ async def init_services():
             token=config.TWITCH_BOT_TOKEN,
             channel=config.TWITCH_CHANNEL,
             prefix=config.TWITCH_BOT_PREFIX,
-            aggregator=state.chat_aggregator
+            aggregator=state.chat_aggregator,
+            client_id=config.TWITCH_CLIENT_ID,
+            client_secret=config.TWITCH_CLIENT_SECRET,
+            bot_id=config.TWITCH_BOT_ID
         )
         logging.info(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
     else:
         logging.info("[Startup] Twitch integration disabled")
     
-    # Configure Aggregator Callback
-    async def aggregation_callback(message: str):
+
+
+    # Audio Pipe (Headless Streaming)
+    try:
+        from audio.pipe import AudioPipe
+        state.audio_pipe = AudioPipe()
+        await state.audio_pipe.start()
+        logging.info("[Startup] AudioPipe initialized for headless streaming")
+        
+        # Monkey-patch TTS Manager to intercept audio for the pipe
+        original_generate = state.tts_manager.generate_audio_stream
+        
+        async def patched_generate_audio_stream(text_stream):
+            # 1. Create a queue to bridge to AudioPipe
+            pipe_queue = asyncio.Queue()
+            
+            # 2. Define the consumer iterator for AudioPipe
+            async def pipe_iterator():
+                while True:
+                    chunk = await pipe_queue.get()
+                    if chunk is None:
+                        break
+                    yield chunk
+            
+            pipe_started = False
+            chunk_count = 0
+            total_bytes = 0
+            logging.info("[AudioPipe Interceptor] Starting to intercept TTS stream...")
+            
+            try:
+                # We need to manually iterate to get the first chunk
+                gen = original_generate(text_stream)
+                
+                async for b64_chunk in gen:
+                    try:
+                        if b64_chunk:
+                            chunk_bytes = base64.b64decode(b64_chunk)
+                            
+                            # Inspect first chunk for WAV header
+                            if not pipe_started:
+                                sample_rate = 24000 # Default (Qwen)
+                                
+                                # Check for RIFF header
+                                if len(chunk_bytes) > 44 and chunk_bytes[0:4] == b'RIFF' and chunk_bytes[8:12] == b'WAVE':
+                                    try:
+                                        sample_rate = struct.unpack('<I', chunk_bytes[24:28])[0]
+                                        logging.info(f"[AudioPipe Interceptor] Detected WAV sample rate: {sample_rate}")
+                                    except:
+                                        logging.warning("[AudioPipe Interceptor] Failed to parse WAV header, defaulting to 24000")
+                                
+                                # Start the pipe with detected rate
+                                logging.info(f"[AudioPipe Interceptor] Starting pipe with input_rate={sample_rate}")
+                                pipe_task = asyncio.create_task(state.audio_pipe.stream_audio_flow(pipe_iterator(), input_rate=sample_rate))
+                                
+                                # Keep a strong reference
+                                if not hasattr(state, "background_tasks"):
+                                    state.background_tasks = set()
+                                state.background_tasks.add(pipe_task)
+                                pipe_task.add_done_callback(state.background_tasks.discard)
+                                pipe_started = True
+
+                            pcm_data = chunk_bytes[44:]
+                            await pipe_queue.put(pcm_data)
+                            chunk_count += 1
+                            total_bytes += len(pcm_data)
+                            
+                    except Exception as e:
+                        logging.error(f"[AudioPipe Interceptor] Error processing chunk: {e}")
+                    
+                    # Yield original (base64 WAV) to Frontend
+                    yield b64_chunk
+                    
+            finally:
+                logging.info(f"[AudioPipe Interceptor] Stream finished. Sent {chunk_count} chunks ({total_bytes} bytes PCM) to pipe.")
+                # Signal end of stream to pipe
+                await pipe_queue.put(None)
+                pass
+
+        state.tts_manager.generate_audio_stream = patched_generate_audio_stream
+        logging.info("[Startup] TTS Manager patched for AudioPipe interception")
+
+    except Exception as e:
+        logging.error(f"[Startup] Failed to init AudioPipe: {e}")
+
+    async def aggregation_callback(message: str, dominant_emotion: str = None):
+        
+        if dominant_emotion:
+            logging.info(f"[ChatAggregator] Processed emotion: {dominant_emotion}")
+        
         await handle_aggregated_response(
             message=message,
             llm_providers=llm_providers,
             tts_manager=state.tts_manager
         )
     state.chat_aggregator.response_callback = aggregation_callback
-    
-    # Vision Heartbeat
+
     state.vision_heartbeat = VisionHeartbeat(
         llm_providers=llm_providers,
         text_to_speech_stream_func=state.tts_manager.generate_audio_stream
@@ -108,6 +221,7 @@ async def init_services():
     async def broadcast_browser_update(data):
         msg_type = data.get("type")
         if msg_type == "audio":
+
             await ws_manager.broadcast({
                 "type": "audio_chunk",
                 "audio_base64": data.get("data"),
@@ -153,7 +267,7 @@ async def websocket_chat(websocket: WebSocket):
                     state.signal_audio_complete()
                     
             except json.JSONDecodeError:
-                pass  # Non-JSON message, ignore
+                pass 
     
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)

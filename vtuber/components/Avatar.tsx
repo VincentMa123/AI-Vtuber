@@ -18,15 +18,20 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
     const appRef = useRef<PIXI.Application | null>(null);
     const animationRef = useRef<number | null>(null);
 
+    // Debug state
+    const [debugStatus, setDebugStatus] = useState<string>("Initializing...");
+    const [error, setError] = useState<string | null>(null);
 
     // Model initialization
     useEffect(() => {
         if (!canvasRef.current) return;
+        setDebugStatus("Canvas ref found");
 
         let app: PIXI.Application | null = null;
         let mounted = true;
 
         const init = async () => {
+            setDebugStatus("Loading PIXI...");
             (window as any).PIXI = PIXI;
             PIXI.utils.skipHello();
 
@@ -42,13 +47,18 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                 }
 
                 if (!(window as any).Live2D && !(window as any).Live2DCubismCore) {
-                    console.error('Live2D runtimes not loaded');
+                    const msg = 'Live2D runtimes not loaded from script';
+                    console.error(msg);
+                    setError(msg);
+                    setDebugStatus("Error: No Live2D Runtime");
                     return;
                 }
 
+                setDebugStatus("Importing Display Library...");
                 const { Live2DModel } = await import('pixi-live2d-display/cubism4');
                 if (!mounted) return;
 
+                setDebugStatus("Creating PIXI App...");
                 app = new PIXI.Application({
                     view: canvasRef.current!,
                     autoStart: true,
@@ -63,9 +73,11 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                 appRef.current = app;
 
                 const modelUrl = 'model/hiyori/hiyori_pro_t11.model3.json';
+                setDebugStatus(`Loading Model: ${modelUrl}`);
 
                 Live2DModel.from(modelUrl).then((loadedModel: any) => {
                     if (!mounted || !app) return;
+                    setDebugStatus("Model Loaded Successfully!");
 
                     app.stage.addChild(loadedModel);
                     setModel(loadedModel);
@@ -75,16 +87,21 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                     loadedModel.scale.set(0.6);
                     loadedModel.interactive = false; // Disable hit testing
                     loadedModel.buttonMode = false;
+
                     if (typeof loadedModel.autoInteract !== 'undefined') {
                         loadedModel.autoInteract = false;
                     }
                     (loadedModel as any).autoInteract = false; // Force disable auto interaction
-
-
+                }).catch((err: any) => {
+                    console.error("Model load error:", err);
+                    setError(`Load Failed: ${err.message}`);
+                    setDebugStatus("Model Load Failed");
                 });
 
-            } catch (error) {
-                console.error("Failed to load Live2D model:", error);
+            } catch (err: any) {
+                console.error("Failed to load Live2D setup:", err);
+                setError(`Setup Failed: ${err.message}`);
+                setDebugStatus("Setup Failed");
             }
         };
 
@@ -98,6 +115,7 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
         };
 
     }, []);
+
 
     // Lip Sync Loop - Natural speech-like mouth animation
     useEffect(() => {
@@ -188,8 +206,6 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
     const playMotion = (group: string) => {
         if (!model) return;
         try {
-            // Randomly pick one motion from the group if multiple exist (0 is safe default)
-            // Using internalModel.motionManager to force start
             model.internalModel.motionManager.startMotion(group, 0);
         } catch (e) {
             console.error("Failed to play motion:", e);
@@ -226,7 +242,14 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
 
     return (
         <div className="w-full h-full flex items-center justify-center overflow-visible relative">
-            <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain', border: '2px dashed red' }} />
+
+            {/* Debug Overlay */}
+            <div className="absolute top-0 left-0 bg-black/80 text-white p-2 text-xs font-mono z-50 pointer-events-none w-full break-words">
+                <div className="font-bold mb-1">Avatar Debug</div>
+                <div>Status: {debugStatus}</div>
+                {error && <div className="text-red-400 font-bold mt-1">Error: {error}</div>}
+            </div>
         </div>
     );
 };

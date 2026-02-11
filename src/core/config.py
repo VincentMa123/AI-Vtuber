@@ -21,7 +21,7 @@ QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
 QWEN_MODEL = "qwen3-vl-flash-2026-01-22" 
 QWEN_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"  
 
-TTS_PROVIDER = "realtimetts" #qwen, realtimetts
+TTS_PROVIDER = "qwen" #qwen, realtimetts
 REALTIMETTS_ENGINE = "system" #system, elevenlabs
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
@@ -45,10 +45,15 @@ TWITCH_ENABLED = True
 TWITCH_BOT_TOKEN = os.getenv("TWITCH_BOT_TOKEN", "")
 TWITCH_CHANNEL = os.getenv("TWITCH_CHANNEL", "")
 TWITCH_BOT_PREFIX = "!"
+TWITCH_STREAM_KEY = os.getenv("TWITCH_STREAM_KEY", "")  # For server-side streaming
+TWITCH_CLIENT_ID = os.getenv("TWITCH_CLIENT_ID", "")
+TWITCH_CLIENT_SECRET = os.getenv("TWITCH_CLIENT_SECRET", "")
+TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 
 # Browser Automation
 BROWSER_BASE_URL = "https://www.klikindomaret.com/"
-BROWSER_HEADLESS = False
+VTUBER_FRONTEND_URL = os.getenv("VTUBER_FRONTEND_URL", "http://192.168.56.1:3000")
+BROWSER_HEADLESS = os.getenv("BROWSER_HEADLESS", "False").lower() == "true"
 BROWSER_SELECTORS = {
     "load_more": [
         'button:has-text("Muat Lebih Banyak")',

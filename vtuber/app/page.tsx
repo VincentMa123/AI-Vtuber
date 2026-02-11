@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useDraggable } from '../hooks/useDraggable';
 import { useAudioPlayer, EmotionType } from '../hooks/useAudioPlayer';
 import { useChatWebSocket, WebSocketMessage } from '../lib/chatWebSocket';
 
@@ -13,153 +12,135 @@ const Avatar = dynamic(() => import('../components/Avatar'), {
 
 const ScreenCapture = dynamic(() => import('../components/ScreenCapture'), { ssr: false });
 
+interface ChatEntry {
+  id: number;
+  username: string;
+  message: string;
+}
+
 const VTuberPage = () => {
   const [emotion, setEmotion] = useState<EmotionType>('neutral');
+  const [chatMessages, setChatMessages] = useState<ChatEntry[]>([]);
+  const chatIdRef = useRef(0);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const sendMessageRef = useRef<((msg: object) => void) | null>(null);
 
-  // Track WebSocket sender ref for audio callback
-  const sendMessageRef = React.useRef<((msg: object) => void) | null>(null);
-
-  // Callback when audio playback completes
   const handlePlaybackComplete = useCallback(() => {
     if (sendMessageRef.current) {
-      console.log('[VTuber] Signaling audio_playback_complete to backend');
       sendMessageRef.current({ type: 'audio_playback_complete' });
     }
   }, []);
 
-  // Custom hooks
   const { isSpeaking, audioEnabled, enableAudio, playAudio, playAudioChunk, getCurrentVolume } = useAudioPlayer({
     onPlaybackComplete: handlePlaybackComplete
   });
-  const { position: avatarPosition, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: 0, y: 0 }
-  });
 
-  // Handle incoming WebSocket messages
-  const handleMessage = (msg: WebSocketMessage) => {
-    if (msg.type === 'ai_response') {
-      console.log('[VTuber] AI response received (non-streaming)');
+  // Auto-enable audio for streaming mode
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const isStreaming = params.get('stream') === '1' || params.get('autoplay') === '1';
+    const timer = setTimeout(() => {
+      if (!audioEnabled) enableAudio();
+    }, isStreaming ? 100 : 2000);
+    return () => clearTimeout(timer);
+  }, [audioEnabled, enableAudio]);
 
-      if (msg.emotion) {
-        setEmotion(msg.emotion);
-      }
+  // Auto-scroll chat
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
 
-      if (msg.audio_base64) {
-        playAudio(msg.audio_base64, () => {
-          setEmotion('neutral');
-        });
-      }
+  const handleMessage = useCallback((msg: WebSocketMessage) => {
+    if (msg.type === 'chat_message') {
+      chatIdRef.current += 1;
+      setChatMessages(prev => {
+        const updated = [...prev, { id: chatIdRef.current, username: msg.username || 'Anon', message: msg.message || '' }];
+        return updated.length > 30 ? updated.slice(-30) : updated;
+      });
+    } else if (msg.type === 'ai_response') {
+      if (msg.emotion) setEmotion(msg.emotion);
+      if (msg.audio_base64) playAudio(msg.audio_base64, () => setEmotion('neutral'));
     } else if (msg.type === 'stream_start') {
-      console.log('[VTuber] Streaming started');
-      if (msg.emotion) {
-        setEmotion(msg.emotion);
-      }
-    } else if (msg.type === 'text_chunk') {
-      // Text chunks are received but we don't need to display them in this UI
-      // They're mainly for logging/debugging
-      if (msg.chunk) {
-        console.log('[VTuber] Text chunk:', msg.chunk);
-      }
-      if (msg.complete) {
-        console.log('[VTuber] Text streaming complete');
-      }
+      if (msg.emotion) setEmotion(msg.emotion);
     } else if (msg.type === 'audio_chunk') {
-      // console.log('[VTuber] Audio chunk received'); // Disabled for performance
       if (msg.audio_base64 || msg.complete) {
         playAudioChunk(msg.audio_base64 || '', msg.complete ?? false, msg.timestamp ?? 0);
-        if (msg.complete) {
-          // Reset emotion when streaming completes
-          setTimeout(() => setEmotion('neutral'), 1000);
-        }
+        if (msg.complete) setTimeout(() => setEmotion('neutral'), 1000);
       }
     } else if (msg.type === 'stream_end') {
-      console.log('[VTuber] Streaming ended');
       setTimeout(() => setEmotion('neutral'), 1000);
-    } else if (msg.type === 'vision_status') {
-      console.log(`[Vision Status] ${msg.data?.content || msg.content}`);
     }
-  };
+  }, [playAudio, playAudioChunk]);
 
   const { isConnected, sendMessage } = useChatWebSocket(handleMessage);
 
-  // Keep sendMessageRef updated for audio playback callback
-  React.useEffect(() => {
-    sendMessageRef.current = sendMessage;
-  }, [sendMessage]);
+  useEffect(() => { sendMessageRef.current = sendMessage; }, [sendMessage]);
 
-  // Handle Vision Reactions
-  const handleVisionReaction = (text: string, audioBase64: string, category: string) => {
-    console.log(`[Vision] Reaction: ${text} (${category})`);
-
-    // Set emotion (default to excited for vision triggers)
+  const handleVisionReaction = useCallback((text: string, audioBase64: string, category: string) => {
     setEmotion('excited');
-
-    // Play Audio
-    playAudio(audioBase64, () => {
-      setEmotion('neutral');
-    });
-  };
+    playAudio(audioBase64, () => setEmotion('neutral'));
+  }, [playAudio]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#00FF00]">
-      {/* Screen Capture (Hidden/Background) */}
+    <>
+      {/* Hidden heartbeat */}
       <ScreenCapture
         onReaction={handleVisionReaction}
         onAudioChunk={(chunk, isComplete) => {
-          // If chunk provided, play it
           if (chunk || isComplete) {
             setEmotion('excited');
             playAudioChunk(chunk, isComplete);
-            if (isComplete) {
-              setTimeout(() => setEmotion('neutral'), 1000);
-            }
+            if (isComplete) setTimeout(() => setEmotion('neutral'), 1000);
           }
         }}
         sendFrame={sendMessage}
         intervalSeconds={10}
       />
 
-      {/* Audio Enable Overlay */}
+      {/* Vtuber avatar overlay (bottom-right, transparent bg) */}
+      <div className="avatar-overlay">
+        <Avatar emotion={emotion} getCurrentVolume={getCurrentVolume} />
+      </div>
+
+      {/* Chat overlay (bottom-left) */}
+      <div className="chat-overlay">
+        <div className="chat-overlay-header">💬 Twitch Chat</div>
+        <div className="chat-messages chat-scrollbar">
+          {chatMessages.length === 0 && (
+            <div className="chat-msg">
+              <span className="text" style={{ opacity: 0.4, fontStyle: 'italic' }}>
+                Waiting for messages...
+              </span>
+            </div>
+          )}
+          {chatMessages.map((msg) => (
+            <div key={msg.id} className="chat-msg">
+              <span className="username">{msg.username}:</span>
+              <span className="text">{msg.message}</span>
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </div>
+      </div>
+
+      {/* Connection dot */}
+      <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`} />
+
+      {/* Status badge */}
+      <div className={`status-badge ${isSpeaking ? 'speaking' : 'idle'}`}>
+        {isSpeaking ? `🎤 ${emotion}` : '💤 Idle'}
+      </div>
+
+      {/* Audio enable button */}
       {!audioEnabled && (
-        <div
-          className="absolute inset-0 z-[100] flex items-center justify-center bg-black/50 cursor-pointer backdrop-blur-sm"
-          onClick={enableAudio}
-        >
-          <div className="bg-white p-6 rounded-xl shadow-2xl text-center transform hover:scale-105 transition-transform">
-            <span className="text-4xl mb-4 block">🔊</span>
-            <p className="text-xl font-bold mb-2 text-gray-800">Click to Enable Audio</p>
-            <p className="text-gray-500 text-sm">Required for auto-playing voice</p>
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] cursor-pointer" onClick={enableAudio}>
+          <div className="bg-white/90 px-4 py-2 rounded-lg shadow-lg text-center">
+            <span className="text-xl mr-2">🔊</span>
+            <span className="text-sm font-medium text-gray-800">Click to Enable Audio</span>
           </div>
         </div>
       )}
-
-      {/* Connection Status */}
-      {!isConnected && (
-        <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-xs z-50">
-          Disconnected
-        </div>
-      )}
-
-      {/* Draggable Avatar */}
-      <div className="absolute inset-0 flex items-end justify-center pb-0 pointer-events-none">
-        <div
-          className="w-[50vw] h-[85vh] max-w-[800px] max-h-[1000px] min-w-[300px] min-h-[400px] relative pointer-events-auto"
-          style={{
-            transform: `translate(${avatarPosition.x}px, ${avatarPosition.y}px)`,
-            cursor: isDragging ? 'grabbing' : 'grab',
-            userSelect: isDragging ? 'none' : 'auto',
-          } as React.CSSProperties}
-          onMouseDown={handleMouseDown}
-        >
-          <Avatar emotion={emotion} getCurrentVolume={getCurrentVolume} />
-        </div>
-      </div>
-
-      {/* Status Indicator */}
-      <div className={`fixed bottom-6 right-6 px-4 py-2 rounded-full ${isSpeaking ? 'bg-green-500/80 animate-pulse' : 'bg-gray-700/80'} text-white text-sm font-medium z-20`}>
-        {isSpeaking ? `🎤 ${emotion}` : '💤 Idle'}
-      </div>
-    </div>
+    </>
   );
 };
 

@@ -2,10 +2,11 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 
 // Types matches backend
 export interface WebSocketMessage {
-    type: 'chat_message' | 'ai_response' | 'status_update' | 'stream_start' | 'stream_end' | 'text_chunk' | 'audio_chunk' | 'vision_status';
+    type: 'chat_message' | 'ai_response' | 'status_update' | 'stream_start' | 'stream_end' | 'text_chunk' | 'audio_chunk' | 'vision_status' | 'browser_screenshot' | 'browser_action';
     username?: string;
     message?: string;
     audio_base64?: string;
+    image_base64?: string;
     emotion?: 'happy' | 'sad' | 'angry' | 'excited' | 'neutral';
     timestamp?: number;
     data?: any;
@@ -39,7 +40,10 @@ export function useChatWebSocket(onMessage?: (msg: WebSocketMessage) => void) {
 
         // Determine correct WebSocket URL
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.hostname === 'localhost' ? 'localhost:8000' : window.location.host;
+        // Handle localhost, local IPs (192.168.x.x), and production
+        const hostname = window.location.hostname;
+        const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
+        const host = isLocalDev ? `${hostname}:8000` : window.location.host;
         const wsUrl = `${protocol}//${host}/ws/chat`;
 
         console.log(`[WebSocket] Connecting to ${wsUrl}...`);

@@ -9,19 +9,21 @@ from ws.manager import ws_manager
 
 
 class TwitchBot(commands.Bot):
-    def __init__(self, token: str, channel: str, prefix: str, aggregator=None):
+    def __init__(self, token: str, channel: str, prefix: str, aggregator=None, 
+                 client_id: str = "", client_secret: str = "", bot_id: str = ""):
         super().__init__(
             token=token,
             prefix=prefix,
-            initial_channels=[channel]
+            initial_channels=[channel],
+            client_id=client_id,
+            client_secret=client_secret,
+            bot_id=int(bot_id) if bot_id else 0
         )
         self.aggregator = aggregator
         self.channel_name = channel
         logging.info(f"[TwitchBot] Initialized for channel: {channel}")
     
     async def event_ready(self):
- 
-        logging.info(f"[TwitchBot] Logged in as {self.nick}")
         logging.info(f"[TwitchBot] Connected to channel: {self.channel_name}")
         logging.info(f"[TwitchBot] Bot is ready!")
     
@@ -34,7 +36,7 @@ class TwitchBot(commands.Bot):
             await self.handle_commands(message)
             return
         
-        logging.debug(f"[TwitchBot] {message.author.name}: {message.content}")
+        logging.info(f"[TwitchBot] {message.author.name}: {message.content}")
 
         if hasattr(message, 'timestamp') and message.timestamp:
             try:
@@ -78,7 +80,16 @@ class TwitchBot(commands.Bot):
     
     @commands.command(name='help')
     async def help_command(self, ctx: commands.Context):
-        await ctx.send("Commands: !lumina, !promo, !help | Just chat with me normally and I'll respond! 💬")
+        await ctx.send("Commands: !lumina, !promo, !refresh, !help | Just chat with me normally and I'll respond! 💬")
+
+    @commands.command(name='refresh')
+    async def refresh_command(self, ctx: commands.Context):
+        import core.state as state
+        if state.vision_heartbeat and state.vision_heartbeat.browser_controller:
+            await state.vision_heartbeat.browser_controller.refresh()
+            await ctx.send("Refreshing the page! 🔄")
+        else:
+            await ctx.send("I can't access the browser right now. 😢")
     
     async def send_response(self, text: str):
  
@@ -99,7 +110,7 @@ class TwitchBot(commands.Bot):
 twitch_bot: Optional[TwitchBot] = None
 
 
-async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregator=None):
+async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregator=None, client_id: str = "", client_secret: str = "", bot_id: str = ""):
     global twitch_bot
     
     if not token or not channel:
@@ -111,7 +122,10 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
             token=token,
             channel=channel,
             prefix=prefix,
-            aggregator=aggregator
+            aggregator=aggregator,
+            client_id=client_id,
+            client_secret=client_secret,
+            bot_id=bot_id
         )
 
         task = asyncio.create_task(twitch_bot.start())

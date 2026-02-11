@@ -58,3 +58,7 @@ htmlcov/
 pytest.ini
 test/
 tests/
+
+# virtual environment
+venv/
+venv_wsl/

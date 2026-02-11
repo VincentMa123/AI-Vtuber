@@ -206,6 +206,14 @@ class VisionHeartbeat:
                         "action": action,
                         "url": await self.browser_controller.get_current_url()
                     })
+                
+                # Send updated screenshot after each action for the frontend background
+                screenshot = await self.browser_controller.get_screenshot()
+                if screenshot and self._on_browser_update:
+                    await self._on_browser_update({
+                        "type": "browser_screenshot",
+                        "image_base64": screenshot
+                    })
 
                 # 2. Check Triggers
                 current_time = asyncio.get_event_loop().time()

@@ -26,12 +26,15 @@ class BrowserController:
             # Common launch args
             launch_args = [
                 '--start-maximized',
+                '--start-fullscreen',
+                '--allow-running-insecure-content',
                 '--disable-blink-features=AutomationControlled',
-                '--disable-gpu',
-                '--disable-software-rasterizer',
-                '--disable-accelerated-2d-canvas',
-                '--disable-gpu-compositing',
-                '--disable-d3d11'
+                '--ignore-certificate-errors',
+                '--no-sandbox',
+                '--ignore-gpu-blocklist',
+                '--enable-webgl',
+                '--enable-accelerated-2d-canvas',
+                '--autoplay-policy=no-user-gesture-required',
             ]
 
             try:
@@ -49,11 +52,22 @@ class BrowserController:
                     args=launch_args
                 )
             
-            # Create context with no_viewport=True to respect window size
-            context = await self.browser.new_context(no_viewport=True)
+            context = await self.browser.new_context(
+                viewport={"width": 854, "height": 480},
+                permissions=['microphone'] 
+            )
             self.page = await context.new_page()
 
+            # Strip CSP and Frame headers to allow overlay injection
+            await self.page.route("**/*", lambda route: asyncio.ensure_future(self._handle_route(route)))
+
             await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=60000)
+            
+            # Inject vtuber overlay on top of the page
+            await self._inject_vtuber_overlay()
+            
+            # Auto-re-inject overlay after any page navigation
+            self.page.on('load', lambda: asyncio.ensure_future(self._inject_vtuber_overlay()))
             
             self.is_running = True
             logging.info(f"[Browser] Started and navigated to {self.base_url}")
@@ -77,6 +91,77 @@ class BrowserController:
             await self.playwright.stop()
             
         logging.info("[Browser] Stopped")
+    
+    async def _inject_vtuber_overlay(self):
+        """Inject transparent vtuber iframe overlay on top of the page."""
+        if not self.page:
+            return
+            
+        overlay_url = config.VTUBER_FRONTEND_URL
+        # Ensure we pass autoplay param
+        if '?' in overlay_url:
+            overlay_url += '&autoplay=1'
+        else:
+            overlay_url += '?autoplay=1'
+            
+        js_code = f"""
+        () => {{
+            // Remove any existing overlay
+            const existing = document.getElementById('vtuber-overlay');
+            if (existing) existing.remove();
+            
+            const iframe = document.createElement('iframe');
+            iframe.id = 'vtuber-overlay';
+            iframe.src = '{overlay_url}';
+            iframe.setAttribute('allowtransparency', 'true');
+            iframe.setAttribute('allow', 'autoplay; microphone; camera');
+            iframe.style.cssText = [
+                'position: fixed',
+                'top: 0',
+                'left: 0',
+                'width: 100vw',
+                'height: 100vh',
+                'z-index: 999999',
+                'border: none',
+                'background: transparent',
+                'pointer-events: none'
+            ].join(';');
+            document.body.appendChild(iframe);
+            return 'Vtuber overlay injected ({overlay_url})';
+        }}
+        """
+        
+        try:
+            result = await self.page.evaluate(js_code)
+            logging.info(f"[Browser] {result}")
+        except Exception as e:
+            logging.warning(f"[Browser] Failed to inject overlay: {e}")
+
+    async def _handle_route(self, route):
+        try:
+            response = await route.fetch()
+            headers = response.headers
+            
+            # Remove security headers that block iframes/injections
+            headers_to_remove = [
+                'content-security-policy',
+                'x-frame-options',
+                'frame-ancestors',
+                'permissions-policy'
+            ]
+            
+            for key in list(headers.keys()):
+                if key.lower() in headers_to_remove:
+                    del headers[key]
+            
+            await route.fulfill(response=response, headers=headers)
+        except Exception as e:
+            # If fetch fails, continue (or abort if critical)
+            # logging.debug(f"[Browser] Route handle error: {e}")
+            try:
+                await route.continue_()
+            except:
+                pass
     
     async def get_screenshot(self) -> Optional[str]:
         
@@ -249,11 +334,24 @@ class BrowserController:
             
         try:
             await self.page.go_back()
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(1)
+            await self._inject_vtuber_overlay()
             logging.debug("[Browser] Navigated back")
         except Exception as e:
             logging.error(f"[Browser] Go back failed: {e}")
     
+    async def refresh(self):
+        if not self.page:
+            return
+        
+        try:
+            await self.page.reload(wait_until='domcontentloaded')
+            await asyncio.sleep(2)
+            await self._inject_vtuber_overlay()
+            logging.info("[Browser] Page refreshed")
+        except Exception as e:
+            logging.error(f"[Browser] Refresh failed: {e}")
+
     async def go_home(self):
         
         if not self.page:
@@ -262,6 +360,7 @@ class BrowserController:
         try:
             await self.page.goto(self.base_url, wait_until='domcontentloaded')
             await asyncio.sleep(2)
+            await self._inject_vtuber_overlay()
             logging.info("[Browser] Navigated to homepage")
         except Exception as e:
             logging.error(f"[Browser] Go home failed: {e}")
