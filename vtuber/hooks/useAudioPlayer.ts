@@ -32,7 +32,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
     // Buffering Refs for Batch Processing
     const audioBufferRef = useRef<Uint8Array<ArrayBuffer>[]>([]);
     const audioBufferLengthRef = useRef<number>(0);
-    const BUFFER_THRESHOLD = 8192; // Balanced threshold (was 1024, increased to reduce decode overhead)
+    const BUFFER_THRESHOLD = 8192;
 
     // Fallback for full file playback
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -102,7 +102,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         // Clear buffer
         audioBufferRef.current = [];
         audioBufferLengthRef.current = 0;
-        volumeQueueRef.current = []
+        volumeQueueRef.current = [];
 
         // Stop HTML Audio if playing
         if (audioRef.current) {
@@ -289,7 +289,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                             onPlaybackComplete();
                         }
                     }
-                }, (remainingTime * 1000) + 100); 
+                }, (remainingTime * 1000) + 100);
             } else {
                 setSpeakingSafe(false);
                 // Signal backend that playback is complete

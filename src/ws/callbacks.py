@@ -17,11 +17,20 @@ async def broadcast_browser_update(data):
                 
                 # Simple header skip if WAV
                 header_offset = 0
-                if len(audio_bytes) > 44 and audio_bytes[0:4] == b'RIFF':
-                    header_offset = 44
-                    
-                pcm_data = audio_bytes[header_offset:]
+                if len(audio_bytes) > 12 and audio_bytes[0:4] == b'RIFF' and audio_bytes[8:12] == b'WAVE':
+                    # Find 'data' chunk by scanning for its marker
+                    offset = 12
+                    while offset + 8 <= len(audio_bytes):
+                        chunk_id = audio_bytes[offset:offset+4]
+                        chunk_size = int.from_bytes(audio_bytes[offset+4:offset+8], 'little')
+                        if chunk_id == b'data':
+                            header_offset = offset + 8
+                            break
+                        offset += 8 + chunk_size
+                    else:
+                        header_offset = 44  # Fallback to common size
                 
+                pcm_data = audio_bytes[header_offset:]                
                 if len(pcm_data) > 0:
                     volume = utils.calculate_rms_volume(pcm_data)
             except Exception as e:
@@ -40,10 +49,10 @@ async def broadcast_browser_update(data):
         await ws_manager.broadcast_stop_signal()
         
     elif msg_type == "text":
-         await ws_manager.broadcast_text_chunk(
-            chunk=data.get("content"),
-            is_complete=True
-         )
+        await ws_manager.broadcast_text_chunk(
+        chunk=data.get("content"),
+        is_complete=True
+        )
          
     else:
         await ws_manager.broadcast(data)

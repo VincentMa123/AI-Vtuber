@@ -25,6 +25,10 @@ class AudioPipe:
         if self.running:
             return
             
+        if not hasattr(os, "mkfifo"):
+            logging.warning("[AudioPipe] os.mkfifo not available (Windows detected). Audio pipe disabled.")
+            return
+
         # Ensure FIFO exists
         if not os.path.exists(self.pipe_path):
             try:
@@ -60,6 +64,9 @@ class AudioPipe:
     async def stream_audio_flow(self, audio_chunk_iterator, input_rate=24000):
      
         if not self.running:
+            # Consume iterator to avoid unawaited warnings or logic issues
+            async for _ in audio_chunk_iterator:
+                pass
             return
 
         self.active_streams += 1
@@ -208,8 +215,7 @@ class AudioPipe:
                      if data_to_write is not silence_data:
                          silence_count = 0 # Reset silence counter if we got real data
                      
-                     if silence_count > 0 and silence_count % 100 == 0: 
-                         pass
+
 
             except Exception as e:
                 logging.error(f"[AudioPipe] Worker loop unexpected error: {e}")

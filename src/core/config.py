@@ -52,27 +52,7 @@ TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 
 # Browser Automation
 BROWSER_BASE_URL = "https://www.klikindomaret.com/"
-VTUBER_FRONTEND_URL = os.getenv("VTUBER_FRONTEND_URL", "http://192.168.56.1:3000")
-BROWSER_HEADLESS = os.getenv("BROWSER_HEADLESS", "False").lower() == "true"
-BROWSER_SELECTORS = {
-    "load_more": [
-        'button:has-text("Muat Lebih Banyak")',
-        'button:has-text("Load More")',
-        'a:has-text("Muat Lebih Banyak")',
-        'a:has-text("Load More")',
-        '[class*="load-more"]',
-        '[class*="loadmore"]',
-    ],
-    "product": [
-        '.item',                  
-        'div[class*="product"]',  
-        '.card',                
-        'a[href*="/product/"]',
-        '.product-card',
-        '.product-item a',
-        '[data-testid="product-card"]'
-    ],
-    "category_link": 'a:has-text("{name}")'
-}
+VTUBER_FRONTEND_URL = "http://192.168.56.1:3000"
+BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
 BROWSER_SCROLL_AMOUNT_MAX = 600

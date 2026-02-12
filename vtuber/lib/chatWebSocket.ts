@@ -40,7 +40,7 @@ export function useChatWebSocket(onMessage?: (msg: WebSocketMessage) => void) {
         }
 
         // Connect directly to local backend
-        const wsUrl = 'ws://localhost:8000/ws/chat';
+        const wsUrl = 'http://localhost:8000/ws/chat';
 
         console.log(`[WebSocket] Connecting to ${wsUrl}...`);
         const socket = new WebSocket(wsUrl);

@@ -125,12 +125,16 @@ async def init_services():
         state.audio_pipe = AudioPipe()
         await state.audio_pipe.start()
         logging.info("[Startup] AudioPipe initialized for headless streaming")
-        
-        # Install Interceptor
-        install_tts_interceptor(state.tts_manager, state.audio_pipe)
-
     except Exception as e:
         logging.error(f"[Startup] Failed to init AudioPipe: {e}")
+        return
+
+    # Install Interceptor
+    try:
+        install_tts_interceptor(state.tts_manager, state.audio_pipe)
+        logging.info("[Startup] TTS interceptor installed")
+    except Exception as e:
+        logging.error(f"[Startup] Failed to install TTS interceptor: {e}")
 
     async def aggregation_callback(message: str, dominant_emotion: str = None):
         

@@ -8,6 +8,35 @@ from .behavior import Behavior
 import src.core.config as config
 
 
+
+BROWSER_SELECTORS = {
+    "load_more": [
+        'button:has-text("Muat Lebih Banyak")',
+        'button:has-text("Load More")',
+        'a:has-text("Muat Lebih Banyak")',
+        'a:has-text("Load More")',
+        '[class*="load-more"]',
+        '[class*="loadmore"]',
+    ],
+    "product": [
+        '.item',                  
+        'div[class*="product"]',  
+        '.card',                
+        'a[href*="/product/"]',
+        '.product-card',
+        '.product-item a',
+        '[data-testid="product-card"]'
+    ],
+    "category_link": 'a:has-text("{name}")'
+}
+
+BROWSER_POPUP_SELECTORS = [
+    'div[class*="promo-popup"] .close', # Generic promo popup
+    '#promo-popup .close',
+    'button[aria-label="Close"]',
+    'button[aria-label="Tutup"]'
+]
+
 class BrowserController:
     
     def __init__(self):
@@ -62,6 +91,10 @@ class BrowserController:
             await self.page.route("**/*", lambda route: asyncio.ensure_future(self._handle_route(route)))
 
             await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=60000)
+            
+            # Initial popup check
+            await asyncio.sleep(5) # Wait for popups
+            await self.check_and_close_popup()
             
             # Inject vtuber overlay on top of the page
             await self._inject_vtuber_overlay()
@@ -238,7 +271,7 @@ class BrowserController:
             return False
             
         try:
-            selectors = config.BROWSER_SELECTORS.get("load_more", [])
+            selectors = BROWSER_SELECTORS.get("load_more", [])
             
             for selector in selectors:
                 try:
@@ -257,13 +290,36 @@ class BrowserController:
             logging.debug(f"[Browser] No load more button found: {e}")
             return False
     
+    async def check_and_close_popup(self):
+        """Check for and close any known popups."""
+        if not self.page:
+            return
+
+        try:
+            # 1. Check for specific selectors
+            for selector in BROWSER_POPUP_SELECTORS:
+                try:
+                    element = await self.page.query_selector(selector)
+                    if element and await element.is_visible():
+                        await element.click()
+                        logging.info(f"[Browser] Closed popup using selector: {selector}")
+                        await asyncio.sleep(1) # Wait for animation
+                        return True
+                except:
+                    continue
+            
+            return False
+
+        except Exception as e:
+            logging.debug(f"[Browser] Popup check failed: {e}")
+            
     async def click_random_product(self) -> bool:
         
         if not self.page:
             return False
             
         try:
-            product_selectors = config.BROWSER_SELECTORS.get("product", [])
+            product_selectors = BROWSER_SELECTORS.get("product", [])
             
             for attempt in range(3):
                 products_in_viewport = []
@@ -347,6 +403,7 @@ class BrowserController:
         try:
             await self.page.reload(wait_until='domcontentloaded')
             await asyncio.sleep(2)
+            await self.check_and_close_popup()
             await self._inject_vtuber_overlay()
             logging.info("[Browser] Page refreshed")
         except Exception as e:
@@ -360,6 +417,7 @@ class BrowserController:
         try:
             await self.page.goto(self.base_url, wait_until='domcontentloaded')
             await asyncio.sleep(2)
+            await self.check_and_close_popup()
             await self._inject_vtuber_overlay()
             logging.info("[Browser] Navigated to homepage")
         except Exception as e:
@@ -371,7 +429,7 @@ class BrowserController:
             
         try:
             # Note: This is an example selector pattern, can be moved to config too if needed
-            selector_template = config.BROWSER_SELECTORS.get("category_link", 'a:has-text("{name}")')
+            selector_template = BROWSER_SELECTORS.get("category_link", 'a:has-text("{name}")')
             selector = selector_template.format(name=category_name)
             
             category_link = await self.page.query_selector(selector)
@@ -408,12 +466,12 @@ class BrowserController:
             return {"scrollY": 0, "scrollHeight": 1, "viewportHeight": 1, "scrollPercent": 0, "atBottom": False, "atTop": True}
     
     async def is_load_more_visible(self) -> bool:
-        """Check if load more button is visible in viewport."""
+
         if not self.page:
             return False
             
         try:
-            selectors = config.BROWSER_SELECTORS.get("load_more", [])
+            selectors = BROWSER_SELECTORS.get("load_more", [])
             
             for selector in selectors:
                 try:
@@ -431,6 +489,9 @@ class BrowserController:
     async def perform_random_action(self) -> str:
         if not self.page:
             return "no_page"
+        
+        # Always check for popup before acting
+        await self.check_and_close_popup()
         
         current_url = await self.get_current_url()
         # klikindomaret specific check, relies on URL structure containing /xpress/ or /product/

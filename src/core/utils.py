@@ -181,7 +181,7 @@ def calculate_rms_volume(pcm_data: bytes, sensitivity: float = 3000.0) -> float:
     Args:
         pcm_data: Raw 16-bit PCM audio bytes.
         sensitivity: Divisor for normalization. Lower value = higher sensitivity.
-                     Default 8000.0 provides good sensitivity for speech.
+                     Default 3000.0 provides good sensitivity for speech.
                      
     Returns:
         float: Normalized volume between 0.0 and 1.0.
