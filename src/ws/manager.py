@@ -76,13 +76,26 @@ class WebSocketManager:
             "timestamp": asyncio.get_event_loop().time()
         })
     
-    async def broadcast_audio_chunk(self, audio_base64: str, is_complete: bool = False):
+    async def broadcast_audio_chunk(self, audio_base64: str = None, volume: float = 0.0, is_complete: bool = False):
 
         await self.broadcast({
             "type": "audio_chunk",
             "audio_base64": audio_base64,
+            "volume": volume,
             "complete": is_complete,
             "timestamp": asyncio.get_event_loop().time()
+        })
+
+    async def broadcast_vision_status(self, content: str):
+        await self.broadcast({
+            "type": "vision_status",
+            "content": content
+        })
+
+    async def broadcast_stop_signal(self):
+        await self.broadcast({
+            "type": "audio_chunk",
+            "complete": True
         })
     
     async def broadcast_stream_start(self, emotion: str = "neutral"):

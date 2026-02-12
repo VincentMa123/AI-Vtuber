@@ -11,7 +11,7 @@ interface UseAudioPlayerReturn {
     audioEnabled: boolean;
     enableAudio: () => void;
     playAudio: (base64Audio: string, onComplete?: () => void) => Promise<void>;
-    playAudioChunk: (base64Audio: string, isComplete?: boolean, timestamp?: number) => Promise<void>;
+    playAudioChunk: (base64Audio: string, isComplete?: boolean, timestamp?: number, volume?: number) => Promise<void>;
     stopAudio: () => void;
     getCurrentVolume: () => number;
 }
@@ -23,10 +23,8 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
 
     // AudioContext Refs
     const audioContextRef = useRef<AudioContext | null>(null);
-    const analyserRef = useRef<AnalyserNode | null>(null);
     const nextStartTimeRef = useRef<number>(0);
     const sourceNodesRef = useRef<AudioBufferSourceNode[]>([]);
-    const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
     // Queue to ensure sequential decoding and scheduling
     const processingChainRef = useRef<Promise<void>>(Promise.resolve());
@@ -34,10 +32,13 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
     // Buffering Refs for Batch Processing
     const audioBufferRef = useRef<Uint8Array<ArrayBuffer>[]>([]);
     const audioBufferLengthRef = useRef<number>(0);
-    const BUFFER_THRESHOLD = 24000; // ~24KB (approx 1.5s of audio at 128kbps)
+    const BUFFER_THRESHOLD = 8192; // Balanced threshold (was 1024, increased to reduce decode overhead)
 
     // Fallback for full file playback
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Queue for backend-provided volume data
+    const volumeQueueRef = useRef<{ start: number; end: number; volume: number }[]>([]);
 
     // Safety ref
     const mountedRef = useRef(true);
@@ -65,12 +66,6 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
             if (!audioContextRef.current) {
                 const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
                 audioContextRef.current = new AudioContextClass();
-
-                // Create Analyser
-                const analyser = audioContextRef.current.createAnalyser();
-                analyser.fftSize = 256;
-                analyserRef.current = analyser;
-                dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
             }
             // Resume if suspended (browser autoplay policy)
             if (audioContextRef.current.state === 'suspended') {
@@ -107,10 +102,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         // Clear buffer
         audioBufferRef.current = [];
         audioBufferLengthRef.current = 0;
-
-        // Cancel existing queue by replacing the promise chain (effectively ignoring previous tasks)
-        // Note: We can't cancel running promises, but we can prevent new ones from acting.
-        // For simplicity, we just reset the state.
+        volumeQueueRef.current = []
 
         // Stop HTML Audio if playing
         if (audioRef.current) {
@@ -132,8 +124,6 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
             const audio = new Audio(url);
             audioRef.current = audio;
 
-            // Connect to Analyser for HTML5 Audio (Cross-origin issues may occur if not strict, but local blob is fine)
-            // Note: MediaElementSource needs context to be running
             if (audioContextRef.current) {
                 try {
                     // Ensure context is running
@@ -142,14 +132,9 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                     }
 
                     const source = audioContextRef.current.createMediaElementSource(audio);
-                    if (analyserRef.current) {
-                        source.connect(analyserRef.current);
-                        analyserRef.current.connect(audioContextRef.current.destination);
-                    } else {
-                        source.connect(audioContextRef.current.destination);
-                    }
+                    source.connect(audioContextRef.current.destination);
                 } catch (e) {
-                    console.warn("Could not connect HTML audio to analyser", e);
+                    console.warn("Could not connect HTML audio to destination", e);
                 }
             }
 
@@ -173,7 +158,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
     }, [stopAudio, setSpeakingSafe]);
 
 
-    const playAudioChunk = useCallback(async (base64Audio: string, isComplete: boolean = false) => {
+    const playAudioChunk = useCallback(async (base64Audio: string, isComplete: boolean = false, timestamp: number = 0, volume: number = 0) => {
         // Chain the processing to ensure sequential order
         processingChainRef.current = processingChainRef.current.then(async () => {
             if (!audioEnabled) {
@@ -213,14 +198,6 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                 ctx.resume();
             }
 
-            // Ensure analyser exists
-            if (!analyserRef.current) {
-                const analyser = ctx.createAnalyser();
-                analyser.fftSize = 256;
-                analyserRef.current = analyser;
-                dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
-            }
-
             try {
                 // Merge Buffer
                 const totalLength = audioBufferLengthRef.current;
@@ -252,15 +229,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                 const source = ctx.createBufferSource();
                 source.buffer = audioBuffer;
 
-                // Connect source -> analyser -> destination
-                if (analyserRef.current) {
-                    source.connect(analyserRef.current);
-                    analyserRef.current.connect(ctx.destination);
-                    console.log("[Audio] Connected source to analyser");
-                } else {
-                    source.connect(ctx.destination);
-                    console.warn("[Audio] Analyser missing during connection!");
-                }
+                source.connect(ctx.destination);
 
                 const startTime = nextStartTimeRef.current;
                 source.start(startTime);
@@ -272,17 +241,26 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                     if (index > -1) {
                         sourceNodesRef.current.splice(index, 1);
                     }
-                    if (sourceNodesRef.current.length === 0 && !isComplete) {
-                        // All chunks played (so far)
-                        // Don't necessarily stop speaking if we expect more, but 
-                        // if the queue is empty and we are done, we will handle it.
-                        // Actually, we should check in the chain or rely on isComplete flag from caller?
-                        // The caller passes isComplete=true on the last chunk.
-                    }
                 };
 
                 // Advance time
-                nextStartTimeRef.current += audioBuffer.duration;
+                const duration = audioBuffer.duration;
+
+                // Queue volume data
+                if (volume !== undefined && volume > 0) {
+                    // We apply this volume for the duration of this chunk
+                    volumeQueueRef.current.push({
+                        start: nextStartTimeRef.current,
+                        end: nextStartTimeRef.current + duration,
+                        volume: volume
+                    });
+
+                    // Clean up old volume entries
+                    const cutoff = currentTime - 5; // keep last 5 seconds just in case
+                    volumeQueueRef.current = volumeQueueRef.current.filter(v => v.end > cutoff);
+                }
+
+                nextStartTimeRef.current += duration;
 
                 setSpeakingSafe(true);
 
@@ -311,7 +289,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                             onPlaybackComplete();
                         }
                     }
-                }, (remainingTime * 1000) + 100); // 100ms buffer
+                }, (remainingTime * 1000) + 100); 
             } else {
                 setSpeakingSafe(false);
                 // Signal backend that playback is complete
@@ -325,31 +303,18 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
     }, [audioEnabled, setSpeakingSafe, onPlaybackComplete]);
 
     const getCurrentVolume = useCallback(() => {
-        if (!analyserRef.current || !dataArrayRef.current) {
-            if (Math.random() < 0.01) console.warn("[Audio] getCurrentVolume: Analyser not ready. Enabled:", audioEnabled);
-            return 0;
+        // Check backend volume queue first
+        const ctx = audioContextRef.current;
+        if (ctx) {
+            const currentTime = ctx.currentTime;
+            const activeVolume = volumeQueueRef.current.find(v => currentTime >= v.start && currentTime < v.end);
+            if (activeVolume) {
+                // If we have backend volume, use it!
+                return activeVolume.volume;
+            }
         }
 
-        analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-
-        // Calculate average volume
-        let sum = 0;
-        for (let i = 0; i < dataArrayRef.current.length; i++) {
-            sum += dataArrayRef.current[i];
-        }
-        const average = sum / dataArrayRef.current.length;
-
-        // Normalize 0-255 to 0-1
-        // Usually speech doesn't hit 255 constantly, so we can scale it up a bit
-
-        // DEBUG: Log raw average if 0
-        if (average === 0 && Math.random() < 0.01) {
-            console.log("[Audio] Raw Average is 0. Analyser connected?", !!analyserRef.current);
-        } else if (average > 0 && Math.random() < 0.05) {
-            console.log("[Audio] Raw Average:", average);
-        }
-
-        return Math.min(1, average / 100);
+        return 0;
     }, []);
 
     return {

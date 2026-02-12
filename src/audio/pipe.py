@@ -2,6 +2,7 @@ import os
 import asyncio
 import logging
 import subprocess
+import time
 
 class AudioPipe:
 
@@ -156,6 +157,12 @@ class AudioPipe:
                     self._pipe_fd = await loop.run_in_executor(None, os.open, self.pipe_path, os.O_WRONLY)
                     logging.info("[AudioPipe] Pipe connected!")
                     silence_count = 0 
+                    
+                    # Reset Timing for Realtime Pacing
+                    # We want to align the "Audio Stream Time" with "Wall Clock Time"
+                    self.start_time = time.time()
+                    self.bytes_written_total = 0
+                    
                 except Exception as e:
                     logging.error(f"[AudioPipe] Failed to open pipe: {e}. Retrying in 1s...")
                     await asyncio.sleep(1)
@@ -164,35 +171,45 @@ class AudioPipe:
             # Silence chunk (100ms)
             silence_bytes = int(self.bytes_per_second * 0.1)
             silence_data = b'\x00' * silence_bytes
+            
+            # --- Realtime Pacing Logic ---
+            # Calculate how much audio we have sent so far (in seconds)
+            audio_time_sent = self.bytes_written_total / self.bytes_per_second
+            
+            # Calculate how much real time has passed since we started streaming
+            wall_time_elapsed = time.time() - self.start_time
+            
+            # If we have sent MORE audio than time has passed, we are "ahead of schedule".
+            # We must wait for reality to catch up.
+            drift = audio_time_sent - wall_time_elapsed
+            
+            if drift > 0.01: # 10ms tolerance
+                await asyncio.sleep(drift)
 
             try:
+                data_to_write = None
                 try:
-                    # Wait up to 100ms for data (Relaxed from 50ms)
-                    data = await asyncio.wait_for(self.queue.get(), timeout=0.1)
-                    
-                    if data:
-                         success = await loop.run_in_executor(None, write_sync, self._pipe_fd, data)
-                         if not success:
-                             logging.warning("[AudioPipe] Broken pipe writing data. Reconnecting...")
-                             try: os.close(self._pipe_fd)
-                             except: pass
-                             self._pipe_fd = None
-                             continue
-                         
-                         silence_count = 0 # Reset silence counter
-                         
+                    data_to_write = await asyncio.wait_for(self.queue.get(), timeout=0.01) # Short timeout
                 except asyncio.TimeoutError:
-                    success = await loop.run_in_executor(None, write_sync, self._pipe_fd, silence_data)
-                    if not success:
-                         logging.warning("[AudioPipe] Broken pipe writing silence. Reconnecting...")
+                    data_to_write = silence_data
+                    silence_count += 1
+                
+                if data_to_write:
+                     success = await loop.run_in_executor(None, write_sync, self._pipe_fd, data_to_write)
+                     if not success:
+                         logging.warning("[AudioPipe] Broken pipe writing data. Reconnecting...")
                          try: os.close(self._pipe_fd)
                          except: pass
                          self._pipe_fd = None
                          continue
-                    
-                    silence_count += 1
-                    if silence_count % 100 == 0: 
-                        pass
+                     
+                     self.bytes_written_total += len(data_to_write)
+                     
+                     if data_to_write is not silence_data:
+                         silence_count = 0 # Reset silence counter if we got real data
+                     
+                     if silence_count > 0 and silence_count % 100 == 0: 
+                         pass
 
             except Exception as e:
                 logging.error(f"[AudioPipe] Worker loop unexpected error: {e}")

@@ -18,10 +18,12 @@ from chat.models import (
 )
 from chat.response_handler import handle_aggregated_response
 from ws.manager import ws_manager
+from audio.pipe import AudioPipe
+from audio.interceptor import install_tts_interceptor
+from ws.callbacks import broadcast_browser_update
 import json
 import asyncio
-import base64
-import struct
+
 
 app = FastAPI()
 
@@ -120,82 +122,12 @@ async def init_services():
 
     # Audio Pipe (Headless Streaming)
     try:
-        from audio.pipe import AudioPipe
         state.audio_pipe = AudioPipe()
         await state.audio_pipe.start()
         logging.info("[Startup] AudioPipe initialized for headless streaming")
         
-        # Monkey-patch TTS Manager to intercept audio for the pipe
-        original_generate = state.tts_manager.generate_audio_stream
-        
-        async def patched_generate_audio_stream(text_stream):
-            # 1. Create a queue to bridge to AudioPipe
-            pipe_queue = asyncio.Queue()
-            
-            # 2. Define the consumer iterator for AudioPipe
-            async def pipe_iterator():
-                while True:
-                    chunk = await pipe_queue.get()
-                    if chunk is None:
-                        break
-                    yield chunk
-            
-            pipe_started = False
-            chunk_count = 0
-            total_bytes = 0
-            logging.info("[AudioPipe Interceptor] Starting to intercept TTS stream...")
-            
-            try:
-                # We need to manually iterate to get the first chunk
-                gen = original_generate(text_stream)
-                
-                async for b64_chunk in gen:
-                    try:
-                        if b64_chunk:
-                            chunk_bytes = base64.b64decode(b64_chunk)
-                            
-                            # Inspect first chunk for WAV header
-                            if not pipe_started:
-                                sample_rate = 24000 # Default (Qwen)
-                                
-                                # Check for RIFF header
-                                if len(chunk_bytes) > 44 and chunk_bytes[0:4] == b'RIFF' and chunk_bytes[8:12] == b'WAVE':
-                                    try:
-                                        sample_rate = struct.unpack('<I', chunk_bytes[24:28])[0]
-                                        logging.info(f"[AudioPipe Interceptor] Detected WAV sample rate: {sample_rate}")
-                                    except:
-                                        logging.warning("[AudioPipe Interceptor] Failed to parse WAV header, defaulting to 24000")
-                                
-                                # Start the pipe with detected rate
-                                logging.info(f"[AudioPipe Interceptor] Starting pipe with input_rate={sample_rate}")
-                                pipe_task = asyncio.create_task(state.audio_pipe.stream_audio_flow(pipe_iterator(), input_rate=sample_rate))
-                                
-                                # Keep a strong reference
-                                if not hasattr(state, "background_tasks"):
-                                    state.background_tasks = set()
-                                state.background_tasks.add(pipe_task)
-                                pipe_task.add_done_callback(state.background_tasks.discard)
-                                pipe_started = True
-
-                            pcm_data = chunk_bytes[44:]
-                            await pipe_queue.put(pcm_data)
-                            chunk_count += 1
-                            total_bytes += len(pcm_data)
-                            
-                    except Exception as e:
-                        logging.error(f"[AudioPipe Interceptor] Error processing chunk: {e}")
-                    
-                    # Yield original (base64 WAV) to Frontend
-                    yield b64_chunk
-                    
-            finally:
-                logging.info(f"[AudioPipe Interceptor] Stream finished. Sent {chunk_count} chunks ({total_bytes} bytes PCM) to pipe.")
-                # Signal end of stream to pipe
-                await pipe_queue.put(None)
-                pass
-
-        state.tts_manager.generate_audio_stream = patched_generate_audio_stream
-        logging.info("[Startup] TTS Manager patched for AudioPipe interception")
+        # Install Interceptor
+        install_tts_interceptor(state.tts_manager, state.audio_pipe)
 
     except Exception as e:
         logging.error(f"[Startup] Failed to init AudioPipe: {e}")
@@ -218,34 +150,6 @@ async def init_services():
     )
     
     # Browser Loop
-    async def broadcast_browser_update(data):
-        msg_type = data.get("type")
-        if msg_type == "audio":
-
-            await ws_manager.broadcast({
-                "type": "audio_chunk",
-                "audio_base64": data.get("data"),
-                "complete": False
-            })
-        elif msg_type == "status":
-            await ws_manager.broadcast({
-                "type": "vision_status",
-                "content": data.get("content")
-            })
-        elif msg_type == "stop":
-            await ws_manager.broadcast({
-                "type": "audio_chunk",
-                "complete": True
-            })
-        elif msg_type == "text":
-             await ws_manager.broadcast({
-                "type": "text_chunk",
-                "chunk": data.get("content"),
-                "complete": True
-             })
-        else:
-            await ws_manager.broadcast(data)
-            
     await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
     logging.info("[Startup] Vision Heartbeat & Browser loop scheduled")
 

@@ -14,6 +14,7 @@ export interface WebSocketMessage {
     // Streaming fields
     chunk?: string;
     complete?: boolean;
+    volume?: number;
 }
 
 export function useChatWebSocket(onMessage?: (msg: WebSocketMessage) => void) {
@@ -38,13 +39,8 @@ export function useChatWebSocket(onMessage?: (msg: WebSocketMessage) => void) {
             return;
         }
 
-        // Determine correct WebSocket URL
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        // Handle localhost, local IPs (192.168.x.x), and production
-        const hostname = window.location.hostname;
-        const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
-        const host = isLocalDev ? `${hostname}:8000` : window.location.host;
-        const wsUrl = `${protocol}//${host}/ws/chat`;
+        // Connect directly to local backend
+        const wsUrl = 'ws://localhost:8000/ws/chat';
 
         console.log(`[WebSocket] Connecting to ${wsUrl}...`);
         const socket = new WebSocket(wsUrl);

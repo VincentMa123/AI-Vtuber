@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAudioPlayer, EmotionType } from '../hooks/useAudioPlayer';
 import { useChatWebSocket, WebSocketMessage } from '../lib/chatWebSocket';
@@ -64,7 +64,7 @@ const VTuberPage = () => {
       if (msg.emotion) setEmotion(msg.emotion);
     } else if (msg.type === 'audio_chunk') {
       if (msg.audio_base64 || msg.complete) {
-        playAudioChunk(msg.audio_base64 || '', msg.complete ?? false, msg.timestamp ?? 0);
+        playAudioChunk(msg.audio_base64 || '', msg.complete ?? false, msg.timestamp ?? 0, msg.volume);
         if (msg.complete) setTimeout(() => setEmotion('neutral'), 1000);
       }
     } else if (msg.type === 'stream_end') {
