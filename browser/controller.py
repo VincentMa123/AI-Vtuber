@@ -6,8 +6,7 @@ from typing import Optional, List, Dict, Any
 from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
 import src.core.config as config
-
-
+import requests
 
 BROWSER_SELECTORS = {
     "load_more": [
@@ -46,7 +45,20 @@ class BrowserController:
         self.is_running = False
         self._loop_task: Optional[asyncio.Task] = None
         self.base_url = config.BROWSER_BASE_URL
+    
+
+    def get_cloudflare_cookies(self, url):
+        response = requests.post('http://localhost:8191/v1', json={
+            "cmd": "request.get",
+            "url": url,
+            "maxTimeout": 60000
+        })
         
+        if response.status_code == 200:
+            solution = response.json()['solution']
+            return solution['cookies']
+        return None
+
     async def start(self) -> bool:
         
         try:
@@ -83,8 +95,12 @@ class BrowserController:
             
             context = await self.browser.new_context(
                 viewport={"width": 854, "height": 480},
-                permissions=['microphone'] 
+                permissions=['microphone'],
             )
+
+            cookies = self.get_cloudflare_cookies('https://www.klikindomaret.com')
+            await context.add_cookies(cookies)
+
             self.page = await context.new_page()
 
             # Strip CSP and Frame headers to allow overlay injection
