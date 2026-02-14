@@ -36,7 +36,9 @@ sudo apt-get install -y \
     libgbm1 \
     fonts-liberation \
     libappindicator3-1 \
-    xdg-utils
+    xdg-utils \
+    build-essential \
+    python3-dev
 
 echo "=== Installing Google Chrome ==="
 if ! command -v google-chrome &> /dev/null; then

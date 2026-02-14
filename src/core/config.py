@@ -18,7 +18,7 @@ REMOTE_VLLM_MODEL = "Qwen3-VL-2B"
 
 # Qwen (DashScope) Configuration
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
-QWEN_MODEL = "qwen3-vl-flash-2026-01-22" 
+QWEN_MODEL = "qwen3-vl-plus" 
 QWEN_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"  
 
 TTS_PROVIDER = "qwen" #qwen, realtimetts

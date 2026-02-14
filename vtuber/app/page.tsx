@@ -103,6 +103,8 @@ const VTuberPage = () => {
       </div>
 
       {/* Chat overlay (bottom-left) */}
+      {/* Chat overlay (bottom-left) - Hidden */}
+      {/* 
       <div className="chat-overlay">
         <div className="chat-overlay-header">💬 Twitch Chat</div>
         <div className="chat-messages chat-scrollbar">
@@ -121,7 +123,8 @@ const VTuberPage = () => {
           ))}
           <div ref={chatEndRef} />
         </div>
-      </div>
+      </div> 
+      */}
 
       {/* Connection dot */}
       <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`} />

@@ -27,7 +27,7 @@ fi
 
 # Configuration
 DISPLAY_NUM=55
-RESOLUTION="854x480"
+RESOLUTION="1920x1080"
 FPS=24
 BITRATE="1500k"
 TWITCH_URL="rtmp://live.twitch.tv/app"

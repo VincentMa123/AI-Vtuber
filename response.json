@@ -1,0 +1,1454 @@
+{
+  "data": {
+    "additionalData": {
+      "blacklistKeywordsMessage": null,
+      "clusterCode": "TJKT",
+      "flag": null,
+      "hasBlacklistedCategories": false,
+      "hasBlacklistedKeywords": false,
+      "notFound": false,
+      "notFoundSectionTitle": null,
+      "productBrands": [
+        {
+          "id": "3521::Aroma",
+          "name": "Aroma",
+          "totalProduct": 1
+        },
+        {
+          "id": "3005::Barco",
+          "name": "Barco",
+          "totalProduct": 2
+        },
+        {
+          "id": "1674::Bimoli",
+          "name": "Bimoli",
+          "totalProduct": 6
+        },
+        {
+          "id": "2469::Filma",
+          "name": "Filma",
+          "totalProduct": 1
+        },
+        {
+          "id": "320::Fortune",
+          "name": "Fortune",
+          "totalProduct": 1
+        },
+        {
+          "id": "3702::Happy Soya",
+          "name": "Happy Soya",
+          "totalProduct": 1
+        },
+        {
+          "id": "1660::Harumas",
+          "name": "Harumas",
+          "totalProduct": 1
+        },
+        {
+          "id": "3945::Ikan Dorang",
+          "name": "Ikan Dorang",
+          "totalProduct": 2
+        },
+        {
+          "id": "1307::Indomaret",
+          "name": "Indomaret",
+          "totalProduct": 1
+        },
+        {
+          "id": "962::Kara",
+          "name": "Kara",
+          "totalProduct": 1
+        },
+        {
+          "id": "542::Sania",
+          "name": "Sania",
+          "totalProduct": 2
+        },
+        {
+          "id": "1794::Sovia",
+          "name": "Sovia",
+          "totalProduct": 2
+        },
+        {
+          "id": "8907::Sunco",
+          "name": "Sunco",
+          "totalProduct": 1
+        },
+        {
+          "id": "3437::Tropical",
+          "name": "Tropical",
+          "totalProduct": 2
+        }
+      ],
+      "productCategories": [
+        {
+          "blacklist": false,
+          "categoryId": 357,
+          "categoryName": "Minyak",
+          "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/category/e0e76d04-a880-43f6-b526-f6d4bff93fce",
+          "parentId": 341,
+          "permalink": "minyak",
+          "position": 0,
+          "totalProduct": 24
+        }
+      ],
+      "productMetaCategories": [
+        {
+          "blacklist": false,
+          "categoryId": 341,
+          "categoryName": "Dapur & Bahan Masakan",
+          "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/category/bfee75ca-f66e-4ca9-a4a1-8c051b2781e4",
+          "parentId": 0,
+          "permalink": "dapur-bahan-masakan",
+          "position": 2,
+          "totalProduct": 24
+        }
+      ],
+      "productPageCode": null,
+      "productSubCategories": [
+        {
+          "blacklist": false,
+          "categoryId": 505,
+          "categoryName": "Minyak Sawit",
+          "imageUrl": null,
+          "parentId": 357,
+          "permalink": "minyak-sawit",
+          "position": 1,
+          "totalProduct": 18
+        },
+        {
+          "blacklist": false,
+          "categoryId": 506,
+          "categoryName": "Minyak Kelapa",
+          "imageUrl": null,
+          "parentId": 357,
+          "permalink": "minyak-kelapa",
+          "position": 3,
+          "totalProduct": 5
+        },
+        {
+          "blacklist": false,
+          "categoryId": 507,
+          "categoryName": "Minyak Biji",
+          "imageUrl": null,
+          "parentId": 357,
+          "permalink": "minyak-biji",
+          "position": 2,
+          "totalProduct": 1
+        }
+      ],
+      "selectedCategory": null,
+      "selectedFilterPriceType": 0,
+      "selectedMaxPrice": null,
+      "selectedMetaCategory": null,
+      "selectedMinPrice": null,
+      "selectedProductBrands": null,
+      "selectedSort": "default,asc",
+      "selectedSubCategory": null,
+      "storeSelling": null,
+      "typoKeyword": null,
+      "unfilteredTotal": 24
+    },
+    "content": [
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "1307::Indomaret",
+        "brandName": "Indomaret",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Dibuat dari kelapa sawit berkualitas. Warna kuning keemasan berasal dari beta karoten alami.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Dibuat dari kelapa sawit berkualitas. Warna kuning keemasan berasal dari beta karoten alami.",
+            "title": "Other Details"
+          },
+          {
+            "content": "Minyak kelapa sawit.",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji 1sdk: 10g",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian per kemasan : 200",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 90kkal, energi dari lemak 90kkal. % AKG: Lemak total 10g, lemak jenuh 4g, lemak tidak jenuh tunggal 4.5g, lemak tidak jenuh ganda 1g, kolesterol 0mg, protein 0g, karbohidrat total 0g, natrium 0mg. Vitamin E 10%.",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "208109002024",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "20043713",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "8%",
+        "discountValue": 3000,
+        "finalPrice": 35900,
+        "flavour": null,
+        "height": 29,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20043713_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 10.8,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-indomaret",
+        "plu": "20043713",
+        "price": 38900,
+        "productId": 35278,
+        "productName": "Indomaret Minyak Goreng 2L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODPLFC00KC",
+        "promoInfo": "",
+        "promoTagList": null,
+        "promoText": "Setiap Pembelian 1 Pc Indomaret Minyak 2l Mendapatkan Potongan Rp 3.000. Berlaku Kelipatanbeban Pl : 1.400beban Mkt (dana Cp 2025) : 1.600",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20043713_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1840,
+        "width": 21.8
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "3005::Barco",
+        "brandName": "Barco",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Minyak goreng barco lebih Higienis, 6 kali proses pengoreng hasilnya kering tidak melekat ke bahan gorengan, mengadung asam laurat merupakan asam lemak rantai fungsinya meningkatkan sistem imunitas tubuh. Mengandung  MCT (Medium chains Tryglyceride Fats) digunakan oleh hati  sebagai pembersih, lemak ini adalah salah satu lemak tersehat karean tubuh dengan  mudah menyerapnya.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "ID00410000067301220",
+            "title": "Halal"
+          },
+          {
+            "content": "8904:2020 LSPr-010-IDN",
+            "title": "SNI"
+          },
+          {
+            "content": "10017889",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 27.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10017889_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 12,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "barco-barco-minyak-goreng-refill-pch-2l",
+        "plu": "10017889",
+        "price": 119900,
+        "productId": 22856944,
+        "productName": "Barco Minyak Goreng Refill 2L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10017889_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1900,
+        "width": 21
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "962::Kara",
+        "brandName": "Kara",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "MINYAK KELAPA YANG MENJADI PUTIH / MEMBEKU MENANDAKAN MINYAK KELAPA ASLI (MINYAK KELAPA SECARA ALAMI MEMBEKU DI BAWAH SUHU 24C DAN AKAN MENCAIR DI SUHU 26C)",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "KARA COCONUT COOKING OIL 100% MINYAK KELAPA ASLI DIBUAT DARI BUAH KELAPA PILIHAN SEHINGGA MENGHASILKAN MINYAK GORENG YANG BERKUALITAS",
+            "title": "Other Details"
+          },
+          {
+            "content": "SIMPAN DI WADAH KEDAP UDARA TEMPAT BERSIH KERING DAN JAUHKAN DARI PAPARAN SINAR MATAHARI LANGSUNG.",
+            "title": "Cara Penyimpanan"
+          },
+          {
+            "content": "ID14410000002111219",
+            "title": "Halal"
+          },
+          {
+            "content": "20139800",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 26.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20139800_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 7.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "kara-kara-minyak-goreng-kelapa-pch-1l",
+        "plu": "20139800",
+        "price": 54900,
+        "productId": 21135028,
+        "productName": "Kara Minyak Goreng Kelapa 1L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20139800_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 938,
+        "width": 15.5
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "320::Fortune",
+        "brandName": "Fortune",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Fortune adalah minyak goreng nabati yang diproses dari buah kelapa sawit segar dan bermutu, serta pengawasan mutu yang ketat.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Minyak goreng tahan panas & lebih renyah",
+            "title": "Other Details"
+          },
+          {
+            "content": "Minyak kelapa sawit dan vitamin A",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji 16ml",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian perkemasan 129",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 130kkal, energi dari lemak 130kkal, lemak total 14g, lemak jenuh 6g, lemak tak jenuh tunggal 6g, lemak tak jenuh 2g, lemak trans 0g, kolesterol 0mg, protein 0g, karbohidrat 0g, natrium 0g",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "231206005037",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10000442",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "4%",
+        "discountValue": 1700,
+        "finalPrice": 38100,
+        "flavour": null,
+        "height": 29.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000442_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 11.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-fortune-2L",
+        "plu": "10000442",
+        "price": 39800,
+        "productId": 28002,
+        "productName": "Fortune Minyak Goreng Refill 2000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODHSFC083Y",
+        "promoInfo": "",
+        "promoTagList": null,
+        "promoText": "Beli 1 Diskon Rp 1.700- Fortune Minyak Goreng Pch 2l Berlaku Kelipatan",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000442_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1850,
+        "width": 21
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "3521::Aroma",
+        "brandName": "Aroma",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "MINYAK GORENG DARI BAHAN BAKU KOPRA",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "MINYAK GORENG KELAPA MERK AROMA",
+            "title": "Other Details"
+          },
+          {
+            "content": "DI RUANGAN SUHU 26 C MULAI MEMBEKU",
+            "title": "Perhatian"
+          },
+          {
+            "content": "20140705",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 27,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20140705_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 8,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "aroma-aroma-minyak-goreng-kelapa-pch-1l",
+        "plu": "20140705",
+        "price": 55900,
+        "productId": 23903353,
+        "productName": "Aroma Minyak Goreng Kelapa 1L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20140705_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 900,
+        "width": 15.5
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "542::Sania",
+        "brandName": "Sania",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Sania adalah minyak goreng premium yang diproduksi dengan beberapa tahap proses pemurnian dan penyaringan.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Sania adalah minyak goreng premium yang diproduksi dengan beberapa tahap proses pemurnian dan penyaringan.",
+            "title": "Other Details"
+          },
+          {
+            "content": "Minyak kelapa sawit dan vitamin A (mengandung antioksidan tokoferol).",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji:8g (1sdk)",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian per kemasan : 225",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 70kkal, energi dari lemak 70kkal. % AKG: lemak total 8g, lemak jenuh 3.5g, lemak tidak jenuh tunggal (omega-9) 3.5g, lemak tak jenuh ganda (omega-6) 1g, lemak trans 0g, kolesterol 0g, protein 0g, karbohidrat total 0g, natrium 0mg, Vitamin A 118RE, vitamin E 8mg.",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "232102001161",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10010805",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "4%",
+        "discountValue": 1800,
+        "finalPrice": 38300,
+        "flavour": null,
+        "height": 28,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10010805_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 10,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-refill-2",
+        "plu": "10010805",
+        "price": 40100,
+        "productId": 28354,
+        "productName": "Sania Minyak Goreng Refill 2000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODHSFC083U",
+        "promoInfo": "",
+        "promoTagList": [
+          {
+            "colorBackground": "#FFF1B8",
+            "colorText": "#D7930C",
+            "iconUrl": "https://cdn-klik.klikindomaret.com/assets/promo/stamp.png",
+            "id": "15",
+            "priority": 5,
+            "tag": "Stamp"
+          }
+        ],
+        "promoText": "Beli 1 Diskon Rp 1.800- Sania Minyak Goreng Pch 2l Berlaku Kelipatan",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10010805_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 2050,
+        "width": 20
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "1660::Harumas",
+        "brandName": "Harumas",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "minyak goreng multiguna cocok untuk goreng dan tumis, dibuat dengan minyak kelapa sawit yang bermutu.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "208109117015",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "20120993",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "10%",
+        "discountValue": 4000,
+        "finalPrice": 36400,
+        "flavour": null,
+        "height": 29,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20120993_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 10.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-10",
+        "plu": "20120993",
+        "price": 40400,
+        "productId": 30253,
+        "productName": "Harumas Minyak Goreng 2L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODHSFC083S",
+        "promoInfo": "",
+        "promoTagList": null,
+        "promoText": "Beli 1 Diskon Rp 4.000- Harumas Minyak Goreng Pch 2l Berlaku Kelipatan",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20120993_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1845,
+        "width": 21.5
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "2469::Filma",
+        "brandName": "Filma",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Filma dengan asam lemak tak jenuh (6g/saji), Omega 9 (5g/saji) dan Omega 6 (1,5g/saji). Omega 6 adalah asam lemak esensial yang diperlukan tubuh. Filma berwarna kuning keemasan dari buah sawit. Filma dibuat dari buah sawit pilihan yang menghasilkan minyak",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Filma dengan asam lemak tak jenuh (6g/saji), Omega 9 (5g/saji) dan Omega 6 (1,5g/saji). Omega 6 adalah asam lemak esensial yang diperlukan tubuh. Filma berwarna kuning keemasan dari buah sawit. Filma dibuat dari buah sawit pilihan yang menghasilkan minyak goreng berkualitas dan jernih",
+            "title": "Other Details"
+          },
+          {
+            "content": "minyak sawit.",
+            "title": "Komposisi"
+          },
+          {
+            "content": "231313003061",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10005838",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "11%",
+        "discountValue": 4600,
+        "finalPrice": 37900,
+        "flavour": null,
+        "height": 28,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10005838_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 8.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-filma",
+        "plu": "10005838",
+        "price": 42500,
+        "productId": 31174,
+        "productName": "Filma Minyak Goreng Refill 2000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODHSFC0840",
+        "promoInfo": "",
+        "promoTagList": null,
+        "promoText": "Beli 1 Diskon Rp 4.600- Filma Minyak Goreng Pch 2l Berlaku Kelipatan(beban Supplier 2600 Beban Mkt 2000)",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10005838_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1845,
+        "width": 21.5
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "3702::Happy Soya",
+        "brandName": "Happy Soya",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Minyak Terbuat dari 100% minyak kedelai murni yang begitu kaya akan vitamin E, antioksidan, omega 3 dan omega 6. Membantu anda memasak masakan yang lebih sehat dan lezat karena memberikan rasa dan aroma alami makanan. Pastikan untuk selalu memberikan yang makanan terbaik bagi keluarga Anda menggunakan Happy Soya Oil.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "209509007003",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "20113694",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 26,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20113694_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 7.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-refill-1",
+        "plu": "20113694",
+        "price": 52900,
+        "productId": 29221,
+        "productName": "Happy Soya Minyak Goreng Refill 1L",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1L",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/20113694_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 922,
+        "width": 15.2
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "542::Sania",
+        "brandName": "Sania",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Sania adalah minyak goreng premium yang diproduksi dengan beberapa tahap proses pemurnian dan penyaringan.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Sania adalah minyak goreng premium yang diproduksi dengan beberapa tahap proses pemurnian dan penyaringan.",
+            "title": "Other Details"
+          },
+          {
+            "content": "Minyak kelapa sawit dan vitamin A (mengandung antioksidan tokoferol).",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji:8g (1sdk)",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian per kemasan : 125",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 70kkal, energi dari lemak 70kkal. % AKG: lemak total 8g, lemak jenuh 3.5g, lemak tidak jenuh tunggal (omega-9) 3.5g, lemak tak jenuh ganda (omega-6) 1g, lemak trans 0g, kolesterol 0g, protein 0g, karbohidrat total 0g, natrium 0mg, Vitamin A 118RE, vitamin E 8mg.",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "232102001161",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10010804",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 26.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10010804_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 7,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-sania-1L",
+        "plu": "10010804",
+        "price": 20300,
+        "productId": 38962,
+        "productName": "Sania Minyak Goreng Refill 1000 Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10010804_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 1030,
+        "width": 15.8
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "3437::Tropical",
+        "brandName": "Tropical",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Tropical minyak goreng dengan 2x penyaringa, yang kaya akan Vitamin E yang baik. Minyak goreng sawit dengan 90mg Omega 3 per saji, 1.7g Omega 6 per saji, dan 6.7g Omega 9 per saji.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "208109102355",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10038881",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 26.4,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10038881_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 7.7,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-12",
+        "plu": "10038881",
+        "price": 20500,
+        "productId": 29678,
+        "productName": "Tropical Minyak Goreng 1000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10038881_thumb.jpg",
+        "uom": "BTL (1 pcs)",
+        "weight": 925,
+        "width": 7.7
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "1674::Bimoli",
+        "brandName": "Bimoli",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Bimoli minyak goreng dirigent 5000mL",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Bimoli Minyak Goreng adalah minyak goreng yang sudah diproses melalui tahap Pemurnian Multi Proses (PMP) sehingga zat-zat yang bermanfaat bagi kesehatan bisa dipertahankan. - Mengandung Omega 9 - Kaya akan Vitamin E - Diproses secara higienis",
+            "title": "Other Details"
+          },
+          {
+            "content": "minyak kelapa sawit",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji: 10g (1sdm)",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian per kemasan: 452",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 90kkal, energi dari lemak 80kkal. % AKG: Lemak total 10g, lemak jenuh 4.5g, lemak tidak jenuh tunggal 4.5g, lemak tidak jenuh ganda 1g, kolesterol 0mg, protein 0g, karbohidrat total 0g, natrium 0mg. Vitamin E 10%.",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "10000181",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 32.8,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000181_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 12,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-17",
+        "plu": "10000181",
+        "price": 102900,
+        "productId": 39024,
+        "productName": "Bimoli Minyak Goreng 5000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "5000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000181_thumb.jpg",
+        "uom": "DRG (1 pcs)",
+        "weight": 4500,
+        "width": 17.7
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "1674::Bimoli",
+        "brandName": "Bimoli",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Minyak goreng Bimoli terbuat dari biji kelapa sawit pilihan yang diproses dengan tahap Pemurnian Multi Proses (PMP) yang memiliki enam tahapan pemrosesan, mampu mempertahankan zat-zat yang bermanfaat bagi kesehatan sehingga menghasilkan minyak goreng berkualitas tinggi. Mengandung Omega 9 yang memiliki asam lemak tak jenuh tunggal atau Mono Unsaturated Fatty Acid (MUFA) yang menurut para ahli internasional berkhasiat menurunkan kolesterol LDL dan menaikkan kolesterol HDL. Minyak goreng Bimoli juga merupakan sumber beta-karoten (pro-vitamin A) tinggi dan vitamin E, serta diformulasi bebas kolesterol sehingga aman untuk penderita kolesterol dan jantung.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "232113001205",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10013100",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 25.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10013100_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 7,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-special-refill-1",
+        "plu": "10013100",
+        "price": 21000,
+        "productId": 32822,
+        "productName": "Bimoli Minyak Goreng Special Refill 1000Ml ",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "1000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10013100_thumb.jpg",
+        "uom": "PCH (1 pcs)",
+        "weight": 925,
+        "width": 15
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "3437::Tropical",
+        "brandName": "Tropical",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Tropical minyak goreng dengan 2x penyaringan.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "208109096355",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10003974",
+            "title": "PLU"
+          }
+        ],
+        "discountText": "4%",
+        "discountValue": 1500,
+        "finalPrice": 39900,
+        "flavour": null,
+        "height": 30.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10003974_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 10.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-4",
+        "plu": "10003974",
+        "price": 41400,
+        "productId": 40378,
+        "productName": "Tropical Minyak Goreng 2000mL",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": "PRODHSFC0841",
+        "promoInfo": "",
+        "promoTagList": null,
+        "promoText": "Beli 1 Diskon Rp 1.500- Tropical Minyak Goreng Btl 2l Berlaku Kelipatan",
+        "promoType": "BASE",
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10003974_thumb.jpg",
+        "uom": "BTL (1 pcs)",
+        "weight": 1850,
+        "width": 10.5
+      },
+      {
+        "availableQtyStruk": null,
+        "blacklist": false,
+        "brandId": "1674::Bimoli",
+        "brandName": "Bimoli",
+        "bulkFinalPrice": null,
+        "bulkPrice": null,
+        "bulkQty": 0,
+        "bulkUom": null,
+        "descriptionList": [
+          {
+            "content": "Bimoli dibuat dari kelapa sawit berkualitas. Warna kuning keemasan berasal dari beta karoten alami. Stabil panasnya. Matang luar dalam.",
+            "title": "Deskripsi Produk"
+          },
+          {
+            "content": "Minyak kelapa sawit",
+            "title": "Komposisi"
+          },
+          {
+            "content": "Takaran saji: 11ml",
+            "title": "Takaran Saji"
+          },
+          {
+            "content": "Sajian per kemasan: 182",
+            "title": "Takaran Per Kemasan"
+          },
+          {
+            "content": "Energi total 90kkal, energi dari lemak 90kkal. %AKG, lemak total 10g, lemak jenuh 4.5g, lemak tidak jenuh tunggal 4.5g, lemak tidak jenuh ganda 1g, kolesterol 0mg, protein 0g, karbohidrat total 0g, natrium 0mg",
+            "title": "Takaran Per Serving"
+          },
+          {
+            "content": "208109042024",
+            "title": "BPOM RI"
+          },
+          {
+            "content": "10000178",
+            "title": "PLU"
+          }
+        ],
+        "discountText": null,
+        "discountValue": null,
+        "finalPrice": null,
+        "flavour": null,
+        "height": 30.5,
+        "imageUrl": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000178_1.jpg",
+        "images": [],
+        "isVariant": false,
+        "length": 9.5,
+        "maxStrukQty": null,
+        "minQty": 1,
+        "minStrukQty": null,
+        "packagePlu": null,
+        "packages": {
+          "bigQty": null,
+          "fileManagerId": null,
+          "id": null,
+          "minRp": null,
+          "name": null,
+          "notePackage": null,
+          "packagePlu": null,
+          "permalink": null,
+          "productPackageDetail": null,
+          "qtyPackage": null,
+          "smallQty": null
+        },
+        "pairProducts": null,
+        "parentProductId": 0,
+        "permalink": "minyak-goreng-2",
+        "plu": "10000178",
+        "price": 44300,
+        "productId": 39021,
+        "productName": "Bimoli Minyak Goreng 2000Ml",
+        "productSource": "warehouse",
+        "promo": null,
+        "promoCode": null,
+        "promoInfo": null,
+        "promoTagList": null,
+        "promoText": null,
+        "promoType": null,
+        "restricted": false,
+        "selling": true,
+        "shippingOptions": [
+          "REGULAR"
+        ],
+        "size": "2000mL",
+        "storeMatchFlag": null,
+        "thumbnail": "https://cdn-klik.klikindomaret.com/klik-catalog/product/10000178_thumb.jpg",
+        "uom": "BTL (1 pcs)",
+        "weight": 1910,
+        "width": 9.5
+      }
+    ],
+    "empty": false,
+    "first": true,
+    "last": false,
+    "number": 0,
+    "numberOfElements": 15,
+    "pageable": {
+      "offset": 0,
+      "pageNumber": 0,
+      "pageSize": 15,
+      "paged": true,
+      "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+      },
+      "unpaged": false
+    },
+    "size": 15,
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "totalElements": 24,
+    "totalPages": 2
+  },
+  "message": "Success",
+  "signature": null,
+  "status": "00",
+  "timestamp": "2026-02-13T16:38:56.344173198Z"
+}

@@ -4,6 +4,7 @@ import random
 import base64
 from typing import Optional, List, Dict, Any
 from playwright.async_api import async_playwright, Browser, Page, Playwright
+from playwright_stealth import stealth_async
 from .behavior import Behavior
 import src.core.config as config
 import requests
@@ -47,24 +48,12 @@ class BrowserController:
         self.base_url = config.BROWSER_BASE_URL
     
 
-    def get_cloudflare_cookies(self, url):
-        response = requests.post('http://localhost:8191/v1', json={
-            "cmd": "request.get",
-            "url": url,
-            "maxTimeout": 60000
-        })
-        
-        if response.status_code == 200:
-            solution = response.json()['solution']
-            return solution['cookies']
-        return None
-
     async def start(self) -> bool:
         
         try:
             self.playwright = await async_playwright().start()
             
-            # Common launch args
+            # Common launch args - REMOVED disable-web-security to avoid Cloudflare detection
             launch_args = [
                 '--start-maximized',
                 '--start-fullscreen',
@@ -93,33 +82,71 @@ class BrowserController:
                     args=launch_args
                 )
             
+            # Context setup - Removed bypass_csp and security ignores that trigger Cloudflare
             context = await self.browser.new_context(
-                viewport={"width": 854, "height": 480},
+                viewport={"width": 1920, "height": 1080},
                 permissions=['microphone'],
+                ignore_https_errors=True, # Keep this for self-signed certs if needed, usually less flagged than disable-web-security
             )
 
-            cookies = self.get_cloudflare_cookies('https://www.klikindomaret.com')
-            await context.add_cookies(cookies)
-
             self.page = await context.new_page()
-
-            # Strip CSP and Frame headers to allow overlay injection
+            
+            # --- PERSISTENT SHELL SETUP ---
+            # 1. Strip headers to allow embedding external sites in iframe
             await self.page.route("**/*", lambda route: asyncio.ensure_future(self._handle_route(route)))
 
-            await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=60000)
+            # 2. Navigate to Server-Hosted Shell
+            # This fixes "SecurityError" (localStorage) because it is a real HTTP origin
+            logging.info("[Browser] Loading Shell from http://localhost:8000/shell ...")
+            try:
+                await self.page.goto("http://localhost:8000/shell", wait_until='domcontentloaded')
+            except Exception as e:
+                logging.error(f"[Browser] Failed to load shell from server. Is api_server.py running? Error: {e}")
+                return False
+
+            # 3. Locate Content Frame
+            self.content_frame = self.page.frame(name="content-frame")
+            retries = 0
+            while not self.content_frame and retries < 10:
+                await asyncio.sleep(0.5)
+                self.content_frame = self.page.frame(name="content-frame")
+                retries += 1
             
-            # Initial popup check
-            await asyncio.sleep(5) # Wait for popups
+            if not self.content_frame:
+                raise Exception("Failed to locate content-frame in Shell.")
+
+            # 4. Navigate Content Frame to Target Page
+            logging.info(f"[Browser] Navigating content frame to {self.base_url}...")
+            await self.content_frame.goto(self.base_url, wait_until='domcontentloaded')
+
+            # 5. Init scripts - Wrappped in try-catch to avoid "Illegal invocaton"
+            try:
+                await self.content_frame.evaluate("""
+                    try {
+                        const getParameter = WebGLRenderingContext.prototype.getParameter;
+                        WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                            try {
+                                if (parameter === 37445) return 'Google Inc. (NVIDIA)';
+                                if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce RTX 3080 Direct3D11 vs_5_0 ps_5_0, D3D11)';
+                                return getParameter.apply(this, arguments);
+                            } catch (e) {
+                                console.warn("WebGL override error:", e);
+                                return getParameter.apply(this, arguments);
+                            }
+                        };
+                    } catch (e) {
+                        console.warn("Failed to install WebGL override:", e);
+                    }
+                """)
+            except Exception as e:
+                 logging.warning(f"[Browser] Failed to inject WebGL script: {e}")
+
+            # Initial popup check (targeted at content frame)
+            await asyncio.sleep(5)
             await self.check_and_close_popup()
             
-            # Inject vtuber overlay on top of the page
-            await self._inject_vtuber_overlay()
-            
-            # Auto-re-inject overlay after any page navigation
-            self.page.on('load', lambda: asyncio.ensure_future(self._inject_vtuber_overlay()))
-            
             self.is_running = True
-            logging.info(f"[Browser] Started and navigated to {self.base_url}")
+            logging.info(f"[Browser] Started. Overlay active. Content at {self.base_url}")
             return True
             
         except Exception as e:
@@ -141,50 +168,7 @@ class BrowserController:
             
         logging.info("[Browser] Stopped")
     
-    async def _inject_vtuber_overlay(self):
-        """Inject transparent vtuber iframe overlay on top of the page."""
-        if not self.page:
-            return
-            
-        overlay_url = config.VTUBER_FRONTEND_URL
-        # Ensure we pass autoplay param
-        if '?' in overlay_url:
-            overlay_url += '&autoplay=1'
-        else:
-            overlay_url += '?autoplay=1'
-            
-        js_code = f"""
-        () => {{
-            // Remove any existing overlay
-            const existing = document.getElementById('vtuber-overlay');
-            if (existing) existing.remove();
-            
-            const iframe = document.createElement('iframe');
-            iframe.id = 'vtuber-overlay';
-            iframe.src = '{overlay_url}';
-            iframe.setAttribute('allowtransparency', 'true');
-            iframe.setAttribute('allow', 'autoplay; microphone; camera');
-            iframe.style.cssText = [
-                'position: fixed',
-                'top: 0',
-                'left: 0',
-                'width: 100vw',
-                'height: 100vh',
-                'z-index: 999999',
-                'border: none',
-                'background: transparent',
-                'pointer-events: none'
-            ].join(';');
-            document.body.appendChild(iframe);
-            return 'Vtuber overlay injected ({overlay_url})';
-        }}
-        """
-        
-        try:
-            result = await self.page.evaluate(js_code)
-            logging.info(f"[Browser] {result}")
-        except Exception as e:
-            logging.warning(f"[Browser] Failed to inject overlay: {e}")
+    # _inject_vtuber_overlay REMOVED - The Shell handles this permanently.
 
     async def _handle_route(self, route):
         try:
@@ -213,7 +197,7 @@ class BrowserController:
                 pass
     
     async def get_screenshot(self) -> Optional[str]:
-        
+        # Screenshot the main page (Shell), which captures both Content and Overlay
         if not self.page:
             return None
             
@@ -228,44 +212,46 @@ class BrowserController:
     
     async def get_current_url(self) -> str:
        
-        if self.page:
-            return self.page.url
+        if self.content_frame:
+            return self.content_frame.url
         return ""
 
     async def scroll_down(self, amount: Optional[int] = None):
-        if not self.page:
+        if not self.content_frame:
             return
         
         if amount is None:
             amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, config.BROWSER_SCROLL_AMOUNT_MAX)
 
         try:
-            await Behavior.smooth_scroll(self.page, amount, direction=1)
+            await Behavior.smooth_scroll(self.content_frame, amount, direction=1)
             logging.debug(f"[Browser] Scrolled down ~{amount}px (smooth)")
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
     
     async def scroll_up(self, amount: Optional[int] = None):
-        if not self.page:
+        if not self.content_frame:
             return
 
         if amount is None:
             amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, config.BROWSER_SCROLL_AMOUNT_MAX)
             
         try:
-            await Behavior.smooth_scroll(self.page, amount, direction=-1)
+            await Behavior.smooth_scroll(self.content_frame, amount, direction=-1)
             logging.debug(f"[Browser] Scrolled up ~{amount}px (smooth)")
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
     
     async def is_in_viewport(self, element) -> bool:
+        if not self.content_frame: 
+            return False
 
         try:
             box = await element.bounding_box()
             if not box:
                 return False
             
-            viewport = await self.page.evaluate("""() => ({
+            viewport = await self.content_frame.evaluate("""() => ({
                 width: window.innerWidth,
                 height: window.innerHeight,
                 scrollY: window.scrollY
@@ -283,7 +269,7 @@ class BrowserController:
     
     async def click_load_more(self) -> bool:
 
-        if not self.page:
+        if not self.content_frame:
             return False
             
         try:
@@ -291,7 +277,7 @@ class BrowserController:
             
             for selector in selectors:
                 try:
-                    button = await self.page.query_selector(selector)
+                    button = await self.content_frame.query_selector(selector)
                     if button and await button.is_visible():
                         await asyncio.sleep(0.3)
                         await button.click()
@@ -308,14 +294,14 @@ class BrowserController:
     
     async def check_and_close_popup(self):
         """Check for and close any known popups."""
-        if not self.page:
+        if not self.content_frame:
             return
 
         try:
             # 1. Check for specific selectors
             for selector in BROWSER_POPUP_SELECTORS:
                 try:
-                    element = await self.page.query_selector(selector)
+                    element = await self.content_frame.query_selector(selector)
                     if element and await element.is_visible():
                         await element.click()
                         logging.info(f"[Browser] Closed popup using selector: {selector}")
@@ -331,7 +317,7 @@ class BrowserController:
             
     async def click_random_product(self) -> bool:
         
-        if not self.page:
+        if not self.content_frame:
             return False
             
         try:
@@ -343,7 +329,7 @@ class BrowserController:
                 
                 for selector in product_selectors:
                     try:
-                        found = await self.page.query_selector_all(selector)
+                        found = await self.content_frame.query_selector_all(selector)
                         if found:
                             for p in found:
                                 if await p.is_visible():
@@ -400,47 +386,44 @@ class BrowserController:
             return False
     
     async def go_back(self):
-        
-        if not self.page:
+        if not self.content_frame:
             return
             
         try:
-            await self.page.go_back()
-            await asyncio.sleep(1)
-            await self._inject_vtuber_overlay()
+            await self.content_frame.evaluate("window.history.back()")
+            await asyncio.sleep(2) # Wait for nav
+            # We do NOT re-inject overlay because it is in a separate persistent frame
             logging.debug("[Browser] Navigated back")
         except Exception as e:
             logging.error(f"[Browser] Go back failed: {e}")
     
     async def refresh(self):
-        if not self.page:
+        if not self.content_frame:
             return
         
         try:
-            await self.page.reload(wait_until='domcontentloaded')
+            await self.content_frame.evaluate("location.reload()")
             await asyncio.sleep(2)
             await self.check_and_close_popup()
-            await self._inject_vtuber_overlay()
+            # No re-inject
             logging.info("[Browser] Page refreshed")
         except Exception as e:
             logging.error(f"[Browser] Refresh failed: {e}")
 
     async def go_home(self):
-        
-        if not self.page:
+        if not self.content_frame:
             return
             
         try:
-            await self.page.goto(self.base_url, wait_until='domcontentloaded')
+            await self.content_frame.goto(self.base_url, wait_until='domcontentloaded')
             await asyncio.sleep(2)
             await self.check_and_close_popup()
-            await self._inject_vtuber_overlay()
             logging.info("[Browser] Navigated to homepage")
         except Exception as e:
             logging.error(f"[Browser] Go home failed: {e}")
     
     async def click_category(self, category_name: str):
-        if not self.page:
+        if not self.content_frame:
             return
             
         try:
@@ -448,7 +431,7 @@ class BrowserController:
             selector_template = BROWSER_SELECTORS.get("category_link", 'a:has-text("{name}")')
             selector = selector_template.format(name=category_name)
             
-            category_link = await self.page.query_selector(selector)
+            category_link = await self.content_frame.query_selector(selector)
             if category_link:
                 await category_link.click()
                 await asyncio.sleep(2)
@@ -458,11 +441,11 @@ class BrowserController:
 
     async def get_scroll_position(self) -> dict:
         """Get current scroll position and page dimensions."""
-        if not self.page:
+        if not self.content_frame:
             return {"scrollY": 0, "scrollHeight": 1, "viewportHeight": 1, "atBottom": False, "atTop": True}
         
         try:
-            pos = await self.page.evaluate("""() => {
+            pos = await self.content_frame.evaluate("""() => {
                 const scrollY = window.scrollY;
                 const scrollHeight = document.documentElement.scrollHeight;
                 const viewportHeight = window.innerHeight;
@@ -483,7 +466,7 @@ class BrowserController:
     
     async def is_load_more_visible(self) -> bool:
 
-        if not self.page:
+        if not self.content_frame:
             return False
             
         try:
@@ -491,7 +474,7 @@ class BrowserController:
             
             for selector in selectors:
                 try:
-                    button = await self.page.query_selector(selector)
+                    button = await self.content_frame.query_selector(selector)
                     if button and await button.is_visible():
                         # Check if in viewport
                         if await self.is_in_viewport(button):
@@ -503,7 +486,7 @@ class BrowserController:
             return False
     
     async def perform_random_action(self) -> str:
-        if not self.page:
+        if not self.content_frame:
             return "no_page"
         
         # Always check for popup before acting

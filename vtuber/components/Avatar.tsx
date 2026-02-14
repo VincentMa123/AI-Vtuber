@@ -5,8 +5,6 @@ import * as PIXI from 'pixi.js';
 
 import type { EmotionType } from '../hooks/useAudioPlayer';
 
-const MOTION_GROUPS = ['Idle', 'Flick', 'FlickDown', 'FlickUp', 'Tap', 'Tap@Body', 'Flick@Body'];
-
 interface AvatarProps {
     emotion: EmotionType;
     getCurrentVolume?: () => number;
