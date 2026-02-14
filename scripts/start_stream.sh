@@ -30,7 +30,7 @@ DISPLAY_NUM=55
 RESOLUTION="1920x1080"
 FPS=24
 BITRATE="1500k"
-TWITCH_URL="rtmp://live.twitch.tv/app"
+TWITCH_URL="rtmps://live.twitch.tv:443/app"
 
 # Check for stream key
 if [ -z "$TWITCH_STREAM_KEY" ]; then
