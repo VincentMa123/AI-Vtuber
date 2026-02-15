@@ -283,6 +283,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                     // Check again if we are really done
                     if (sourceNodesRef.current.length === 0) {
                         setSpeakingSafe(false);
+                        volumeQueueRef.current = []; // Ensure volume is cleared
                         // Signal backend that playback is complete
                         if (onPlaybackComplete) {
                             console.log('[Audio] Playback complete, signaling backend');

@@ -21,9 +21,19 @@ interface ChatEntry {
 const VTuberPage = () => {
   const [emotion, setEmotion] = useState<EmotionType>('neutral');
   const [chatMessages, setChatMessages] = useState<ChatEntry[]>([]);
+  const [isGreenScreen, setIsGreenScreen] = useState(false);
   const chatIdRef = useRef(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const sendMessageRef = useRef<((msg: object) => void) | null>(null);
+
+  // Detect green screen mode
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('green') === '1') {
+      setIsGreenScreen(true);
+      document.body.classList.add('green-screen');
+    }
+  }, []);
 
   const handlePlaybackComplete = useCallback(() => {
     if (sendMessageRef.current) {
@@ -47,7 +57,7 @@ const VTuberPage = () => {
 
   // Auto-scroll chat
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
   const handleMessage = useCallback((msg: WebSocketMessage) => {
@@ -82,7 +92,7 @@ const VTuberPage = () => {
   }, [playAudio]);
 
   return (
-    <>
+    <div className={isGreenScreen ? 'green-screen' : ''} style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
       {/* Hidden heartbeat */}
       <ScreenCapture
         onReaction={handleVisionReaction}
@@ -143,7 +153,7 @@ const VTuberPage = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

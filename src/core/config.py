@@ -52,7 +52,10 @@ TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 
 # Browser Automation
 BROWSER_BASE_URL = "https://www.klikindomaret.com/"
-VTUBER_FRONTEND_URL = "http://192.168.56.1:3000"
+VTUBER_FRONTEND_URL = "http://localhost:3000"
 BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
-BROWSER_SCROLL_AMOUNT_MAX = 600
+BROWSER_SCROLL_AMOUNT_MAX = 300
+
+# FlareSolverr
+FLARESOLVERR_URL = os.getenv("FLARESOLVERR_URL", "http://localhost:8191/v1")

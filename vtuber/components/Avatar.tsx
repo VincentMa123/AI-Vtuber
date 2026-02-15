@@ -151,6 +151,9 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
             let targetMouth = 0;
 
             if (volume > threshold) {
+                // Debug volume
+                if (Math.random() < 0.05) console.log(`[Avatar] Volume: ${volume.toFixed(3)}`);
+
                 // Base opening from volume
                 const volumeComponent = Math.min(1.0, volume * 5);
                 const syllableFrequency = 2; // Hz - syllables per second
@@ -242,12 +245,14 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
         <div className="w-full h-full flex items-center justify-center overflow-visible relative">
             <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain', border: '2px dashed red' }} />
 
-            {/* Debug Overlay */}
+            {/* Debug Overlay - Hidden for production */}
+            {/* 
             <div className="absolute top-0 left-0 bg-black/80 text-white p-2 text-xs font-mono z-50 pointer-events-none w-full break-words">
                 <div className="font-bold mb-1">Avatar Debug</div>
                 <div>Status: {debugStatus}</div>
                 {error && <div className="text-red-400 font-bold mt-1">Error: {error}</div>}
             </div>
+            */}
         </div>
     );
 };

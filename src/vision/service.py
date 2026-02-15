@@ -23,6 +23,7 @@ class VisionHeartbeat:
         self._browser_loop_running = False
         self._on_browser_update: Optional[Callable] = None  # Callback for WS updates
         self._last_analysis_time = 0
+        self._last_auto_refresh_time = 0
         
         logging.info("[VisionHeartbeat] Initialized with CooldownManager")
 
@@ -196,6 +197,16 @@ class VisionHeartbeat:
             
         while self._browser_loop_running:
             try:
+                # 0. Check if page is stuck/placeholders only
+                current_time = asyncio.get_event_loop().time()
+                is_stuck_cooldown = (current_time - self._last_auto_refresh_time) >= 60  # Wait 60s between auto-refreshes
+                
+                if is_stuck_cooldown and await self.browser_controller.is_page_stuck():
+                    logging.warning(f"[Action Loop {loop_id}] Page appears STUCK. Triggering auto-refresh...")
+                    self._last_auto_refresh_time = current_time
+                    await self.browser_controller.refresh(force_home=True)
+                    continue
+
                 logging.debug(f"[Action Loop {loop_id}] Starting iteration...")
                 action = await self.browser_controller.perform_random_action()
                 logging.debug(f"[Action Loop] Performed: {action}")
@@ -231,7 +242,7 @@ class VisionHeartbeat:
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
-                    await Behavior.guarded_sleep(self.browser_controller.page, 1, 3)
+                    await Behavior.guarded_sleep(self.browser_controller.page, 4, 8)
 
             except asyncio.CancelledError:
                 break

@@ -1,114 +1,171 @@
-from twitchio.ext import commands
 import asyncio
-import time
 import logging
+import ssl
+import re
 from datetime import datetime, timezone
+import time
 from typing import Optional
+from twitchio.ext import commands
 from chat.aggregator import ChatMessage
 from ws.manager import ws_manager
 
-
-class TwitchBot(commands.Bot):
-    def __init__(self, token: str, channel: str, prefix: str, aggregator=None, 
+class TwitchBot:
+    def __init__(self, token: str, channel: str, prefix: str = "!", aggregator=None, 
                  client_id: str = "", client_secret: str = "", bot_id: str = ""):
-        super().__init__(
-            token=token,
-            prefix=prefix,
-            initial_channels=[channel],
-            client_id=client_id,
-            client_secret=client_secret,
-            bot_id=int(bot_id) if bot_id else 0
-        )
+        self.token = token
+        self.channel = channel.lower()
+        if not self.channel.startswith("#"):
+            self.channel = f"#{self.channel}"
+        self.prefix = prefix
         self.aggregator = aggregator
-        self.channel_name = channel
-        logging.info(f"[TwitchBot] Initialized for channel: {channel}")
-    
-    async def event_ready(self):
-        logging.info(f"[TwitchBot] Connected to channel: {self.channel_name}")
-        logging.info(f"[TwitchBot] Bot is ready!")
-    
-    async def event_message(self, message):
-
-        if message.echo:
-            return
+        self.username = self.channel[1:] # Assume bot is same as channel for user token
         
-        if message.content.startswith(self._prefix):
-            await self.handle_commands(message)
-            return
-        
-        logging.info(f"[TwitchBot] {message.author.name}: {message.content}")
+        # Ensure oauth: prefix
+        if not self.token.startswith("oauth:"):
+            self.token = f"oauth:{self.token}"
+            
+        self.reader: Optional[asyncio.StreamReader] = None
+        self.writer: Optional[asyncio.StreamWriter] = None
+        self.running = False
+        self.reconnect_delay = 5
 
-        if hasattr(message, 'timestamp') and message.timestamp:
+    async def start(self):
+        self.running = True
+        while self.running:
             try:
-                ts = message.timestamp
-                if hasattr(ts, 'replace') and ts.tzinfo is None:
-                    ts = ts.replace(tzinfo=timezone.utc)
-                
-                msg_time = ts.timestamp() if hasattr(ts, 'timestamp') else ts
-                
-                latency = time.time() - msg_time
-                logging.info(f"[TwitchBot] Message received from Twitch. Latency: {latency:.3f}s")
+                await self._connect()
+                await self._listen()
+            except asyncio.CancelledError:
+                logging.info("[TwitchBot] Task cancelled.")
+                self.running = False
+                break
             except Exception as e:
-                logging.debug(f"[TwitchBot] Could not calculate latency: {e}")
+                logging.error(f"[TwitchBot] Connection error: {e}")
+                logging.info(f"[TwitchBot] Reconnecting in {self.reconnect_delay}s...")
+                await asyncio.sleep(self.reconnect_delay)
+            finally:
+                await self._disconnect()
 
-        await ws_manager.broadcast_chat_message(
-            username=message.author.name,
-            message=message.content,
-            user_id=str(message.author.id)
+    async def _connect(self):
+        logging.info(f"[TwitchBot] Connecting to Twitch IRC (SSL)...")
+        ctx = ssl.create_default_context()
+        self.reader, self.writer = await asyncio.open_connection(
+            'irc.chat.twitch.tv', 6697, ssl=ctx
         )
         
+        # Authenticate
+        self.writer.write(f"PASS {self.token}\r\n".encode())
+        self.writer.write(f"NICK {self.username}\r\n".encode())
+        self.writer.write(f"JOIN {self.channel}\r\n".encode())
+        await self.writer.drain()
+        logging.info(f"[TwitchBot] Auth sent. Joining {self.channel}...")
+
+    async def _disconnect(self):
+        if self.writer:
+            try:
+                self.writer.close()
+                await self.writer.wait_closed()
+            except:
+                pass
+        self.reader = None
+        self.writer = None
+
+    async def _listen(self):
+        if not self.reader:
+            return
+
+        while self.running:
+            line_bytes = await self.reader.readline()
+            if not line_bytes:
+                logging.warning("[TwitchBot] Connection closed by server.")
+                break
+            
+            line = line_bytes.decode('utf-8').strip()
+            
+            # Keep-alive
+            if line.startswith("PING"):
+                pong = line.replace("PING", "PONG")
+                logging.debug(f"[TwitchBot] Sending {pong}")
+                self.writer.write(f"{pong}\r\n".encode())
+                await self.writer.drain()
+                continue
+            
+            # Handle Login Success
+            if "001" in line and ":Welcome" in line:
+                logging.info(f"[TwitchBot] ✅ Login Successful! Connected as {self.username}")
+                continue
+
+            # Handle Chat Messages
+            # Format: :username!user@user.tmi.twitch.tv PRIVMSG #channel :message
+            # Regex to parse IRV privmsg
+            # Group 1: Username, Group 2: Channel, Group 3: Message
+            match = re.search(r":(\w+)!\w+@\w+\.tmi\.twitch\.tv PRIVMSG (#\w+) :(.*)", line)
+            if match:
+                user = match.group(1)
+                chan = match.group(2)
+                msg = match.group(3)
+                await self.handle_message(user, msg)
+            elif "PRIVMSG" in line:
+                # Fallback logging if regex fails but it's a message
+                logging.debug(f"[TwitchBot] Unparsed PRIVMSG: {line}")
+
+    async def handle_message(self, user: str, message: str):
+        
+        # Broadcast to UI
+        await ws_manager.broadcast_chat_message(
+            username=user,
+            message=message,
+            user_id="0" # We don't have ID from raw IRC easily without tags, but 0 is fine for display
+        )
+        
+        # Aggregator
         if self.aggregator:
             chat_msg = ChatMessage(
-                message=message.content,
-                user_id=str(message.author.id),
-                username=message.author.name,
+                message=message,
+                user_id="0",
+                username=user,
                 timestamp=time.time()
             )
-            
-            accepted = await self.aggregator.submit_message(chat_msg)
-            
-            if not accepted:
-                logging.debug(f"[TwitchBot] Message from {message.author.name} was filtered")
-    
-    @commands.command(name='lumina')
-    async def lumina_command(self, ctx: commands.Context):
-        await ctx.send(f"Hi {ctx.author.name}! I'm Lumina, your Indomaret Brand Ambassador! 😊")
-    
-    @commands.command(name='promo')
-    async def promo_command(self, ctx: commands.Context):
-        await ctx.send("Check out our latest Harga Heboh deals at Indomaret! Ask me about specific products! 🛒")
-    
-    @commands.command(name='help')
-    async def help_command(self, ctx: commands.Context):
-        await ctx.send("Commands: !lumina, !promo, !refresh, !help | Just chat with me normally and I'll respond! 💬")
+            await self.aggregator.submit_message(chat_msg)
 
-    @commands.command(name='refresh')
-    async def refresh_command(self, ctx: commands.Context):
-        import core.state as state
-        if state.vision_heartbeat and state.vision_heartbeat.browser_controller:
-            await state.vision_heartbeat.browser_controller.refresh()
-            await ctx.send("Refreshing the page! 🔄")
-        else:
-            await ctx.send("I can't access the browser right now. 😢")
-    
+        # Commands
+        if message.startswith(self.prefix):
+            cmd = message[len(self.prefix):].split(" ")[0].lower()
+            if cmd == "lumina":
+                await self.send_response(f"Hi {user}! I'm Lumina, your Indomaret Brand Ambassador! 😊")
+            elif cmd == "promo":
+                await self.send_response("Check out our latest Harga Heboh deals at Indomaret! Ask me about specific products! 🛒")
+            elif cmd == "help":
+                await self.send_response("Commands: !lumina, !promo, !refresh, !help | Just chat with me normally and I'll respond! 💬")
+            elif cmd == "refresh":
+                 # Import locally to avoid circular imports
+                import core.state as state
+                if state.vision_heartbeat and state.vision_heartbeat.browser_controller:
+                    await state.vision_heartbeat.browser_controller.refresh(force_home=True)
+                    await self.send_response("Refreshing the page (Force Home)! 🔄")
+                else:
+                    await self.send_response("I can't access the browser right now. 😢")
+
     async def send_response(self, text: str):
- 
+        if not self.writer:
+            logging.warning("[TwitchBot] Cannot send message: Not connected.")
+            return
+
         try:
-            channel = self.get_channel(self.channel_name)
-            if channel:
-                # Split long messages (Twitch has 500 char limit)
-                if len(text) > 450:
-                    text = text[:447] + "..."
-                
-                await channel.send(text)
-                logging.info(f"[TwitchBot] Sent to chat: {text}")
+             # Twitch limit 500 chars
+            if len(text) > 450:
+                text = text[:447] + "..."
+            
+            # IRC command: PRIVMSG #channel :message
+            cmd = f"PRIVMSG {self.channel} :{text}\r\n"
+            self.writer.write(cmd.encode('utf-8'))
+            await self.writer.drain()
+            logging.info(f"[TwitchBot] Sent: {text}")
         except Exception as e:
             logging.error(f"[TwitchBot] Error sending message: {e}")
 
-
 # Global bot instance
 twitch_bot: Optional[TwitchBot] = None
-
 
 async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregator=None, client_id: str = "", client_secret: str = "", bot_id: str = ""):
     global twitch_bot
@@ -118,6 +175,8 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
         return None
     
     try:
+        logging.info(f"[TwitchBot] Initializing Simple AsyncBot for channel: {channel}")
+
         twitch_bot = TwitchBot(
             token=token,
             channel=channel,
@@ -128,20 +187,8 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
             bot_id=bot_id
         )
 
-        task = asyncio.create_task(twitch_bot.start())
-        
-        def on_task_done(t):
-            try:
-                exc = t.exception()
-                if exc:
-                    logging.error(f"[TwitchBot] Task failed: {exc}")
-            except asyncio.CancelledError:
-                logging.info("[TwitchBot] Task was cancelled")
-            except Exception as e:
-                logging.error(f"[TwitchBot] Error in done callback: {e}")
-        
-        task.add_done_callback(on_task_done)
-        logging.info("[TwitchBot] Starting bot...")
+        logging.info("[TwitchBot] Starting background task...")
+        asyncio.create_task(twitch_bot.start())
         
         return twitch_bot
         

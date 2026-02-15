@@ -1,213 +1,160 @@
 #!/bin/bash
-# Start Stream Script - Launch virtual display and stream to Twitch
-# Usage: ./scripts/start_stream.sh
+# Efficient Streaming with FFmpeg Overlay
+# Single browser window + FFmpeg composites VTuber overlay
 
-# Don't exit on error - we want to handle errors gracefully
 set +e
 
-# Load environment variables
+# Load environment
 if [ -f "src/.env" ]; then
     export $(grep -v '^#' src/.env | xargs)
 fi
 
-# Detect Windows Host IP for WSL checks if running in WSL
-if grep -q Microsoft /proc/version; then
-    # Prefer 192.168.56.1 if reachable (common for VirtualBox/Host-Only)
-    if curl -s -m 1 http://192.168.56.1:3000 > /dev/null; then
-        HOST_IP="192.168.56.1"
-    else
-        HOST_IP=$(ip route show | grep default | awk '{print $3}')
-    fi
-
-    if [ -z "$VTUBER_FRONTEND_URL" ]; then
-        export VTUBER_FRONTEND_URL="http://$HOST_IP:3000"
-        echo "Configured VTUBER_FRONTEND_URL=$VTUBER_FRONTEND_URL (Windows Host IP for WSL)"
-    fi
-fi
-
 # Configuration
 DISPLAY_NUM=55
+OVERLAY_DISPLAY_NUM=56  # Separate small display for VTuber
 RESOLUTION="1920x1080"
+OVERLAY_SIZE="600x800"  # Smaller VTuber window
 FPS=24
 BITRATE="1500k"
 TWITCH_URL="rtmps://live.twitch.tv:443/app"
 
-# Check for stream key
+# Force correct display
+export DISPLAY=:$DISPLAY_NUM
+
 if [ -z "$TWITCH_STREAM_KEY" ]; then
-    echo "ERROR: TWITCH_STREAM_KEY not set in src/.env"
-    echo "Add: TWITCH_STREAM_KEY=live_xxxxxxxxxxxxx"
+    echo "ERROR: TWITCH_STREAM_KEY not set"
     exit 1
 fi
 
-# Fix potential X11 socket permission issues and stale locks
-echo "=== Cleaning up X11 locks ==="
-rm -f /tmp/.X${DISPLAY_NUM}-lock 2>/dev/null || true
-rm -f /tmp/.X11-unix/X${DISPLAY_NUM} 2>/dev/null || true
-
-if [ -d "/tmp/.X11-unix" ]; then
-    chmod 1777 /tmp/.X11-unix 2>/dev/null || true
-else
-    mkdir -p /tmp/.X11-unix
-    chmod 1777 /tmp/.X11-unix 2>/dev/null || true
-fi
-
-# Audio Configuration (Headless FIFO)
-AUDIO_PIPE="/tmp/tts_audio.fifo"
-echo "=== Audio Configuration (Headless) ==="
-echo "Pipe: $AUDIO_PIPE"
-
-# Create FIFO if not exists
-if [ ! -p "$AUDIO_PIPE" ]; then
-    rm -f "$AUDIO_PIPE"
-    mkfifo "$AUDIO_PIPE"
-    echo "✓ Created FIFO pipe"
-else
-    echo "✓ FIFO pipe exists"
-fi
-
-# Ensure XDG_RUNTIME_DIR and Cookie if missing (just in case)
-if [ -z "$XDG_RUNTIME_DIR" ]; then export XDG_RUNTIME_DIR="/run/user/$(id -u)"; fi
-
-# Cleanup function
+# Cleanup
 cleanup() {
-    echo ""
     echo "Stopping stream..."
     pkill -f "Xvfb :$DISPLAY_NUM" 2>/dev/null || true
+    pkill -f "Xvfb :$OVERLAY_DISPLAY_NUM" 2>/dev/null || true
     pkill -f "ffmpeg.*twitch" 2>/dev/null || true
-    pkill -f "google-chrome.*localhost:3000" 2>/dev/null || true
+    pkill -f "chrome" 2>/dev/null || true
     pkill -f "python3.*api_server" 2>/dev/null || true
-    pkill -f "node.*next" 2>/dev/null || true
-    echo "Stream stopped."
     exit 0
 }
 trap cleanup SIGINT SIGTERM
 
-# Kill existing processes
-echo "=== Cleaning up existing processes ==="
-pkill -f "Xvfb :$DISPLAY_NUM" 2>/dev/null || true
+# Kill existing
+echo "=== Cleaning up ==="
+pkill -f "Xvfb" 2>/dev/null || true
+pkill -f "chrome" 2>/dev/null || true
 sleep 1
 
-echo "=== Starting Virtual Display (TCP Mode) ==="
-# WSLg mounts /tmp/.X11-unix as read-only/system, so we must use TCP
-# and avoid trying to create unix sockets there.
+# Start main display (content)
+echo "=== Starting Main Display :$DISPLAY_NUM ==="
 Xvfb :$DISPLAY_NUM -screen 0 ${RESOLUTION}x24 \
     +extension GLX +render \
-    -nolisten unix \
-    -listen tcp \
-    -ac &
+    -nolisten unix -listen tcp -ac &
 XVFB_PID=$!
 sleep 2
 
-# Point clients to TCP display
-export DISPLAY=127.0.0.1:$DISPLAY_NUM
-echo "Debug: DISPLAY set to $DISPLAY"
+# Start small display for VTuber overlay
+echo "=== Starting Overlay Display :$OVERLAY_DISPLAY_NUM ==="
+Xvfb :$OVERLAY_DISPLAY_NUM -screen 0 ${OVERLAY_SIZE}x24 \
+    +extension GLX +render \
+    -nolisten unix -listen tcp -ac &
+XVFB_OVERLAY_PID=$!
+sleep 2
 
-echo "=== Detect Host IP ==="
-# Try /etc/resolv.conf first (reliable in WSL2)
-HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
-if [ -z "$HOST_IP" ]; then
-    # Fallback to route
-    HOST_IP=$(ip route show | grep default | awk '{print $3}')
+# Audio FIFO
+AUDIO_PIPE="/tmp/tts_audio.fifo"
+if [ ! -p "$AUDIO_PIPE" ]; then
+    rm -f "$AUDIO_PIPE"
+    mkfifo "$AUDIO_PIPE"
 fi
-echo "Host IP: $HOST_IP"
 
-# Use the Host IP for internal services if needed, but for browser
-# we might need to access the Next.js app running in WSL.
-# Next.js is on localhost:3000 inside WSL.
-VTUBER_URL="http://localhost:3000/vtuber/overlay"
-echo "Overlay URL: $VTUBER_URL"
-
-echo "=== Starting Chromium (Playwright) ==="
-# Prepare browser arguments
-# - Use TCP display
-# - Force audio output
-BROWSER_ARGS="--display=$DISPLAY \
-  --window-size=${RESOLUTION%x*},${RESOLUTION#*x} \
-  --window-position=0,0 \
-  --no-sandbox \
-  --disable-setuid-sandbox \
-  --disable-dev-shm-usage \
-  --autoplay-policy=no-user-gesture-required \
-  --use-fake-ui-for-media-stream \
-  --disable-features=IsolateOrigins,site-per-process \
-  --allow-running-insecure-content \
-  --disable-web-security"
-
-echo "Browser Args: $BROWSER_ARGS"
-echo "=== Activating Virtual Environment ==="
+# Activate venv
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-echo "Project directory: $PROJECT_DIR"
-
-# Activate the WSL virtual environment
 if [ -f "$PROJECT_DIR/venv_wsl/bin/activate" ]; then
     source "$PROJECT_DIR/venv_wsl/bin/activate"
-    echo "Activated venv_wsl"
 elif [ -f "$PROJECT_DIR/venv/bin/activate" ]; then
     source "$PROJECT_DIR/venv/bin/activate"
-    echo "Activated venv"
 fi
 
-echo "=== Starting Backend (Python) ==="
+# Start backend (will open content browser on DISPLAY :55)
+echo "=== Starting Backend ==="
 cd "$PROJECT_DIR"
-# Playwright browser runs VISIBLE (not headless) to show Klikindomaret
-# It will inject the vtuber overlay iframe on top of the page
-# Start the Python Backend
-# Use -u for unbuffered output to see logs immediately
 python3 -u src/api_server.py &
 BACKEND_PID=$!
-echo "Backend PID: $BACKEND_PID"
 
-# Wait for backend to ACTUALLY be ready (retry loop)
-echo "Waiting for backend to start..."
-MAX_RETRIES=240
+# Wait for backend
+echo "Waiting for backend..."
+MAX_RETRIES=60
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     if curl -s http://localhost:8000 > /dev/null 2>&1; then
-        echo "✓ Backend is running on port 8000"
+        echo "✓ Backend is running"
         break
     fi
-    
-    # Check if the process is still alive
     if ! kill -0 $BACKEND_PID 2>/dev/null; then
-        echo "✗ Backend process died! Check for errors above."
+        echo "✗ Backend died"
         exit 1
     fi
-    
     RETRY_COUNT=$((RETRY_COUNT + 1))
-    echo "  Waiting for backend... ($RETRY_COUNT/$MAX_RETRIES)"
-    sleep 3
+    sleep 1
 done
 
-if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    echo "✗ Backend failed to start after $MAX_RETRIES attempts"
-    exit 1
-fi
+# Start small Chrome for VTuber overlay on separate display
+echo "=== Starting VTuber Overlay Browser ==="
+# Use a fresh temp profile every time to ensure no popups
+OVERLAY_PROFILE="/tmp/vtuber_profile_$(date +%s)"
+mkdir -p "$OVERLAY_PROFILE"
 
-# Wait for Playwright browser to open and inject the vtuber overlay
-echo "Waiting for Playwright browser to initialize..."
-sleep 15
+DISPLAY=:$OVERLAY_DISPLAY_NUM google-chrome \
+    --no-sandbox \
+    --no-first-run \
+    --no-default-browser-check \
+    --password-store=basic \
+    --user-data-dir="$OVERLAY_PROFILE" \
+    --window-size=600,800 \
+    --window-position=0,0 \
+    --app="http://localhost:3000?autoplay=1&green=1" \
+    --disable-infobars \
+    --disable-extensions \
+    --disable-notifications \
+    --disable-translate \
+    --disable-features=Translate,PrivacySandboxSettings4 \
+    --use-gl=angle \
+    --use-angle=swiftshader \
+    --enable-webgl \
+    --ignore-gpu-blocklist \
+    &
+OVERLAY_CHROME_PID=$!
+
+sleep 10
+
+# FFmpeg with overlay filter
+echo "=== Starting Stream with Overlay ==="
 
 ffmpeg \
     -thread_queue_size 2048 \
     -f x11grab -video_size $RESOLUTION -framerate $FPS -i :$DISPLAY_NUM \
     -thread_queue_size 2048 \
+    -f x11grab -video_size $OVERLAY_SIZE -framerate $FPS -i :$OVERLAY_DISPLAY_NUM \
+    -thread_queue_size 2048 \
     -f s16le -ar 48000 -ac 1 -i "$AUDIO_PIPE" \
-    -c:v libx264 -preset ultrafast -tune zerolatency \
-    -maxrate $BITRATE -bufsize 4000k \
+    -filter_complex "[1:v]colorkey=0x00ff00:0.1:0.1[ckey];[0:v][ckey]overlay=main_w-overlay_w-20:main_h-overlay_h-20[outv]" \
+    -map "[outv]" -map 2:a \
+    -c:v libx264 -preset veryfast -tune zerolatency \
+    -maxrate 2500k -bufsize 5000k \
     -pix_fmt yuv420p \
     -g $(($FPS * 2)) \
     -c:a aac -b:a 128k -ar 48000 \
     -af "aresample=async=1" \
-    -map 0:v -map 1:a \
+    -max_interleave_delta 0 \
     -f flv "$TWITCH_URL/$TWITCH_STREAM_KEY" &
 FFMPEG_PID=$!
 
 echo ""
 echo "=== Stream Started ==="
-echo "Check your Twitch dashboard: https://dashboard.twitch.tv"
-echo "Press Ctrl+C to stop"
+echo "Content: Display :$DISPLAY_NUM (1920x1080)"
+echo "Overlay: Display :$OVERLAY_DISPLAY_NUM (600x800) - bottom-right"
+echo "Check: https://dashboard.twitch.tv"
 echo ""
-echo "PIDs: Xvfb=$XVFB_PID, Backend=$BACKEND_PID, FFmpeg=$FFMPEG_PID"
+echo "PIDs: Xvfb=$XVFB_PID, Overlay=$XVFB_OVERLAY_PID, Backend=$BACKEND_PID, FFmpeg=$FFMPEG_PID"
 
-# Wait for FFmpeg (main process)
 wait $FFMPEG_PID
