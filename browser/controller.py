@@ -441,8 +441,8 @@ class BrowserController:
             await self.go_back()
             return "go_back"
         
-        if await self.click_load_more():
-            return "load_more"
+        # if await self.click_load_more():
+        #     return "load_more"
         
         if at_bottom:
             actions = ['scroll_up'] * 3 + ['click_product', 'back']

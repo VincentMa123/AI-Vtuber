@@ -242,7 +242,7 @@ class VisionHeartbeat:
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
-                    await Behavior.guarded_sleep(self.browser_controller.page, 4, 8)
+                    await Behavior.guarded_sleep(self.browser_controller.page, 1, 3)
 
             except asyncio.CancelledError:
                 break

@@ -14,6 +14,7 @@ interface UseAudioPlayerReturn {
     playAudioChunk: (base64Audio: string, isComplete?: boolean, timestamp?: number, volume?: number) => Promise<void>;
     stopAudio: () => void;
     getCurrentVolume: () => number;
+    isPlaybackCompleteRef: React.MutableRefObject<boolean>;
 }
 
 export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPlayerReturn {
@@ -39,6 +40,9 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
 
     // Queue for backend-provided volume data
     const volumeQueueRef = useRef<{ start: number; end: number; volume: number }[]>([]);
+
+    // Track if backend signaled completion
+    const isPlaybackCompleteRef = useRef(false);
 
     // Safety ref
     const mountedRef = useRef(true);
@@ -103,6 +107,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         audioBufferRef.current = [];
         audioBufferLengthRef.current = 0;
         volumeQueueRef.current = [];
+        isPlaybackCompleteRef.current = false;
 
         // Stop HTML Audio if playing
         if (audioRef.current) {
@@ -159,6 +164,9 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
 
 
     const playAudioChunk = useCallback(async (base64Audio: string, isComplete: boolean = false, timestamp: number = 0, volume: number = 0) => {
+        if (isComplete) {
+            isPlaybackCompleteRef.current = true;
+        }
         // Chain the processing to ensure sequential order
         processingChainRef.current = processingChainRef.current.then(async () => {
             if (!audioEnabled) {
@@ -241,6 +249,18 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                     if (index > -1) {
                         sourceNodesRef.current.splice(index, 1);
                     }
+
+                    // Event-driven completion check
+                    if (sourceNodesRef.current.length === 0 && isPlaybackCompleteRef.current) {
+                        console.log("[Audio] Playback finished (event-driven)");
+                        setSpeakingSafe(false);
+                        volumeQueueRef.current = []; // Immediate cleanup!
+                        isPlaybackCompleteRef.current = false;
+
+                        if (onPlaybackComplete) {
+                            onPlaybackComplete();
+                        }
+                    }
                 };
 
                 // Advance time
@@ -273,33 +293,13 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         // Wait for the chain step we just added
         await processingChainRef.current;
 
-        if (isComplete) {
-            // Calculate when the final silence should trigger
-            const ctx = audioContextRef.current;
-            if (ctx) {
-                // Wait for the queue to finish playing
-                const remainingTime = Math.max(0, nextStartTimeRef.current - ctx.currentTime);
-                setTimeout(() => {
-                    // Check again if we are really done
-                    if (sourceNodesRef.current.length === 0) {
-                        setSpeakingSafe(false);
-                        volumeQueueRef.current = []; // Ensure volume is cleared
-                        // Signal backend that playback is complete
-                        if (onPlaybackComplete) {
-                            console.log('[Audio] Playback complete, signaling backend');
-                            onPlaybackComplete();
-                        }
-                    }
-                }, (remainingTime * 1000) + 100);
-            } else {
-                setSpeakingSafe(false);
-                // Signal backend that playback is complete
-                if (onPlaybackComplete) {
-                    console.log('[Audio] Playback complete (no ctx), signaling backend');
-                    onPlaybackComplete();
-                }
-            }
-        }
+        // Check if we should trigger completion logic based on events
+        // We do this check at the end of every chunk processing to see if we reached the state
+        /* 
+           The logic below was time-based and caused drifting. 
+           We now rely on the 'onended' event of the last source node to clear state.
+           See source.onended inside the processing chain.
+        */
 
     }, [audioEnabled, setSpeakingSafe, onPlaybackComplete]);
 
@@ -325,6 +325,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         playAudio, // Full file (legacy)
         playAudioChunk, // Streaming (Web Audio API)
         stopAudio,
-        getCurrentVolume
+        getCurrentVolume,
+        isPlaybackCompleteRef
     };
 }

@@ -55,7 +55,7 @@ BROWSER_BASE_URL = "https://www.klikindomaret.com/"
 VTUBER_FRONTEND_URL = "http://localhost:3000"
 BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
-BROWSER_SCROLL_AMOUNT_MAX = 300
+BROWSER_SCROLL_AMOUNT_MAX = 600
 
 # FlareSolverr
 FLARESOLVERR_URL = os.getenv("FLARESOLVERR_URL", "http://localhost:8191/v1")

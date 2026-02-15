@@ -130,7 +130,17 @@ async def handle_streaming_response(
         # Stream audio chunks as they're ready
         async for audio_chunk_base64 in audio_stream:
             if audio_chunk_base64:
-                await ws_manager.broadcast_audio_chunk(audio_chunk_base64, is_complete=False)
+                # Calculate volume for lip sync
+                volume = 0.0
+                try:
+                    audio_bytes = base64.b64decode(audio_chunk_base64)
+                    # Skip WAV header (typical 44 bytes) to get PCM data
+                    pcm_data = audio_bytes[44:] if len(audio_bytes) > 44 else audio_bytes
+                    volume = utils.calculate_rms_volume(pcm_data)
+                except Exception as e:
+                    logging.warning(f"[Response Handler] Volume calc failed: {e}")
+
+                await ws_manager.broadcast_audio_chunk(audio_chunk_base64, volume=volume, is_complete=False)
         
         # Wait for text collection to complete
         await collect_task

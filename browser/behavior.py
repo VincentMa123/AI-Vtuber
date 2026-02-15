@@ -74,11 +74,6 @@ class Behavior:
                     # Check if we're still at expected position before scrolling
                     actual_position = await page.evaluate("window.scrollY")
                     
-                    # If website JS moved us, correct back first
-                    if abs(actual_position - expected_position) > 50:
-                        logging.debug(f"[Behavior] Correcting position drift: {actual_position} -> {expected_position}")
-                        await page.evaluate(f"window.scrollTo(0, {expected_position})")
-                    
                     # Now apply our scroll
                     await page.evaluate(f"window.scrollBy(0, {step * direction})")
                     current_scroll += step
