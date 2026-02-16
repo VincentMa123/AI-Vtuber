@@ -16,7 +16,7 @@ echo "TWITCH_STREAM_KEY=live_xxxxxxxxxxxx" >> src/.env
 # 3. Build frontend
 cd vtuber && npm install && npm run build && cd ..
 
-# 4. Start streaming!
+# 4. Start everything (frontend + stream)!
 ./scripts/start_stream.sh
 ```
 

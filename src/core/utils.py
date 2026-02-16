@@ -1,4 +1,4 @@
-
+import requests
 import datetime
 import os
 import sys
@@ -210,3 +210,30 @@ def calculate_rms_volume(pcm_data: bytes, sensitivity: float = 3000.0) -> float:
         return 0.0
 
 
+def get_flaresolverr_cookies(url: str, flaresolverr_url: str = "http://localhost:8191/v1") -> Tuple[list, Optional[str]]:
+
+    try:
+        logging.info(f"[FlareSolverr] Requesting solution for {url}...")
+        response = requests.post(flaresolverr_url, json={
+            "cmd": "request.get",
+            "url": url,
+            "maxTimeout": 60000
+        }, timeout=65)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("status") == "ok":
+                solution = data.get("solution", {})
+                user_agent = solution.get("userAgent")
+                cookies = solution.get("cookies", [])
+                logging.info(f"[FlareSolverr] ✓ Got {len(cookies)} cookies")
+                return cookies, user_agent
+            else:
+                logging.error(f"[FlareSolverr] Failed: {data.get('message')}")
+        else:
+            logging.error(f"[FlareSolverr] HTTP error: {response.status_code}")
+            
+    except Exception as e:
+        logging.error(f"[FlareSolverr] Error: {e}")
+        
+    return [], None

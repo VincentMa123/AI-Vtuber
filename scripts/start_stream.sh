@@ -14,7 +14,7 @@ DISPLAY_NUM=55
 OVERLAY_DISPLAY_NUM=56  # Separate small display for VTuber
 RESOLUTION="1920x1080"
 OVERLAY_SIZE="600x800"  # Smaller VTuber window
-FPS=24
+FPS=30
 BITRATE="1500k"
 TWITCH_URL="rtmps://live.twitch.tv:443/app"
 
@@ -34,15 +34,10 @@ cleanup() {
     pkill -f "ffmpeg.*twitch" 2>/dev/null || true
     pkill -f "chrome" 2>/dev/null || true
     pkill -f "python3.*api_server" 2>/dev/null || true
+    pkill -f "node.*next-server" 2>/dev/null || true
     exit 0
 }
 trap cleanup SIGINT SIGTERM
-
-# Kill existing
-echo "=== Cleaning up ==="
-pkill -f "Xvfb" 2>/dev/null || true
-pkill -f "chrome" 2>/dev/null || true
-sleep 1
 
 # Start main display (content)
 echo "=== Starting Main Display :$DISPLAY_NUM ==="
@@ -75,7 +70,29 @@ elif [ -f "$PROJECT_DIR/venv/bin/activate" ]; then
     source "$PROJECT_DIR/venv/bin/activate"
 fi
 
-# Start backend (will open content browser on DISPLAY :55)
+# Start frontend
+echo "=== Starting Frontend (Next.js) ==="
+cd "$PROJECT_DIR/vtuber"
+npm run start > "$PROJECT_DIR/logs/frontend_dev.log" 2>&1 &
+FRONTEND_PID=$!
+
+echo "Waiting for frontend to be ready on http://localhost:3000..."
+MAX_RETRIES=60
+RETRY_COUNT=0
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if curl -s http://localhost:3000 > /dev/null 2>&1; then
+        echo "✓ Frontend is ready"
+        break
+    fi
+    if ! kill -0 $FRONTEND_PID 2>/dev/null; then
+        echo "✗ Frontend failed to start (check logs/frontend_dev.log)"
+        exit 1
+    fi
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    sleep 1
+done
+
+
 echo "=== Starting Backend ==="
 cd "$PROJECT_DIR"
 python3 -u src/api_server.py &
@@ -106,6 +123,7 @@ mkdir -p "$OVERLAY_PROFILE"
 
 DISPLAY=:$OVERLAY_DISPLAY_NUM google-chrome \
     --no-sandbox \
+    --test-type \
     --no-first-run \
     --no-default-browser-check \
     --password-store=basic \
@@ -117,7 +135,7 @@ DISPLAY=:$OVERLAY_DISPLAY_NUM google-chrome \
     --disable-extensions \
     --disable-notifications \
     --disable-translate \
-    --disable-features=Translate,PrivacySandboxSettings4 \
+    --disable-features=Translate,PrivacySandboxSettings4,OptimizationHints \
     --use-gl=angle \
     --use-angle=swiftshader \
     --enable-webgl \
@@ -131,13 +149,14 @@ sleep 10
 echo "=== Starting Stream with Overlay ==="
 
 ffmpeg \
-    -thread_queue_size 2048 \
+    -thread_queue_size 1024 \
     -f x11grab -video_size $RESOLUTION -framerate $FPS -i :$DISPLAY_NUM \
-    -thread_queue_size 2048 \
+    -thread_queue_size 1024 \
     -f x11grab -video_size $OVERLAY_SIZE -framerate $FPS -i :$OVERLAY_DISPLAY_NUM \
     -thread_queue_size 2048 \
+    -use_wallclock_as_timestamps 1 \
     -f s16le -ar 48000 -ac 1 -i "$AUDIO_PIPE" \
-    -filter_complex "[1:v]colorkey=0x00ff00:0.1:0.1[ckey];[0:v][ckey]overlay=main_w-overlay_w-20:main_h-overlay_h-20[outv]" \
+    -filter_complex "[1:v]colorkey=0x00ff00:0.1:0.1[ckey];[0:v][ckey]overlay=main_w-overlay_w:main_h-overlay_h[outv]" \
     -map "[outv]" -map 2:a \
     -c:v libx264 -preset veryfast -tune zerolatency \
     -maxrate 2500k -bufsize 5000k \
@@ -146,6 +165,7 @@ ffmpeg \
     -c:a aac -b:a 128k -ar 48000 \
     -af "aresample=async=1" \
     -max_interleave_delta 0 \
+    -fflags +nobuffer -flags +low_delay \
     -f flv "$TWITCH_URL/$TWITCH_STREAM_KEY" &
 FFMPEG_PID=$!
 

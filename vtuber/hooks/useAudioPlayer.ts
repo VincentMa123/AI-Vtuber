@@ -25,6 +25,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
     // AudioContext Refs
     const audioContextRef = useRef<AudioContext | null>(null);
     const nextStartTimeRef = useRef<number>(0);
+    const visualNextStartTimeRef = useRef<number>(0);
     const sourceNodesRef = useRef<AudioBufferSourceNode[]>([]);
 
     // Queue to ensure sequential decoding and scheduling
@@ -101,6 +102,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         // Reset timing
         if (audioContextRef.current) {
             nextStartTimeRef.current = audioContextRef.current.currentTime;
+            visualNextStartTimeRef.current = 0;
         }
 
         // Clear buffer
@@ -268,15 +270,31 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
 
                 // Queue volume data
                 if (volume !== undefined && volume > 0) {
-                    // We apply this volume for the duration of this chunk
+                    // Visual Sync Logic:
+                    // We use an independent "visual clock" based on performance.now()
+                    // This avoids issues where audioContext.currentTime freezes (headless)
+                    // or drifts significantly.
+                    
+                    const now = performance.now();
+                    let start = visualNextStartTimeRef.current;
+                    
+                    // If the visual queue has fallen behind (gap in speech), jump to now
+                    if (start < now) {
+                        start = now;
+                    }
+                    
+                    const end = start + (duration * 1000);
+                    
                     volumeQueueRef.current.push({
-                        start: nextStartTimeRef.current,
-                        end: nextStartTimeRef.current + duration,
+                        start: start,
+                        end: end,
                         volume: volume
                     });
 
+                    visualNextStartTimeRef.current = end;
+
                     // Clean up old volume entries
-                    const cutoff = currentTime - 5; // keep last 5 seconds just in case
+                    const cutoff = now - 5000; 
                     volumeQueueRef.current = volumeQueueRef.current.filter(v => v.end > cutoff);
                 }
 
@@ -293,26 +311,16 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
         // Wait for the chain step we just added
         await processingChainRef.current;
 
-        // Check if we should trigger completion logic based on events
-        // We do this check at the end of every chunk processing to see if we reached the state
-        /* 
-           The logic below was time-based and caused drifting. 
-           We now rely on the 'onended' event of the last source node to clear state.
-           See source.onended inside the processing chain.
-        */
-
     }, [audioEnabled, setSpeakingSafe, onPlaybackComplete]);
 
     const getCurrentVolume = useCallback(() => {
         // Check backend volume queue first
-        const ctx = audioContextRef.current;
-        if (ctx) {
-            const currentTime = ctx.currentTime;
-            const activeVolume = volumeQueueRef.current.find(v => currentTime >= v.start && currentTime < v.end);
-            if (activeVolume) {
-                // If we have backend volume, use it!
-                return activeVolume.volume;
-            }
+        // Use performance.now() (ms) to match the new queue format
+        const now = performance.now();
+        const activeVolume = volumeQueueRef.current.find(v => now >= v.start && now < v.end);
+
+        if (activeVolume) {
+            return activeVolume.volume;
         }
 
         return 0;

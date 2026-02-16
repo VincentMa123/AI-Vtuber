@@ -61,12 +61,13 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                     view: canvasRef.current!,
                     autoStart: true,
                     backgroundAlpha: 0,
-                    width: 1400,
-                    height: 1300,
+                    width: 1000,
+                    height: 1000,
                     sharedTicker: true,
                     sharedLoader: true,
-                    antialias: false,
-                    resolution: 1,
+                    antialias: true,
+                    resolution: window.devicePixelRatio || 1,
+                    powerPreference: 'high-performance',
                 });
                 appRef.current = app;
 
@@ -80,9 +81,9 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                     app.stage.addChild(loadedModel);
                     setModel(loadedModel);
 
-                    loadedModel.x = app.screen.width / 2 - (loadedModel.width * 0.4) / 2; // Rough centering
-                    loadedModel.y = app.screen.height - 1200; // Adjust Y for larger model
-                    loadedModel.scale.set(0.6);
+                    loadedModel.x = app.screen.width / 2 - (loadedModel.width * 0.5) / 2; // Better centering
+                    loadedModel.y = app.screen.height - 900; // Adjust Y for smaller canvas
+                    loadedModel.scale.set(0.5);
                     loadedModel.interactive = false; // Disable hit testing
                     loadedModel.buttonMode = false;
 
@@ -243,7 +244,7 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
 
     return (
         <div className="w-full h-full flex items-center justify-center overflow-visible relative">
-            <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain', border: '2px dashed red' }} />
+            <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
 
             {/* Debug Overlay - Hidden for production */}
             {/* 

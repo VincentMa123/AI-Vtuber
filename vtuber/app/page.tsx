@@ -29,7 +29,7 @@ const VTuberPage = () => {
   // Detect green screen mode
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('green') === '1') {
+    if (params.get('green') === '1' || params.get('bg') === 'green') {
       setIsGreenScreen(true);
       document.body.classList.add('green-screen');
     }
@@ -111,30 +111,6 @@ const VTuberPage = () => {
       <div className="avatar-overlay">
         <Avatar emotion={emotion} getCurrentVolume={getCurrentVolume} />
       </div>
-
-      {/* Chat overlay (bottom-left) */}
-      {/* Chat overlay (bottom-left) - Hidden */}
-      {/* 
-      <div className="chat-overlay">
-        <div className="chat-overlay-header">💬 Twitch Chat</div>
-        <div className="chat-messages chat-scrollbar">
-          {chatMessages.length === 0 && (
-            <div className="chat-msg">
-              <span className="text" style={{ opacity: 0.4, fontStyle: 'italic' }}>
-                Waiting for messages...
-              </span>
-            </div>
-          )}
-          {chatMessages.map((msg) => (
-            <div key={msg.id} className="chat-msg">
-              <span className="username">{msg.username}:</span>
-              <span className="text">{msg.message}</span>
-            </div>
-          ))}
-          <div ref={chatEndRef} />
-        </div>
-      </div> 
-      */}
 
       {/* Connection dot */}
       <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`} />

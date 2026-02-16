@@ -63,13 +63,7 @@ const ScreenCapture: React.FC<ScreenCaptureProps> = ({
         return () => stopCapture();
     }, [startHeartbeatLoop, stopCapture]);
 
-    return (
-        <div className="fixed top-4 left-4 z-50 hidden">
-            {/* <div className="bg-black/70 text-green-400 text-xs px-2 py-1 rounded font-mono border border-green-900 opacity-60">
-                👁️ {debugStatus}
-            </div> */}
-        </div>
-    );
+    return null;
 };
 
 export default ScreenCapture;

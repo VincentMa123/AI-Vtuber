@@ -100,8 +100,8 @@ class AudioPipe:
                 try:
                     chunks_read = 0
                     while True:
-                        # Read PCM chunks (e.g. 4KB)
-                        data = await p.stdout.read(4096)
+                        # Read PCM chunks (e.g. 16KB)
+                        data = await p.stdout.read(8192)
                         if not data:
                             break
                         await self.queue.put(data)

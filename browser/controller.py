@@ -1,17 +1,12 @@
-"""
-Efficient Single-Window Browser Controller
-Just the content page - VTuber overlay handled by FFmpeg
-"""
-
 import logging
 import asyncio
 import random
 import base64
-import requests
 from typing import Optional
 from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
 import src.core.config as config
+from src.core.utils import get_flaresolverr_cookies
 
 BROWSER_SELECTORS = {
     "load_more": [
@@ -26,12 +21,13 @@ BROWSER_SELECTORS = {
     "popup_close": [
         'button[aria-label="Close"]',
         'button[aria-label="Tutup"]',
+        '.modal-close',
+        'button.close',
+        '[class*="close"]',
     ],
 }
 
 class BrowserController:
-    """Single browser window - overlay handled externally by FFmpeg"""
-    
     def __init__(self):
         self.playwright: Optional[Playwright] = None
         self.browser: Optional[Browser] = None
@@ -45,30 +41,10 @@ class BrowserController:
             self.playwright = await async_playwright().start()
             
             # 1. Get FlareSolverr solution
-            flaresolverr_url = "http://localhost:8191/v1"
-            cookies = []
-            user_agent = None
+            cookies, user_agent = get_flaresolverr_cookies(self.base_url)
             
-            try:
-                logging.info(f"[Browser] Requesting FlareSolverr solution...")
-                response = requests.post(flaresolverr_url, json={
-                    "cmd": "request.get",
-                    "url": self.base_url,
-                    "maxTimeout": 60000
-                }, timeout=65)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get("status") == "ok":
-                        solution = data.get("solution", {})
-                        user_agent = solution.get("userAgent")
-                        cookies = solution.get("cookies", [])
-                        logging.info(f"[Browser] ✓ FlareSolverr: Got {len(cookies)} cookies")
-                    else:
-                        logging.error(f"[Browser] FlareSolverr failed")
-                        return False
-            except Exception as e:
-                logging.error(f"[Browser] FlareSolverr error: {e}")
+            if not cookies:
+                logging.error(f"[Browser] FlareSolverr failed to get cookies")
                 return False
             
             # 2. Launch single browser instance
@@ -83,6 +59,8 @@ class BrowserController:
                 '--no-default-browser-check',
                 '--password-store=basic',
                 '--disable-blink-features=AutomationControlled',
+                '--test-type',
+                '--disable-infobars',
             ]
             
             try:
@@ -90,14 +68,16 @@ class BrowserController:
                     channel="chrome",
                     headless=False,
                     args=launch_args,
-                    env={'DISPLAY': display}
+                    env={'DISPLAY': display},
+                    ignore_default_args=["--enable-automation"]
                 )
                 logging.info("[Browser] ✓ Chrome launched")
             except:
                 self.browser = await self.playwright.chromium.launch(
                     headless=False,
                     args=launch_args,
-                    env={'DISPLAY': display}
+                    env={'DISPLAY': display},
+                    ignore_default_args=["--enable-automation"]
                 )
                 logging.info("[Browser] ✓ Chromium launched")
             
@@ -117,7 +97,11 @@ class BrowserController:
             self.page = await context.new_page()
             
             logging.info(f"[Browser] Loading {self.base_url}...")
-            await self.page.goto(self.base_url, timeout=30000, wait_until='domcontentloaded')
+            await self.page.goto(self.base_url, timeout=3000, wait_until='domcontentloaded')
+            
+            # Hide cursor on all pages (including navigations)
+            await self.page.add_style_tag(content="* { cursor: none !important; }")
+            self.page.on("framenavigated", lambda frame: asyncio.create_task(frame.add_style_tag(content="* { cursor: none !important; }")) if frame == self.page.main_frame else None)
             
             # Verify Cloudflare bypass
             title = await self.page.title()
@@ -221,8 +205,9 @@ class BrowserController:
                     product = random.choice(products[:10])
                     await product.click()
                     await asyncio.sleep(2)
-                    logging.info("[Browser] Clicked product")
+                    logging.info(f"[Browser] Clicked product via selector: {selector}")
                     return True
+            logging.warning("[Browser] No products found with any selector")
             return False
         except Exception as e:
             logging.error(f"[Browser] Click failed: {e}")
@@ -274,62 +259,9 @@ class BrowserController:
                     box['y'] + box['height'] > 0)
         except:
             return False
-
-    async def is_page_stuck(self) -> bool:
-        """Detect if the page is stuck with placeholders/skeletons"""
-        if not self.page:
-            return False
-        
-        try:
-            # Check for common skeleton/placeholder selectors on Klik Indomaret
-            # Often they use 'shimmer', 'skeleton', 'placeholder' or just have many empty divs
-            skeleton_selectors = [
-                '.skeleton',
-                '[class*="skeleton"]',
-                '.shimmer',
-                '.placeholder-item',
-                'div[style*="background-color: rgb(238, 238, 238)"]' # Common grey placeholder
-            ]
-            
-            for selector in skeleton_selectors:
-                elements = await self.page.query_selector_all(selector)
-                if len(elements) > 10: # If many skeletons, it's probably stuck
-                    logging.warning(f"[Browser] ⚠ Stuck detection: Found {len(elements)} skeletons ({selector})")
-                    return True
-            
-            # Check if any products ARE loaded
-            for selector in BROWSER_SELECTORS.get("product", []):
-                products = await self.page.query_selector_all(selector)
-                if products:
-                    # Found products, but do they have real content?
-                    # Check first product's title/text
-                    text = await products[0].inner_text()
-                    if len(text.strip()) > 5:
-                        return False # Real content found
-            
-            # If we are on the base URL but no products found after sleep, might be stuck
-            return True
-            
-        except Exception as e:
-            logging.error(f"[Browser] Stuck detection failed: {e}")
-            return False
-    
-    async def click_load_more(self) -> bool:
-        if not self.page:
-            return False
-        try:
-            for selector in BROWSER_SELECTORS.get("load_more", []):
-                button = await self.page.query_selector(selector)
-                if button and await button.is_visible():
-                    await button.click()
-                    await asyncio.sleep(2)
-                    return True
-            return False
-        except:
-            return False
     
     async def check_and_close_popup(self) -> bool:
-        """Detect and close random popups or modals using multiple layers, scanning all frames"""
+
         if not self.page:
             return False
             
@@ -345,7 +277,7 @@ class BrowserController:
                             if button and await button.is_visible():
                                 box = await button.bounding_box()
                                 if box:
-                                    logging.info(f"[Browser] ◌ Popup detected in frame ({frame.name or 'main'}) via ({selector}) at ({box['x']}, {box['y']}), closing...")
+                                    logging.info(f"[Browser] ◌ Popup detected in frame ({frame.name or 'main'}) via selector ({selector}) at ({box['x']}, {box['y']}), closing...")
                                     await button.click()
                                     await asyncio.sleep(1)
                                     return True
@@ -427,6 +359,13 @@ class BrowserController:
         if not self.page:
             return "no_page"
         
+        # 1. Recovery: If we are on about:blank, go home
+        current_url = await self.get_current_url()
+        if "about:blank" in current_url:
+            logging.warning("[Browser] ⚠ Detected about:blank! Navigating home...")
+            await self.go_home()
+            return "recovered_from_blank"
+
         await self.check_and_close_popup()
         
         current_url = await self.get_current_url()
@@ -441,15 +380,12 @@ class BrowserController:
             await self.go_back()
             return "go_back"
         
-        # if await self.click_load_more():
-        #     return "load_more"
-        
         if at_bottom:
             actions = ['scroll_up'] * 3 + ['click_product', 'back']
         elif at_top:
             actions = ['scroll_down'] * 4 + ['click_product']
         else:
-            actions = ['scroll_down'] * 2 + ['scroll_up', 'click_product'] * 2 + ['back']
+            actions = ['scroll_down'] * 3 + ['scroll_up', 'click_product'] + ['back']
         
         action = random.choice(actions)
         

@@ -50,7 +50,8 @@ class TwitchBot:
         logging.info(f"[TwitchBot] Connecting to Twitch IRC (SSL)...")
         ctx = ssl.create_default_context()
         self.reader, self.writer = await asyncio.open_connection(
-            'irc.chat.twitch.tv', 6697, ssl=ctx
+            'irc.chat.twitch.tv', 6697, ssl=ctx,
+            ssl_handshake_timeout=10.0
         )
         
         # Authenticate
