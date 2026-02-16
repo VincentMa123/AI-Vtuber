@@ -16,7 +16,11 @@ BROWSER_SELECTORS = {
     "product": [
         '.item',
         'div[class*="product"]',
+        '.card',
         'a[href*="/product/"]',
+        '.product-card',
+        '.product-item a',
+        '[data-testid="product-card"]'
     ],
     "popup_close": [
         'button[aria-label="Close"]',
@@ -201,13 +205,75 @@ class BrowserController:
         try:
             for selector in BROWSER_SELECTORS.get("product", []):
                 products = await self.page.query_selector_all(selector)
-                if products:
-                    product = random.choice(products[:10])
-                    await product.click()
-                    await asyncio.sleep(2)
+                if not products:
+                    continue
+                
+                # Filter to only visible, in-viewport elements
+                visible_products = []
+                for p in products[:20]:
+                    try:
+                        if not await p.is_visible():
+                            continue
+                        box = await p.bounding_box()
+                        if not box:
+                            continue
+                        viewport = await self.page.evaluate(
+                            "() => ({ w: window.innerWidth, h: window.innerHeight })"
+                        )
+                        # Check element is actually within the viewport
+                        if (box['y'] + box['height'] > 0 and box['y'] < viewport['h'] and
+                                box['x'] + box['width'] > 0 and box['x'] < viewport['w']):
+                            visible_products.append(p)
+                    except:
+                        continue
+                
+                if not visible_products:
+                    continue
+                
+                product = random.choice(visible_products[:10])
+                
+                # Listen for new tabs (target="_blank" links)
+                new_page_event = asyncio.get_event_loop().create_future()
+                
+                def on_popup(popup):
+                    if not new_page_event.done():
+                        new_page_event.set_result(popup)
+                
+                self.page.once("popup", on_popup)
+                
+                try:
+                    await product.click(timeout=5000)
+                except Exception:
+                    self.page.remove_listener("popup", on_popup)
+                    raise
+                
+                # Check if a new tab was opened
+                try:
+                    new_page = await asyncio.wait_for(
+                        asyncio.shield(new_page_event), timeout=2.0
+                    )
+                    # A new tab opened — switch to it
+                    await new_page.wait_for_load_state("domcontentloaded", timeout=10000)
+                    old_page = self.page
+                    self.page = new_page
+                    
+                    # Hide cursor on the new page too
+                    await self.page.add_style_tag(content="* { cursor: none !important; }")
+                    
+                    try:
+                        await old_page.close()
+                    except:
+                        pass
+                    logging.info(f"[Browser] Clicked product (new tab) via selector: {selector}")
+                except asyncio.TimeoutError:
+                    # No new tab — normal navigation, which is fine
+                    self.page.remove_listener("popup", on_popup)
                     logging.info(f"[Browser] Clicked product via selector: {selector}")
-                    return True
-            logging.warning("[Browser] No products found with any selector")
+                
+                await asyncio.sleep(2)
+                return True
+                
+            logging.warning("[Browser] No visible products found with any selector")
             return False
         except Exception as e:
             logging.error(f"[Browser] Click failed: {e}")
@@ -217,6 +283,11 @@ class BrowserController:
         if self.page:
             await self.page.go_back()
             await asyncio.sleep(2)
+            # Safety: if go_back landed on about:blank, recover to home
+            current_url = self.page.url
+            if "about:blank" in current_url:
+                logging.warning("[Browser] ⚠ go_back landed on about:blank, recovering to home...")
+                await self.go_home()
     
     async def refresh(self, force_home: bool = False):
         if self.page:
@@ -381,11 +452,11 @@ class BrowserController:
             return "go_back"
         
         if at_bottom:
-            actions = ['scroll_up'] * 3 + ['click_product', 'back']
+            actions = ['scroll_up'] * 3 + ['click_product']
         elif at_top:
             actions = ['scroll_down'] * 4 + ['click_product']
         else:
-            actions = ['scroll_down'] * 3 + ['scroll_up', 'click_product'] + ['back']
+            actions = ['scroll_down'] * 3 + ['scroll_up'] + ['click_product']
         
         action = random.choice(actions)
         
@@ -398,10 +469,6 @@ class BrowserController:
         elif action == 'click_product':
             success = await self.click_random_product()
             return "click_product" if success else "click_failed"
-        elif action == 'back':
-            await Behavior.sleep(0.5, 1.5)
-            await self.go_back()
-            return "go_back"
         
         return action
 
