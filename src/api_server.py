@@ -114,13 +114,11 @@ async def _init_services():
         logging.info("[Startup] Twitch integration disabled")
 
     # 4. Audio Pipe (headless streaming)
-    try:
-        state.audio_pipe = AudioPipe()
-        await state.audio_pipe.start()
-        logging.info("[Startup] AudioPipe initialized")
-    except Exception as e:
-        logging.error(f"[Startup] Failed to init AudioPipe: {e}")
-        return
+
+    state.audio_pipe = AudioPipe()
+    await state.audio_pipe.start()
+    logging.info("[Startup] AudioPipe initialized")
+
 
     try:
         install_tts_interceptor(state.tts_manager, state.audio_pipe)

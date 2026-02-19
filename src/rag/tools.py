@@ -60,12 +60,18 @@ async def _handle_search_product(arguments: dict) -> str:
     
     from .klikindomaret_service import get_klikindomaret_service
     
-    service = get_klikindomaret_service()
-    result = await service.format_top_result(keyword)
-    
-    logger.info(f"[Tools] search_product result: {result[:100]}...")
-    return result
-
+    try:
+        service = get_klikindomaret_service()
+        result = await service.format_top_result(keyword)
+        
+        if result is None:
+            result = "Tidak ada produk ditemukan"
+        
+        logger.info(f"[Tools] search_product result: {result[:100] if len(result) > 100 else result}")
+        return result
+    except Exception as e:
+        logger.error(f"[Tools] search_product error: {e}")
+        return f"Error searching for product: {str(e)}"
 
 def parse_tool_calls_from_sse(data: dict) -> Optional[list]:
     """

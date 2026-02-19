@@ -94,12 +94,7 @@ async def _ensure_token() -> Optional[str]:
     token = get_waf_token()
     if token:
         return token
-
-    token = get_waf_token()
-    if token:
-        logger.info(f"[Klikindomaret] WAF token captured from browser")
-        return token
-    
+        
     # Main browser didn't provide a token — use heavyweight fallback
     logger.warning("[Klikindomaret] Browser didn't provide token, using fallback...")
     return await _refresh_token_fallback()
@@ -180,9 +175,11 @@ class KlikindomaretService:
         except requests.exceptions.RequestException as e:
             logger.error(f"[Klikindomaret] Search failed for '{keyword}': {e}")
             # Token might be expired, clear it
-            global _waf_token
-            _waf_token = None
-            return []
+            with _token_lock:
+                global _waf_token, _waf_token_expires
+                _waf_token = None
+                _waf_token_expires = None
+            return []        
         except Exception as e:
             logger.error(f"[Klikindomaret] Unexpected error searching '{keyword}': {e}")
             return []

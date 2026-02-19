@@ -58,6 +58,10 @@ class DeepSeekProvider(BaseLLMProvider):
                 stream=False,
             )
             
+            if not first_response.choices:
+                logging.warning("DeepSeek returned empty choices")
+                return
+                
             choice = first_response.choices[0]
             
             # Check if the model wants to call a tool
