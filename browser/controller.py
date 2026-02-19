@@ -46,11 +46,11 @@ class BrowserController:
             self.playwright = await async_playwright().start()
             
             # 1. Get FlareSolverr solution
-            # cookies, user_agent = get_flaresolverr_cookies(self.base_url)
+            cookies, user_agent = get_flaresolverr_cookies(self.base_url)
             
-            # if not cookies:
-            #     logging.error(f"[Browser] FlareSolverr failed to get cookies")
-            #     return False
+            if not cookies:
+                logging.error(f"[Browser] FlareSolverr failed to get cookies")
+                return False
             
             # 2. Launch single browser instance
             import os
@@ -93,10 +93,10 @@ class BrowserController:
                 ignore_https_errors=True,
             )
             
-            # for cookie in cookies:
-            #     if "sameSite" not in cookie:
-            #         cookie["sameSite"] = "Lax"
-            # await context.add_cookies(cookies)
+            for cookie in cookies:
+                if "sameSite" not in cookie:
+                    cookie["sameSite"] = "Lax"
+            await context.add_cookies(cookies)
             
             # 4. Create page and navigate to content
             self.page = await context.new_page()
