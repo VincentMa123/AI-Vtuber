@@ -7,6 +7,7 @@ from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
 import src.core.config as config
 from src.core.utils import get_flaresolverr_cookies
+from rag.klikindomaret_service import get_waf_token, set_waf_token
 
 BROWSER_SELECTORS = {
     "load_more": [
@@ -88,7 +89,7 @@ class BrowserController:
             # 3. Create context with FlareSolverr credentials
             context = await self.browser.new_context(
                 viewport={"width": 1920, "height": 1080},
-                user_agent=user_agent,
+                # user_agent=user_agent,
                 ignore_https_errors=True,
             )
             
@@ -100,8 +101,19 @@ class BrowserController:
             # 4. Create page and navigate to content
             self.page = await context.new_page()
             
+            # Capture WAF tokens from network requests to share with the API service
+            def _on_request(request):
+                try:
+                    waf_token = request.headers.get('x-aws-waf-token')
+                    if waf_token:
+                        set_waf_token(waf_token)
+                except Exception as e:
+                    logging.warning(f"[Browser] Error in request interceptor: {e}")
+            
+            self.page.on("request", _on_request)
+            
             logging.info(f"[Browser] Loading {self.base_url}...")
-            await self.page.goto(self.base_url, timeout=3000, wait_until='domcontentloaded')
+            await self.page.goto(self.base_url, timeout=30000, wait_until='domcontentloaded')
             
             # Hide cursor on all pages (including navigations)
             await self.page.add_style_tag(content="* { cursor: none !important; }")
@@ -143,6 +155,39 @@ class BrowserController:
             self.is_running = True
             logging.info("[Browser] ✓ Single-window setup complete!")
             logging.info("[Browser] VTuber overlay will be added by FFmpeg")
+            
+            # 6. Warm up WAF token — trigger a search so the AWS WAF JS attaches the token
+            try:
+                logging.info("[Browser] Warming up WAF token...")
+                await self.page.wait_for_timeout(2000)  # Short initial wait
+                
+                # Try selectors: ID first (most reliable), then name
+                search_input = self.page.locator('#search-submited').or_(self.page.locator('input[name="keyword"]')).first
+                
+                try:
+
+                    await search_input.wait_for(state="visible", timeout=10000)
+                    
+                    await search_input.fill('susu')
+                    await self.page.wait_for_timeout(1000)
+
+                    await search_input.press("Enter")
+                    await self.page.wait_for_timeout(5000) # Wait for page load/requests due to search
+                    await search_input.clear()
+                    
+                    # Verify token was captured
+                    token = get_waf_token()
+                    if token:
+                        logging.info("[Browser] ✓ WAF token captured during warmup")
+                    else:
+                        logging.warning("[Browser] WAF token not captured during warmup")
+                        
+                except Exception as e:
+                    logging.warning(f"[Browser] Search input missing/timeout: {e}")
+                   
+                    
+            except Exception as e:
+                logging.warning(f"[Browser] WAF warmup failed: {e}")
             
             return True
             

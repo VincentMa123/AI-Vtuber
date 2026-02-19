@@ -1,5 +1,4 @@
 import logging
-
 from typing import Optional, List, Dict, Any, AsyncGenerator
 from openai import AsyncOpenAI, APIError
 import core.config as config

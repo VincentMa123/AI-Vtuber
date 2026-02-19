@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-LLM_PROVIDER = "qwen"
+LLM_PROVIDER = "deepseek"
+VLLM_PROVIDER = "qwen"
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL ="allenai/molmo-2-8b:free"
@@ -52,7 +53,6 @@ TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 
 # Browser Automation
 BROWSER_BASE_URL = "https://www.klikindomaret.com/"
-VTUBER_FRONTEND_URL = "http://localhost:3000"
 BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
 BROWSER_SCROLL_AMOUNT_MAX = 600

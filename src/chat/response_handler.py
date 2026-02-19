@@ -37,11 +37,13 @@ async def handle_aggregated_response(
             if emotion_instruction:
                 enhanced_message = f"[EMOTION CONTEXT: {emotion_instruction}]\n\nUser message: {message}"
             
-            llm_provider = state.llm_provider
-            provider = llm_providers.get(llm_provider)
+            # Chat uses the configured LLM_PROVIDER (e.g., "deepseek" for tool calling)
+            # Vision uses config.VLM_PROVIDER in vision/service.py
+            provider_key = config.LLM_PROVIDER
+            provider = llm_providers.get(provider_key)
             
             if not provider:
-                logging.error(f"[Response Handler] Error: Invalid LLM provider: {llm_provider}")
+                logging.error(f"[Response Handler] Error: LLM provider '{provider_key}' not found")
                 return
 
             if use_streaming:
@@ -141,6 +143,7 @@ async def handle_streaming_response(
                     logging.warning(f"[Response Handler] Volume calc failed: {e}")
 
                 await ws_manager.broadcast_audio_chunk(audio_chunk_base64, volume=volume, is_complete=False)
+                state.mark_audio_sent()
         
         # Wait for text collection to complete
         await collect_task

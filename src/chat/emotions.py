@@ -1,7 +1,6 @@
 import numpy as np
 from typing import Literal, Tuple
 from sentence_transformers import SentenceTransformer
-from rag.embeddings import get_embedding_model
 import logging
 import os
 import pickle
@@ -12,6 +11,12 @@ EmotionType = Literal["happy", "sad", "angry", "excited", "neutral"]
 _emotion_embeddings_cache = None
 _model = None
 
+def preload():
+    """Preload model and embeddings during startup to avoid cold-start latency."""
+    _get_model()
+    _get_emotion_embeddings()
+    logging.info("[Emotions] Model and embeddings preloaded")
+
 def _get_model():
 
     global _model
@@ -19,16 +24,12 @@ def _get_model():
         return _model
     
     try:
-        _model = get_embedding_model()
+        _model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        logging.debug("[Emotions] Loaded embedding model directly")
         return _model
-    except ImportError:
-        try:
-            _model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-            logging.debug("[Emotions] Loaded embedding model directly")
-            return _model
-        except Exception as e:
-            logging.error(f"[Emotions] Failed to load model: {e}")
-            return None
+    except Exception as e:
+        logging.error(f"[Emotions] Failed to load model: {e}")
+        return None
             
 def _load_emotion_references() -> dict:
     references = {}

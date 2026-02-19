@@ -1,20 +1,18 @@
 import logging
 import asyncio
 from typing import Dict, Tuple, Optional, Callable, Any
-
 import core.config as config
 import core.state as state
 import core.utils as utils
 from core.utils import compress_image_for_vlm, is_similar_to_last
 from .models import HeartbeatRequest
 from browser import BrowserController, get_browser_controller, Behavior
-
 import random
 import uuid
 
 class VisionHeartbeat:
     def __init__(self, llm_providers: Dict, text_to_speech_stream_func=None):
-        self.llm_providers = llm_providers
+        self.vllm_providers = llm_providers
         self.text_to_speech_stream_func = text_to_speech_stream_func
         
         # Browser automation
@@ -29,8 +27,8 @@ class VisionHeartbeat:
 
 
     async def _generate_reaction_stream(self, image_base64: str):
-        provider_key = state.llm_provider
-        provider = self.llm_providers.get(provider_key)
+        provider_key = config.VLLM_PROVIDER
+        provider = self.vllm_providers.get(provider_key)
         
         # Load specialized vision persona
         system_prompt = utils.load_prompt_file("vision_reaction.md")
@@ -77,6 +75,7 @@ class VisionHeartbeat:
         if self.text_to_speech_stream_func:
             try:
                 async for audio_chunk in self.text_to_speech_stream_func(tee_text_generator()):
+                    state.mark_audio_sent()
                     yield {"type": "audio", "data": audio_chunk}
             except Exception as e:
                 logging.error(f"[Vision] Streaming TTS error: {e}")

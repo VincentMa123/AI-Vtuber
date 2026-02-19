@@ -3,10 +3,6 @@ import logging
 from typing import List, Dict, Any
 from contextlib import asynccontextmanager
 
-model = None
-processor = None
-local_model_available = False
-llm_provider = None
 tts_manager = None
 chat_aggregator = None
 vision_heartbeat = None
@@ -22,6 +18,12 @@ _chat_history: List[Dict[str, Any]] = []
 # Audio playback signaling
 _audio_complete_event = asyncio.Event()
 _waiting_for_audio = False
+_audio_was_sent = False
+
+def mark_audio_sent():
+    """Mark that audio was sent to frontend. Called by response handlers."""
+    global _audio_was_sent
+    _audio_was_sent = True
 
 def signal_audio_complete():
 
@@ -32,7 +34,11 @@ def signal_audio_complete():
 
 async def wait_for_audio_complete(timeout: float = 30.0) -> bool:
 
-    global _waiting_for_audio
+    global _waiting_for_audio, _audio_was_sent
+    if not _audio_was_sent:
+        logging.debug("[State] No audio was sent, skipping wait")
+        return True
+    _audio_was_sent = False  # Reset for next cycle
     _audio_complete_event.clear()
     _waiting_for_audio = True
     try:

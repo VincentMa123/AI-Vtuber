@@ -1,16 +1,25 @@
-import httpx
 import logging
 import json
 from typing import Optional, List, Dict, Any, AsyncGenerator
+from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history, parse_sse_stream
+from .base import BaseLLMProvider, sanitize_history
+from rag.tools import ALL_TOOLS, execute_tool_call
 
 
 class DeepSeekProvider(BaseLLMProvider):
     
     def __init__(self):
-        self.client = httpx.AsyncClient(timeout=30.0)
+        self.client = None
+        
+        if config.DEEPSEEK_API_KEY:
+            self.client = AsyncOpenAI(
+                api_key=config.DEEPSEEK_API_KEY,
+                base_url="https://api.deepseek.com",
+            )
+        else:
+            logging.warning("DeepSeek API key not configured.")
     
     async def generate_stream(
         self, 
@@ -20,7 +29,8 @@ class DeepSeekProvider(BaseLLMProvider):
         **kwargs
     ) -> AsyncGenerator[str, None]:
 
-        if not config.DEEPSEEK_API_KEY:
+        if not self.client:
+            logging.error("DeepSeek client not initialized.")
             return
             
         history = history or []
@@ -39,27 +49,61 @@ class DeepSeekProvider(BaseLLMProvider):
         max_tokens = kwargs.get("max_tokens", 256)
         
         try:
-            async with self.client.stream(
-                "POST",
-                config.DEEPSEEK_BASE_URL,
-                headers={
-                    "Authorization": f"Bearer {config.DEEPSEEK_API_KEY}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": config.DEEPSEEK_MODEL,
-                    "messages": messages,
-                    "max_tokens": max_tokens,
-                    "stream": True
-                },
-                # Use client timeout default
-            ) as response:
-                if response.status_code != 200:
-                    logging.error(f"DeepSeek streaming error: {response.status_code}")
-                    return
+            # First call: non-streaming with tools to check for tool calls
+            first_response = await self.client.chat.completions.create(
+                model=config.DEEPSEEK_MODEL,
+                messages=messages,
+                max_tokens=max_tokens,
+                tools=ALL_TOOLS,
+                stream=False,
+            )
+            
+            choice = first_response.choices[0]
+            
+            # Check if the model wants to call a tool
+            if choice.finish_reason == "tool_calls" and choice.message.tool_calls:
+                logging.info(f"[DeepSeek] Tool call detected: {len(choice.message.tool_calls)} calls")
                 
-                async for chunk in parse_sse_stream(response):
-                    yield chunk
+                # Add the assistant's tool call message
+                messages.append(choice.message.model_dump())
+                
+                # Execute each tool call
+                for tool_call in choice.message.tool_calls:
+                    tool_name = tool_call.function.name
+                    try:
+                        tool_args = json.loads(tool_call.function.arguments)
+                    except json.JSONDecodeError:
+                        tool_args = {}
+                    
+                    logging.info(f"[DeepSeek] Executing tool: {tool_name}({tool_args})")
+                    tool_result = await execute_tool_call(tool_name, tool_args)
+                    
+                    # Add tool result message
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": tool_result,
+                    })
+                
+                # Second call: stream the final response with tool results
+                stream = await self.client.chat.completions.create(
+                    model=config.DEEPSEEK_MODEL,
+                    messages=messages,
+                    max_tokens=max_tokens,
+                    stream=True,
+                )
+                
+                async for chunk in stream:
+                    if chunk.choices and len(chunk.choices) > 0:
+                        delta = chunk.choices[0].delta
+                        if delta.content:
+                            yield delta.content
+            else:
+                # No tool call — yield content directly
+                if choice.message.content:
+                    yield choice.message.content
                         
+        except APIError as e:
+             logging.error(f"DeepSeek error: {e}")
         except Exception as e:
-            logging.error(f"DeepSeek streaming failed: {type(e).__name__}: {e}")
+            logging.error(f"DeepSeek failed: {type(e).__name__}: {e}")

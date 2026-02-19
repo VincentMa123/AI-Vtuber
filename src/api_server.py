@@ -1,109 +1,73 @@
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-import core.check_models as check_models
-from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenProvider
-from tts import TTSManager
-from rag import initialize_rag
-from vision import HeartbeatRequest, VisionHeartbeat
-import core.config as config
-import uvicorn
-import logging
-import core.logger as logger
-from core import state
-from twitch.bot import start_twitch_bot, get_twitch_bot
-from chat.aggregator import ChatAggregator
-from chat.models import (
-    ChatMessage, AggregationConfig,
-    BatchChatRequest,
-)
-from chat.response_handler import handle_aggregated_response
-from ws.manager import ws_manager
-from audio.pipe import AudioPipe
-from audio.interceptor import install_tts_interceptor
-from ws.callbacks import broadcast_browser_update
 import json
 import asyncio
+import logging
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
+import core.config as config
+import core.logger as logger
+import core.check_models as check_models
+from core import state
 
-from fastapi.responses import HTMLResponse
+from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenProvider
+from tts import TTSManager
+from vision import VisionHeartbeat
+from chat.aggregator import ChatAggregator
+from chat.models import AggregationConfig
+from chat.response_handler import handle_aggregated_response
+from ws.manager import ws_manager
+from ws.callbacks import broadcast_browser_update
+from audio.pipe import AudioPipe
+from audio.interceptor import install_tts_interceptor
+from twitch.bot import start_twitch_bot, get_twitch_bot
 
 app = FastAPI()
 
-@app.get("/shell", response_class=HTMLResponse)
-async def get_shell():
-    overlay_url = config.VTUBER_FRONTEND_URL
-    if '?' in overlay_url:
-        overlay_url += '&autoplay=1'
-    else:
-        overlay_url += '?autoplay=1'
-        
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Btuber Shell</title>
-        <style>
-            body, html {{ margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #000; }}
-            iframe {{ border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
-            #content-frame {{ z-index: 1; }}
-            #vtuber-frame {{ z-index: 9999; pointer-events: none; }}
-        </style>
-    </head>
-    <body>
-        <iframe id="content-frame" name="content-frame" src="{config.BROWSER_BASE_URL}" 
-            sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads allow-modals"
-            allow="autoplay; microphone; camera; geolocation; payment">
-        </iframe>
-        <iframe id="vtuber-frame" name="vtuber-frame" src="{overlay_url}" allow="autoplay; microphone; camera" allowtransparency="true"></iframe>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content, status_code=200)
-
-# Enable CORS - allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for dev/streaming
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
 llm_providers = {
     "openrouter": OpenRouterProvider(),
     "deepseek": DeepSeekProvider(),
-    "remote": RemoteVLLMProvider(),
-    "qwen": QwenProvider()
 }
+
+vllm_providers = {
+    "remote": RemoteVLLMProvider(),
+    "qwen": QwenProvider(),
+}
+
 
 @app.on_event("startup")
 async def startup_event():
-    """Application startup: Initialize all services."""
-    logger.setup_logger()
-    
-    # 1. Initialize Models & RAG
-    await check_models.check_models()
-    try:
-        initialize_rag()
-    except Exception as e:
-        logging.warning(f"[Startup] Warning: Could not initialize RAG: {e}")
 
-    # 2. Initialize Services used by API
-    await init_services()
+    logger.setup_logger()
+    await check_models.check_models()
     
+    # Preload emotion model to avoid cold-start latency on first query
+    from chat.emotions import preload as preload_emotions
+    preload_emotions()
+    
+    await _init_services()
     logging.info("[Startup] System fully initialized")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
-
     logging.info("[Shutdown] Stopping services...")
-    
-    if hasattr(state, 'vision_heartbeat') and state.vision_heartbeat:
+
+    if state.vision_heartbeat:
         await state.vision_heartbeat.stop_browser()
-        
-    if hasattr(state, 'chat_aggregator') and state.chat_aggregator:
+
+    if state.chat_aggregator:
         await state.chat_aggregator.stop()
-    
+
     twitch_bot = get_twitch_bot()
     if twitch_bot:
         try:
@@ -111,18 +75,16 @@ async def shutdown_event():
             logging.info("[Shutdown] Twitch bot closed")
         except Exception as e:
             logging.error(f"[Shutdown] Error closing Twitch bot: {e}")
-        
+
     logging.info("[Shutdown] Services stopped")
 
-async def init_services():
 
-    
-    # TTS Manager
+async def _init_services():
+
     state.tts_manager = TTSManager()
     await state.tts_manager.initialize()
-    logging.info(f"[Startup] TTS Manager initialized (Provider: {config.TTS_PROVIDER})")
-    
-    # Chat Aggregator
+    logging.info(f"[Startup] TTS initialized (provider: {config.TTS_PROVIDER})")
+
     aggregator_config = AggregationConfig(
         enabled=config.CHAT_AGGREGATION_ENABLED,
         window_seconds=config.AGGREGATION_WINDOW_SECONDS,
@@ -130,13 +92,13 @@ async def init_services():
         max_messages_per_user_per_window=config.MAX_MESSAGES_PER_USER_PER_WINDOW,
         min_message_length=config.MIN_MESSAGE_LENGTH,
         similarity_threshold=config.SIMILARITY_THRESHOLD,
-        max_batch_size=config.MAX_BATCH_SIZE
+        max_batch_size=config.MAX_BATCH_SIZE,
     )
     state.chat_aggregator = ChatAggregator(aggregator_config)
     state.chat_aggregator.duplicate_expiry_seconds = config.DUPLICATE_EXPIRY_SECONDS
     await state.chat_aggregator.start()
-    logging.info("[Startup] Chat aggregator initialized")    
-    # Twitch Bot
+    logging.info("[Startup] Chat aggregator initialized")
+
     if config.TWITCH_ENABLED:
         await start_twitch_bot(
             token=config.TWITCH_BOT_TOKEN,
@@ -145,24 +107,21 @@ async def init_services():
             aggregator=state.chat_aggregator,
             client_id=config.TWITCH_CLIENT_ID,
             client_secret=config.TWITCH_CLIENT_SECRET,
-            bot_id=config.TWITCH_BOT_ID
+            bot_id=config.TWITCH_BOT_ID,
         )
         logging.info(f"[Startup] Twitch bot initialized for channel: {config.TWITCH_CHANNEL}")
     else:
         logging.info("[Startup] Twitch integration disabled")
-    
 
-
-    # Audio Pipe (Headless Streaming)
+    # 4. Audio Pipe (headless streaming)
     try:
         state.audio_pipe = AudioPipe()
         await state.audio_pipe.start()
-        logging.info("[Startup] AudioPipe initialized for headless streaming")
+        logging.info("[Startup] AudioPipe initialized")
     except Exception as e:
         logging.error(f"[Startup] Failed to init AudioPipe: {e}")
         return
 
-    # Install Interceptor
     try:
         install_tts_interceptor(state.tts_manager, state.audio_pipe)
         logging.info("[Startup] TTS interceptor installed")
@@ -170,52 +129,40 @@ async def init_services():
         logging.error(f"[Startup] Failed to install TTS interceptor: {e}")
 
     async def aggregation_callback(message: str, dominant_emotion: str = None):
-        
         if dominant_emotion:
-            logging.info(f"[ChatAggregator] Processed emotion: {dominant_emotion}")
-        
+            logging.info(f"[ChatAggregator] Emotion: {dominant_emotion}")
         await handle_aggregated_response(
             message=message,
             llm_providers=llm_providers,
-            tts_manager=state.tts_manager
+            tts_manager=state.tts_manager,
         )
+
     state.chat_aggregator.response_callback = aggregation_callback
 
     state.vision_heartbeat = VisionHeartbeat(
-        llm_providers=llm_providers,
-        text_to_speech_stream_func=state.tts_manager.generate_audio_stream
+        llm_providers=vllm_providers,
+        text_to_speech_stream_func=state.tts_manager.generate_audio_stream,
     )
-    
-    # Browser Loop
     await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
-    logging.info("[Startup] Vision Heartbeat & Browser loop scheduled")
-
+    logging.info("[Startup] Vision heartbeat & browser loop started")
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):
-
     await ws_manager.connect(websocket)
     try:
         while True:
             raw_data = await websocket.receive_text()
-            # Handle incoming messages from frontend
             try:
                 data = json.loads(raw_data)
-                msg_type = data.get("type")
-                
-                if msg_type == "audio_playback_complete":
-                    # Frontend signals that audio playback has finished
+                if data.get("type") == "audio_playback_complete":
                     state.signal_audio_complete()
-                    
             except json.JSONDecodeError:
-                pass 
-    
+                pass
     except WebSocketDisconnect:
         ws_manager.disconnect(websocket)
     except Exception as e:
         logging.error(f"[WebSocket] Error: {e}")
         ws_manager.disconnect(websocket)
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
