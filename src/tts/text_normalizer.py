@@ -147,3 +147,36 @@ _normalizer = IndonesianTextNormalizer()
 
 def normalize_for_tts(text: str, min_length: int = 3) -> str:
     return _normalizer.normalize_for_tts(text, min_length)
+
+def is_sentence_boundary(text: str, idx: int) -> bool:
+    char = text[idx]
+    
+    if char == '\n':
+        return True
+    
+    # ! and ? are always sentence endings
+    if char in {'!', '?'}:
+        return True
+    
+    # For period, check if it's between digits (number separator)
+    if char == '.':
+        # Check character before: if digit, might be number
+        if idx > 0 and text[idx - 1].isdigit():
+            # If at end of buffer AND preceded by digit, DON'T break
+            # (might be incomplete like "14." waiting for "000")
+            if idx + 1 >= len(text):
+                return False  # Wait for more text
+            # Check character after: if digit, it's a number separator
+            if text[idx + 1].isdigit():
+                return False  # "16.000" - not a sentence boundary
+        
+        # Period followed by space or uppercase = sentence end
+        if idx + 1 >= len(text):  
+            return True  # End of stream
+        next_char = text[idx + 1]
+        if next_char == ' ' or next_char.isupper():
+            return True
+
+        return False 
+    
+    return False

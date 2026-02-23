@@ -1,14 +1,19 @@
 import io
 import wave
+import time
 import threading
+import traceback
 import asyncio
+from queue import Queue, Empty
+
 from typing import Optional, AsyncGenerator
 from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 from queue import Queue as ThreadQueue
-from .text_normalizer import normalize_for_tts
+from .text_normalizer import normalize_for_tts, is_sentence_boundary
 import logging
+
 
 class RealtimeTTSProvider(BaseTTSProvider):
     def __init__(self, engine_name: str = "system"):
@@ -50,7 +55,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
             logging.info("[RealtimeTTS] Starting streaming audio generation...")
             
             # Use a queue to pass audio chunks from the callback
-            from queue import Queue, Empty
             audio_queue = Queue()
             play_complete = False
             play_error = None
@@ -69,40 +73,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
 
                 nonlocal feed_complete
                 text_buffer = ""
-
-                def is_sentence_boundary(text, idx):
-                    
-                    char = text[idx]
-                        
-                    if char == '\n':
-                        return True
-                    
-                    # ! and ? are always sentence endings
-                    if char in {'!', '?'}:
-                        return True
-                    
-                    # For period, check if it's between digits (number separator)
-                    if char == '.':
-                        # Check character before: if digit, might be number
-                        if idx > 0 and text[idx - 1].isdigit():
-                            # If at end of buffer AND preceded by digit, DON'T break
-                            # (might be incomplete like "14." waiting for "000")
-                            if idx + 1 >= len(text):
-                                return False  # Wait for more text
-                            # Check character after: if digit, it's a number separator
-                            if text[idx + 1].isdigit():
-                                return False  # "16.000" - not a sentence boundary
-                        
-                        # Period followed by space or uppercase = sentence end
-                        if idx + 1 >= len(text):  
-                            return True  # End of stream
-                        next_char = text[idx + 1]
-                        if next_char == ' ' or next_char.isupper():
-                            return True
-
-                        return False 
-                    
-                    return False
 
                 try:
                     async for token in text_stream:
@@ -166,7 +136,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
                     )
     
                     while self.stream.is_playing():
-                        import time
                         time.sleep(0.05)
         
                     logging.info("[RealtimeTTS] Playback completed")
@@ -174,14 +143,12 @@ class RealtimeTTSProvider(BaseTTSProvider):
                     audio_queue.put(None)  # Signal completion
                 except Exception as e:
                     logging.error(f"[RealtimeTTS] Play error: {e}")
-                    import traceback
                     traceback.print_exc()
                     play_error = e
                     play_complete = True
                     audio_queue.put(None)
             
             # Start playback in a thread
-            import threading
             play_thread = threading.Thread(target=run_play, daemon=True)
             play_thread.start()
             
@@ -256,7 +223,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
                 
                 except Exception as e:
                     logging.error(f"[RealtimeTTS] Error: {e}")
-                    import traceback
                     traceback.print_exc()
                     break
             
@@ -280,7 +246,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
             
         except Exception as e:
             logging.error(f"[RealtimeTTS] Streaming failed: {e}")
-            import traceback
             traceback.print_exc()
 
 

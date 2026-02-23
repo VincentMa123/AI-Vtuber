@@ -5,7 +5,9 @@ import threading
 import time
 import json
 from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from typing import List, Dict, Optional
+from playwright.async_api import async_playwright
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +29,7 @@ def set_waf_token(token: str):
 
 
 def get_waf_token() -> Optional[str]:
-    """Get the current WAF token. Returns None if expired or not set."""
+
     global _waf_token, _waf_token_expires
     with _token_lock:
         if _waf_token and _waf_token_expires and datetime.now() < _waf_token_expires:
@@ -38,8 +40,7 @@ def get_waf_token() -> Optional[str]:
 async def _refresh_token_fallback():
 
     try:
-        from playwright.async_api import async_playwright
-        
+
         logger.info("[Klikindomaret] No WAF token from browser controller, using fallback...")
         captured_token = None
         

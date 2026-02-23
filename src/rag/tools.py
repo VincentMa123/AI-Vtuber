@@ -51,10 +51,9 @@ async def _handle_search_product(arguments: dict) -> str:
     if not keyword:
         return "Error: keyword is required"
     
-    logger.info(f"[Tools] Executing search_product(keyword='{keyword}')")
     
     from .klikindomaret_service import get_klikindomaret_service
-    
+
     try:
         service = get_klikindomaret_service()
         result = await service.format_top_result(keyword)

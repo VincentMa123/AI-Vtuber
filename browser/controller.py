@@ -1,3 +1,6 @@
+import os
+import subprocess
+import traceback
 import logging
 import asyncio
 import random
@@ -58,7 +61,6 @@ class BrowserController:
                 return False
             
             # 2. Launch single browser instance
-            import os
             display = os.environ.get('DISPLAY', ':55')
             
             launch_args = [
@@ -136,7 +138,6 @@ class BrowserController:
             try:
                 await self.page.evaluate("window.moveTo(0, 0); window.resizeTo(1920, 1080);")
                 
-                import subprocess
                 result = subprocess.run(
                     ['xdotool', 'search', '--class', 'chrome'],
                     capture_output=True,
@@ -196,7 +197,6 @@ class BrowserController:
             
         except Exception as e:
             logging.error(f"[Browser] Failed to start: {e}")
-            import traceback
             traceback.print_exc()
             return False
     

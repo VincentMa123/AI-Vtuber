@@ -15,7 +15,7 @@ import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
 from .base import BaseTTSProvider, create_wav_buffer
-from .text_normalizer import normalize_for_tts
+from .text_normalizer import normalize_for_tts, is_sentence_boundary
 import core.config as config
 
 class QwenTTSCallback(QwenTtsRealtimeCallback):
@@ -205,39 +205,6 @@ class QwenTTSProvider(BaseTTSProvider):
                 try:
                     # Buffer to accumulate text until sentence boundary
                     text_buffer = ""
-                    
-                    def is_sentence_boundary(text, idx):
-                        char = text[idx]
-                        
-                        if char == '\n':
-                            return True
-                        
-                        # ! and ? are always sentence endings
-                        if char in {'!', '?'}:
-                            return True
-                        
-                        # For period, check if it's between digits (number separator)
-                        if char == '.':
-                            # Check character before: if digit, might be number
-                            if idx > 0 and text[idx - 1].isdigit():
-                                # If at end of buffer AND preceded by digit, DON'T break
-                                # (might be incomplete like "14." waiting for "000")
-                                if idx + 1 >= len(text):
-                                    return False  # Wait for more text
-                                # Check character after: if digit, it's a number separator
-                                if text[idx + 1].isdigit():
-                                    return False  # "16.000" - not a sentence boundary
-                            
-                            # Period followed by space or uppercase = sentence end
-                            if idx + 1 >= len(text):  
-                                return True  # End of stream
-                            next_char = text[idx + 1]
-                            if next_char == ' ' or next_char.isupper():
-                                return True
-
-                            return False 
-                        
-                        return False
                     
                     async for text_chunk in text_stream:
                         if not text_chunk or not self.stream_client:

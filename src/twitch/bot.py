@@ -6,6 +6,7 @@ from typing import Optional
 import websockets
 from chat.aggregator import ChatMessage
 from ws.manager import ws_manager
+import core.state as state
 
 TWITCH_WS_URL = "wss://irc-ws.chat.twitch.tv:443"
 
@@ -146,8 +147,6 @@ class TwitchBot:
             elif cmd == "help":
                 await self.send_response("Commands: !lumina, !promo, !refresh, !help | Just chat with me normally and I'll respond! 💬")
             elif cmd == "refresh":
-                # Import locally to avoid circular imports
-                import core.state as state
                 if state.vision_heartbeat and state.vision_heartbeat.browser_controller:
                     await state.vision_heartbeat.browser_controller.refresh(force_home=True)
                     await self.send_response("Refreshing the page (Force Home)! 🔄")
