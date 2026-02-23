@@ -13,7 +13,6 @@ class AudioPipe:
         self.queue = asyncio.Queue() 
         self._pipe_fd = None
         self._worker_task = None
-        self.active_streams = 0 # Track concurrent streams to handle silence logic
         
         # Audio format constants (s16le, 1 channel, 48000Hz)
         self.bytes_per_sample = 2 # 16-bit
@@ -69,7 +68,6 @@ class AudioPipe:
                 pass
             return
 
-        self.active_streams += 1
         try:
             args = [
                 "ffmpeg", 
@@ -137,14 +135,11 @@ class AudioPipe:
             
         except Exception as e:
             logging.error(f"[AudioPipe] Stream conversion error: {e}")
-        finally:
-            self.active_streams -= 1
 
 
     async def _worker_loop(self):
 
         loop = asyncio.get_running_loop()
-        silence_count = 0
         
         def write_sync(fd, data):
             try:
@@ -163,7 +158,6 @@ class AudioPipe:
                 try:
                     self._pipe_fd = await loop.run_in_executor(None, os.open, self.pipe_path, os.O_WRONLY)
                     logging.info("[AudioPipe] Pipe connected!")
-                    silence_count = 0 
                     
                     # Reset Timing for Realtime Pacing
                     # We want to align the "Audio Stream Time" with "Wall Clock Time"
@@ -203,7 +197,6 @@ class AudioPipe:
                     else:
                         # We are falling behind real time, must write silence to keep FFmpeg moving
                         data_to_write = silence_data
-                        silence_count += 1
                 else:
                     # We got REAL audio. 
                     # We'll allow up to a 0.2 second buffer constraint to stay perfectly synced with the frontend lipsync.
@@ -220,9 +213,6 @@ class AudioPipe:
                      continue
                  
                 self.bytes_written_total += len(data_to_write)
-                
-                if data_to_write is not silence_data:
-                     silence_count = 0 
 
             except Exception as e:
                 logging.error(f"[AudioPipe] Worker loop unexpected error: {e}")

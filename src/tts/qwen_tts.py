@@ -15,7 +15,7 @@ import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
 from .base import BaseTTSProvider, create_wav_buffer
-from .text_normalizer import normalize_indonesian_text, normalize_for_tts
+from .text_normalizer import normalize_for_tts
 import core.config as config
 
 class QwenTTSCallback(QwenTtsRealtimeCallback):

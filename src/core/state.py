@@ -79,9 +79,3 @@ def get_history() -> List[Dict[str, Any]]:
 
     return _chat_history.copy()
 
-def clear_history():
-
-    global _chat_history
-    _chat_history = []
-    logging.info("[State] Chat history cleared")
-

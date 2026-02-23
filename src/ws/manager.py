@@ -20,14 +20,6 @@ class WebSocketManager:
             self.active_connections.remove(websocket)
             logging.info(f"[WebSocket] Connection closed. Total: {len(self.active_connections)}")
     
-    async def send_personal(self, message: Dict[str, Any], websocket: WebSocket):
-  
-        try:
-            await websocket.send_json(message)
-        except Exception as e:
-            logging.error(f"[WebSocket] Error sending to client: {e}")
-            self.disconnect(websocket)
-    
     async def broadcast(self, message: Dict[str, Any]):
  
         disconnected = []
@@ -112,16 +104,5 @@ class WebSocketManager:
             "type": "stream_end",
             "timestamp": asyncio.get_event_loop().time()
         })
-    
-    async def broadcast_status(self, status: Dict[str, Any]):
-
-        await self.broadcast({
-            "type": "status_update",
-            "data": status
-        })
-    
-    def get_connection_count(self) -> int:
-        """Get the number of active connections"""
-        return len(self.active_connections)
 
 ws_manager = WebSocketManager()

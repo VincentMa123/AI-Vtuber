@@ -67,29 +67,3 @@ async def _handle_search_product(arguments: dict) -> str:
     except Exception as e:
         logger.error(f"[Tools] search_product error: {e}")
         return f"Error searching for product: {str(e)}"
-
-def parse_tool_calls_from_sse(data: dict) -> Optional[list]:
-    """
-    Parse tool calls from an SSE response chunk (for httpx-based providers like DeepSeek).
-    
-    Returns list of tool calls if present, None otherwise.
-    """
-    if "choices" not in data or not data["choices"]:
-        return None
-    
-    choice = data["choices"][0]
-    
-    # Check finish_reason
-    if choice.get("finish_reason") == "tool_calls":
-        message = choice.get("message", {})
-        tool_calls = message.get("tool_calls", [])
-        if tool_calls:
-            return tool_calls
-    
-    # Check delta for streaming
-    delta = choice.get("delta", {})
-    tool_calls = delta.get("tool_calls", [])
-    if tool_calls:
-        return tool_calls
-    
-    return None

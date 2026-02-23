@@ -7,7 +7,7 @@ from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
 from queue import Queue as ThreadQueue
-from .text_normalizer import normalize_indonesian_text, normalize_for_tts
+from .text_normalizer import normalize_for_tts
 import logging
 
 class RealtimeTTSProvider(BaseTTSProvider):
@@ -40,11 +40,6 @@ class RealtimeTTSProvider(BaseTTSProvider):
         
         self.stream = TextToAudioStream(self.engine, language="id")
         logging.info(f"RealtimeTTS initialized with {engine_name} engine")
-        
-    def _on_audio_chunk(self, chunk):
-
-        with self.lock:
-            self.audio_buffer.append(chunk)
     
     async def generate_audio_stream(
         self, 

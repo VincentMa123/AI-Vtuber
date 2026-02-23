@@ -145,8 +145,5 @@ class IndonesianTextNormalizer:
 # Global instance
 _normalizer = IndonesianTextNormalizer()
 
-def normalize_indonesian_text(text: str) -> str:
-    return _normalizer.normalize(text)
-
 def normalize_for_tts(text: str, min_length: int = 3) -> str:
     return _normalizer.normalize_for_tts(text, min_length)
