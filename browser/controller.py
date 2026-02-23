@@ -15,10 +15,15 @@ BROWSER_SELECTORS = {
         'button:has-text("Load More")',
     ],
     "product": [
+        'a[href*="/xpress/"]',
+        'a[href*="/p/"]',
+        'a[href*="/product/"]',
+        '.item[data-cs-item]',
+        '.item .product-collection',
+        'div[class*="product-collection"] .item',
         '.item',
         'div[class*="product"]',
         '.card',
-        'a[href*="/product/"]',
         '.product-card',
         '.product-item a',
         '[data-testid="product-card"]'
@@ -495,7 +500,7 @@ class BrowserController:
             return "go_back"
         
         if at_bottom:
-            actions = ['scroll_up'] * 3 + ['click_product']
+            actions = ['scroll_up'] * 4 + ['click_product']
         elif at_top:
             actions = ['scroll_down'] * 4 + ['click_product']
         else:

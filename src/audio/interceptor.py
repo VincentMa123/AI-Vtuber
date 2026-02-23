@@ -69,7 +69,15 @@ def install_tts_interceptor(tts_manager, audio_pipe):
                 yield b64_chunk
                 
         finally:
-            logging.info(f"[AudioPipe Interceptor] Stream finished. Sent {chunk_count} chunks ({total_bytes} bytes PCM) to pipe.")
+            duration_seconds = 0
+            if 'sample_rate' in locals():
+                duration_seconds = total_bytes / (sample_rate * 2) 
+            logging.info(f"[AudioPipe Interceptor] Stream finished. Sent {chunk_count} chunks ({total_bytes} bytes PCM) to pipe. Duration: {duration_seconds:.2f}s")
+            
+            # Simulate frontend audio_playback_complete event after the calculated duration
+            if duration_seconds > 0:
+                asyncio.get_running_loop().call_later(duration_seconds, state.signal_audio_complete)
+                
             # Signal end of stream to pipe
             await pipe_queue.put(None)
 

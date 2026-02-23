@@ -17,6 +17,7 @@ OVERLAY_SIZE="600x800"  # Smaller VTuber window
 FPS=30
 BITRATE="1500k"
 TWITCH_URL="rtmps://live.twitch.tv:443/app"
+YOUTUBE_URL="rtmps://a.rtmp.youtube.com:443/live2"
 
 # Force correct display
 export DISPLAY=:$DISPLAY_NUM
@@ -32,6 +33,7 @@ cleanup() {
     pkill -f "Xvfb :$DISPLAY_NUM" 2>/dev/null || true
     pkill -f "Xvfb :$OVERLAY_DISPLAY_NUM" 2>/dev/null || true
     pkill -f "ffmpeg.*twitch" 2>/dev/null || true
+    pkill -f "ffmpeg.*youtube" 2>/dev/null || true
     pkill -f "chrome" 2>/dev/null || true
     pkill -f "python3.*api_server" 2>/dev/null || true
     pkill -f "node.*next-server" 2>/dev/null || true
@@ -159,14 +161,14 @@ ffmpeg \
     -filter_complex "[1:v]colorkey=0x00ff00:0.1:0.1[ckey];[0:v][ckey]overlay=main_w-overlay_w:main_h-overlay_h[outv]" \
     -map "[outv]" -map 2:a \
     -c:v libx264 -preset veryfast -tune zerolatency \
-    -maxrate 2500k -bufsize 5000k \
+    -b:v 6800k -maxrate 6800k -bufsize 13600k \
     -pix_fmt yuv420p \
     -g $(($FPS * 2)) \
     -c:a aac -b:a 128k -ar 48000 \
     -af "aresample=async=1" \
-    -max_interleave_delta 0 \
+    -max_muxing_queue_size 1024 \
     -fflags +nobuffer -flags +low_delay \
-    -f flv "$TWITCH_URL/$TWITCH_STREAM_KEY" &
+    -f tee "[f=flv]$TWITCH_URL/$TWITCH_STREAM_KEY|[f=flv]$YOUTUBE_URL/$YOUTUBE_STREAM_KEY" &
 FFMPEG_PID=$!
 
 echo ""

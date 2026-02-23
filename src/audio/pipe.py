@@ -179,43 +179,50 @@ class AudioPipe:
             silence_bytes = int(self.bytes_per_second * 0.1)
             silence_data = b'\x00' * silence_bytes
             
-            # --- Realtime Pacing Logic ---
-            # Calculate how much audio we have sent so far (in seconds)
             audio_time_sent = self.bytes_written_total / self.bytes_per_second
-            
-            # Calculate how much real time has passed since we started streaming
             wall_time_elapsed = time.time() - self.start_time
-            
-            # If we have sent MORE audio than time has passed, we are "ahead of schedule".
-            # We must wait for reality to catch up.
             drift = audio_time_sent - wall_time_elapsed
-            
-            if drift > 0.01: # 10ms tolerance
-                await asyncio.sleep(drift)
 
             try:
                 data_to_write = None
                 try:
-                    data_to_write = await asyncio.wait_for(self.queue.get(), timeout=0.01) # Short timeout
+                    # Use a very short timeout just to check the queue
+                    data_to_write = await asyncio.wait_for(self.queue.get(), timeout=0.01)
                 except asyncio.TimeoutError:
-                    data_to_write = silence_data
-                    silence_count += 1
-                
-                if data_to_write:
-                     success = await loop.run_in_executor(None, write_sync, self._pipe_fd, data_to_write)
-                     if not success:
-                         logging.warning("[AudioPipe] Broken pipe writing data. Reconnecting...")
-                         try: os.close(self._pipe_fd)
-                         except: pass
-                         self._pipe_fd = None
-                         continue
-                     
-                     self.bytes_written_total += len(data_to_write)
-                     
-                     if data_to_write is not silence_data:
-                         silence_count = 0 # Reset silence counter if we got real data
-                     
+                    pass
 
+                if data_to_write is None:
+                    # Recalculate drift just in case
+                    wall_time_elapsed = time.time() - self.start_time
+                    drift = (self.bytes_written_total / self.bytes_per_second) - wall_time_elapsed
+                    
+                    if drift > 0.1:
+                        # We have buffered enough silence/audio ahead of time. Wait.
+                        await asyncio.sleep(min(0.1, drift))
+                        continue
+                    else:
+                        # We are falling behind real time, must write silence to keep FFmpeg moving
+                        data_to_write = silence_data
+                        silence_count += 1
+                else:
+                    # We got REAL audio. 
+                    # We'll allow up to a 0.2 second buffer constraint to stay perfectly synced with the frontend lipsync.
+                    if drift > 0.2:
+                        await asyncio.sleep(drift - 0.2)
+
+                # We have either real data or necessary padding silence
+                success = await loop.run_in_executor(None, write_sync, self._pipe_fd, data_to_write)
+                if not success:
+                     logging.warning("[AudioPipe] Broken pipe writing data. Reconnecting...")
+                     try: os.close(self._pipe_fd)
+                     except: pass
+                     self._pipe_fd = None
+                     continue
+                 
+                self.bytes_written_total += len(data_to_write)
+                
+                if data_to_write is not silence_data:
+                     silence_count = 0 
 
             except Exception as e:
                 logging.error(f"[AudioPipe] Worker loop unexpected error: {e}")

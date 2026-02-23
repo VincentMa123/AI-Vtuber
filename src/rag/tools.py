@@ -1,8 +1,3 @@
-"""
-Tool definitions for LLM function calling.
-Defines the product search tool and handles tool call execution.
-"""
-
 import json
 import logging
 from typing import Optional

@@ -158,6 +158,7 @@ class VisionHeartbeat:
 
             if is_similar_to_last(screenshot):
                 logging.info("[Vision Cycle] Screenshot similar to last, skipping VLM")
+                return
 
             compressed_screenshot = compress_image_for_vlm(screenshot)
 
