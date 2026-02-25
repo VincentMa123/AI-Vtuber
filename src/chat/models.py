@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, Set
 from pydantic import BaseModel
 import time
 
@@ -42,3 +42,21 @@ class AggregationConfigRequest(BaseModel):
     window_seconds: Optional[float] = None
     min_response_interval: Optional[float] = None
     max_messages_per_user_per_window: Optional[int] = None  # Maximum messages to process in one batch
+
+
+@dataclass(frozen=True)
+class ScoringConfig:
+    question_score: float = 3.0
+    name_score: float = 2.0
+    novelty_max: int = 2
+    long_message_score: float = 1.0
+    image_score: float = 2.0
+    recency_score: float = 0.5
+    min_words_for_length_bonus: int = 5
+    max_topics: int = 3
+    recent_topic_limit: int = 20
+    keywords: Set[str] = frozenset({"lumina", "indomaret"})
+    stopwords: Set[str] = frozenset(
+        {"that", "this", "with", "have", "from", "they", "been", "were", "what", "when"}
+    )
+    

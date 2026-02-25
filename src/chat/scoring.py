@@ -1,22 +1,23 @@
 import re
 from typing import List
-from .models import ChatMessage
+from .models import ChatMessage, ScoringConfig
 
 class ChatScorer:
-    def __init__(self):
+    def __init__(self, config: ScoringConfig | None = None):
         self.recent_topics: List[str] = []
+        self.config = config or ScoringConfig()
 
     def calculate_priority(self, message: ChatMessage) -> float:
         """
         Calculate priority score for a message
         
-        Scoring factors:
-        - Questions: +3
-        - Name mentions (Lumina/Indomaret): +2
-        - Novelty (new topics): +1-2
-        - Length (5+ words): +1
-        - Image attachment: +2
-        - Recency: +0.5
+        Scoring factors (weights from ScoringConfig):
+        - Questions
+        - Name mentions (configurable keywords)
+        - Novelty (new topics)
+        - Length (configurable min words)
+        - Image attachment
+        - Recency
         """
         score = 0.0
         text = message.message.lower()
@@ -28,28 +29,27 @@ class ChatScorer:
         ]
         for pattern in question_patterns:
             if re.search(pattern, text):
-                score += 3.0
+                score += self.config.question_score
                 break
         
         # Name mentions
-        if 'lumina' in text:
-            score += 2.0
-        if 'indomaret' in text:
-            score += 2.0
+        for keyword in self.config.keywords:
+            if keyword in text:
+                score += self.config.name_score
         
         topics = self.extract_topics(message.message)
         new_topics = [t for t in topics if t not in self.recent_topics]
         if new_topics:
-            score += min(len(new_topics), 2)
+            score += min(len(new_topics), self.config.novelty_max)
         
         word_count = len(message.message.split())
-        if word_count >= 5:
-            score += 1.0
+        if word_count >= self.config.min_words_for_length_bonus:
+            score += self.config.long_message_score
         
         if message.image_base64:
-            score += 2.0
+            score += self.config.image_score
         
-        score += 0.5
+        score += self.config.recency_score
         
         return score
 
@@ -58,18 +58,17 @@ class ChatScorer:
         # Simple topic extraction - get words longer than 4 characters
         words = re.findall(r'\b\w{4,}\b', message.lower())
         # Filter out common words
-        stopwords = {'that', 'this', 'with', 'have', 'from', 'they', 'been', 'were', 'what', 'when'}
-        topics = [w for w in words if w not in stopwords]
-        return topics[:3]  # Return top 3 topics
+        topics = [w for w in words if w not in self.config.stopwords]
+        return topics[:self.config.max_topics]  # Return top N topics
 
     def update_recent_topics(self, messages: List[ChatMessage]):
 
         for msg in messages:
             topics = self.extract_topics(msg.message)
             self.recent_topics.extend(topics)
-            # Keep only last 20 topics
-            if len(self.recent_topics) > 20:
-                self.recent_topics = self.recent_topics[-20:]
+            # Keep only last N topics
+            if len(self.recent_topics) > self.config.recent_topic_limit:
+                self.recent_topics = self.recent_topics[-self.config.recent_topic_limit:]
 
     def reset(self):
         self.recent_topics.clear()

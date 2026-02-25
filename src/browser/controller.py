@@ -8,8 +8,8 @@ import base64
 from typing import Optional
 from playwright.async_api import async_playwright, Browser, Page, Playwright
 from .behavior import Behavior
-import src.core.config as config
-from src.core.utils import get_flaresolverr_cookies
+import core.config as config
+from core.utils import get_flaresolverr_cookies
 from rag.klikindomaret_service import get_waf_token, set_waf_token
 
 BROWSER_SELECTORS = {
