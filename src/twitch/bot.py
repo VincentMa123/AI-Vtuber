@@ -133,7 +133,8 @@ class TwitchBot:
                 message=message,
                 user_id="0",
                 username=user,
-                timestamp=time.time()
+                timestamp=time.time(),
+                platform="twitch"  
             )
             await self.aggregator.submit_message(chat_msg)
 

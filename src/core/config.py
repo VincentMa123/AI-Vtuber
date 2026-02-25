@@ -51,6 +51,10 @@ TWITCH_CLIENT_ID = os.getenv("TWITCH_CLIENT_ID", "")
 TWITCH_CLIENT_SECRET = os.getenv("TWITCH_CLIENT_SECRET", "")
 TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 
+# YouTube Integration
+YOUTUBE_ENABLED = True
+YOUTUBE_VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID", "")
+
 # Browser Automation
 BROWSER_BASE_URL = "https://www.klikindomaret.com/"
 BROWSER_HEADLESS = False

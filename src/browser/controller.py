@@ -54,11 +54,11 @@ class BrowserController:
             self.playwright = await async_playwright().start()
             
             # 1. Get FlareSolverr solution
-            cookies, user_agent = get_flaresolverr_cookies(self.base_url)
+            # cookies, user_agent = get_flaresolverr_cookies(self.base_url)
             
-            if not cookies:
-                logging.error(f"[Browser] FlareSolverr failed to get cookies")
-                return False
+            # if not cookies:
+            #     logging.error(f"[Browser] FlareSolverr failed to get cookies")
+            #     return False
             
             # 2. Launch single browser instance
             display = os.environ.get('DISPLAY', ':55')
@@ -100,10 +100,10 @@ class BrowserController:
                 ignore_https_errors=True,
             )
             
-            for cookie in cookies:
-                if "sameSite" not in cookie:
-                    cookie["sameSite"] = "Lax"
-            await context.add_cookies(cookies)
+            # for cookie in cookies:
+            #     if "sameSite" not in cookie:
+            #         cookie["sameSite"] = "Lax"
+            # await context.add_cookies(cookies)
             
             # 4. Create page and navigate to content
             self.page = await context.new_page()
@@ -205,26 +205,42 @@ class BrowserController:
         if self._loop_task:
             self._loop_task.cancel()
         if self.browser:
-            await self.browser.close()
+            try:
+                await asyncio.wait_for(self.browser.close(), timeout=3.0)
+            except asyncio.TimeoutError:
+                logging.warning("[Browser] browser.close() timed out (browser may have crashed)")
+            except Exception as e:
+                logging.warning(f"[Browser] browser.close() failed: {e}")
         if self.playwright:
-            await self.playwright.stop()
+            try:
+                await asyncio.wait_for(self.playwright.stop(), timeout=3.0)
+            except asyncio.TimeoutError:
+                logging.warning("[Browser] playwright.stop() timed out")
+            except Exception as e:
+                logging.warning(f"[Browser] playwright.stop() failed: {e}")
+        self.browser = None
+        self.playwright = None
+        self.page = None
         logging.info("[Browser] Stopped")
     
     async def get_screenshot(self) -> Optional[str]:
-        if not self.page:
+        if not self.page or not self.is_running:
             return None
         try:
             screenshot_bytes = await self.page.screenshot(type='jpeg', quality=80)
             return base64.b64encode(screenshot_bytes).decode('utf-8')
         except Exception as e:
             logging.error(f"[Browser] Screenshot failed: {e}")
+            if "Connection closed" in str(e) or "connection" in str(e).lower():
+                logging.error("[Browser] Connection lost — marking browser as stopped")
+                self.is_running = False
             return None
     
     async def get_current_url(self) -> str:
         return self.page.url if self.page else ""
     
     async def scroll_down(self, amount: Optional[int] = None):
-        if not self.page:
+        if not self.page or not self.is_running:
             return
         if amount is None:
             amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, 
@@ -234,9 +250,11 @@ class BrowserController:
             await Behavior.smooth_scroll(self.page, amount, direction=1)
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
+            if "Connection closed" in str(e) or "connection" in str(e).lower():
+                self.is_running = False
     
     async def scroll_up(self, amount: Optional[int] = None):
-        if not self.page:
+        if not self.page or not self.is_running:
             return
         if amount is None:
             amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN,
@@ -246,6 +264,8 @@ class BrowserController:
             await Behavior.smooth_scroll(self.page, amount, direction=-1)
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
+            if "Connection closed" in str(e) or "connection" in str(e).lower():
+                self.is_running = False
     
     async def click_random_product(self) -> bool:
         if not self.page:
@@ -475,7 +495,7 @@ class BrowserController:
             return {"scrollY": 0, "atBottom": False, "atTop": True}
     
     async def perform_random_action(self) -> str:
-        if not self.page:
+        if not self.page or not self.is_running:
             return "no_page"
         
         # 1. Recovery: If we are on about:blank, go home

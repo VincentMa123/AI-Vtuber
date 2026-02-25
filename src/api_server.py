@@ -21,6 +21,7 @@ from ws.callbacks import broadcast_browser_update
 from audio.pipe import AudioPipe
 from audio.interceptor import install_tts_interceptor
 from twitch.bot import start_twitch_bot, get_twitch_bot
+from youtube.bot import start_youtube_bot, get_youtube_bot, stop_youtube_task
 
 app = FastAPI()
 
@@ -60,23 +61,81 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    logging.info("[Shutdown] Stopping services...")
+    logging.info("[Shutdown] Initiating graceful shutdown...")
+    
+    try:
+        # 1. Stop vision heartbeat FIRST (stops all broadcasting)
+        logging.info("[Shutdown] Stopping vision heartbeat...")
+        if state.vision_heartbeat:
+            try:
+                await asyncio.wait_for(state.vision_heartbeat.stop_browser(), timeout=2.0)
+            except asyncio.TimeoutError:
+                logging.warning("[Shutdown] Vision heartbeat timeout")
+            except Exception as e:
+                logging.warning(f"[Shutdown] Error stopping vision: {e}")
+    except Exception as e:
+        logging.warning(f"[Shutdown] Error in vision stop: {e}")
 
-    if state.vision_heartbeat:
-        await state.vision_heartbeat.stop_browser()
+    try:
+        # 2. Stop bots to prevent them from broadcasting
+        logging.info("[Shutdown] Stopping bots...")
+        twitch_bot = get_twitch_bot()
+        if twitch_bot:
+            try:
+                await asyncio.wait_for(twitch_bot.close(), timeout=2.0)
+                logging.info("[Shutdown] Twitch bot stopped")
+            except asyncio.TimeoutError:
+                logging.warning("[Shutdown] Twitch bot timeout")
+            except Exception as e:
+                logging.warning(f"[Shutdown] Error stopping Twitch bot: {e}")
+        
+        yt_bot = get_youtube_bot()
+        if yt_bot:
+            try:
+                yt_bot.shutting_down = True  # Signal bot to stop immediately
+                yt_bot.running = False  # Force running flag off
+                await asyncio.wait_for(yt_bot.close(), timeout=2.0)
+                logging.info("[Shutdown] YouTube bot stopped")
+            except asyncio.TimeoutError:
+                logging.warning("[Shutdown] YouTube bot timeout, forcing cancellation")
+                try:
+                    await stop_youtube_task()
+                except:
+                    pass
+            except Exception as e:
+                logging.warning(f"[Shutdown] Error stopping YouTube bot: {e}")
+        
+    except Exception as e:
+        logging.warning(f"[Shutdown] Error in bot stop: {e}")
 
-    if state.chat_aggregator:
-        await state.chat_aggregator.stop()
+    try:
+        # 3. Close all WebSocket connections (now that nothing is broadcasting)
+        logging.info("[Shutdown] Closing WebSocket connections...")
+        await ws_manager.close_all()
+        logging.info("[Shutdown] WebSockets closed")
+    except Exception as e:
+        logging.warning(f"[Shutdown] Error closing WebSockets: {e}")
 
-    twitch_bot = get_twitch_bot()
-    if twitch_bot:
-        try:
-            await twitch_bot.close()
-            logging.info("[Shutdown] Twitch bot closed")
-        except Exception as e:
-            logging.error(f"[Shutdown] Error closing Twitch bot: {e}")
+    try:
+        # 4. Stop remaining services
+        if state.chat_aggregator:
+            logging.info("[Shutdown] Stopping chat aggregator...")
+            await asyncio.wait_for(state.chat_aggregator.stop(), timeout=1.0)
+    except asyncio.TimeoutError:
+        logging.warning("[Shutdown] Chat aggregator timeout")
+    except Exception as e:
+        logging.warning(f"[Shutdown] Error stopping aggregator: {e}")
 
-    logging.info("[Shutdown] Services stopped")
+    try:
+        # 5. Wait for YouTube task to finish with aggressive timeout
+        logging.info("[Shutdown] Cancelling YouTube task...")
+        await asyncio.wait_for(stop_youtube_task(), timeout=1.0)
+    except asyncio.TimeoutError:
+        logging.warning("[Shutdown] YouTube task timeout")
+    except Exception as e:
+        logging.warning(f"[Shutdown] Error stopping YouTube task: {e}")
+
+    logging.info("[Shutdown] Shutdown complete")
 
 
 async def _init_services():
@@ -113,6 +172,15 @@ async def _init_services():
     else:
         logging.info("[Startup] Twitch integration disabled")
 
+    if config.YOUTUBE_ENABLED:
+        await start_youtube_bot(
+            video_id=config.YOUTUBE_VIDEO_ID,
+            aggregator=state.chat_aggregator,
+        )
+        logging.info(f"[Startup] YouTube bot initialized for video: {config.YOUTUBE_VIDEO_ID}")
+    else:
+        logging.info("[Startup] YouTube integration disabled")
+
     # 4. Audio Pipe (headless streaming)
 
     state.audio_pipe = AudioPipe()
@@ -126,7 +194,7 @@ async def _init_services():
     except Exception as e:
         logging.error(f"[Startup] Failed to install TTS interceptor: {e}")
 
-    async def aggregation_callback(message: str, dominant_emotion: str = None):
+    async def aggregation_callback(message: str, dominant_emotion: str = None, platform: str = "twitch"):
         if dominant_emotion:
             logging.info(f"[ChatAggregator] Emotion: {dominant_emotion}")
         await handle_aggregated_response(

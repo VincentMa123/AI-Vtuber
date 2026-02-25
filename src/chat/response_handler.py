@@ -7,7 +7,6 @@ import core.utils as utils
 from chat.emotions import detect_emotion
 from ws.manager import ws_manager
 import asyncio
-from twitch.bot import get_twitch_bot
 
 EMOTION_CONTEXT = {
     "happy": "The viewer seems happy and positive! Match their energy with enthusiasm.",
@@ -52,7 +51,7 @@ async def handle_aggregated_response(
                         enhanced_message=enhanced_message,
                         provider=provider,
                         tts_manager=tts_manager,
-                        user_emotion=user_emotion
+                        user_emotion=user_emotion,
                     )
                     return
                 except Exception as e:
@@ -66,7 +65,7 @@ async def handle_streaming_response(
     enhanced_message: str,
     provider,
     tts_manager,
-    user_emotion: str
+    user_emotion: str,
 ) -> None:
 
     import time
@@ -159,12 +158,6 @@ async def handle_streaming_response(
         # Store AI response in history
         if full_text:
             state.add_to_history("assistant", full_text)
-        
-        # Send to Twitch chat if bot is available
-        if config.TWITCH_ENABLED and full_text:
-            bot = get_twitch_bot()
-            if bot:
-                await bot.send_response(full_text)
         
         logging.info(f"[Response Handler] Streaming complete: {len(full_text)} chars")
         logging.info(f"[Response Handler] Streaming took {time.time() - start_time:.2f}s")

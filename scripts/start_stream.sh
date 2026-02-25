@@ -6,7 +6,7 @@ set +e
 
 # Load environment
 if [ -f "src/.env" ]; then
-    export $(grep -v '^#' src/.env | xargs)
+    export $(grep -v '^#' src/.env | tr -d '\r' | xargs)
 fi
 
 # Configuration

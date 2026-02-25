@@ -197,10 +197,22 @@ class VisionHeartbeat:
             
         while self._browser_loop_running:
             try:
+                # Check if browser connection is still alive
+                if not self.browser_controller or not self.browser_controller.is_running:
+                    logging.warning(f"[Action Loop {loop_id}] Browser connection lost, stopping loop")
+                    self._browser_loop_running = False
+                    break
+
                 # 0. Check if page is stuck/placeholders only
                 logging.debug(f"[Action Loop {loop_id}] Starting iteration...")
                 action = await self.browser_controller.perform_random_action()
                 logging.debug(f"[Action Loop] Performed: {action}")
+
+                # Re-check after action in case connection died during it
+                if not self.browser_controller.is_running:
+                    logging.warning(f"[Action Loop {loop_id}] Browser died during action, stopping loop")
+                    self._browser_loop_running = False
+                    break
                 
                 if self._on_browser_update:
                     await self._on_browser_update({
@@ -239,4 +251,9 @@ class VisionHeartbeat:
                 break
             except Exception as e:
                 logging.error(f"[Action Loop] Error: {e}")
+                # If browser connection is dead, don't retry - break the loop
+                if self.browser_controller and not self.browser_controller.is_running:
+                    logging.warning(f"[Action Loop {loop_id}] Browser not running after error, stopping loop")
+                    self._browser_loop_running = False
+                    break
                 await Behavior.sleep(4, 7)

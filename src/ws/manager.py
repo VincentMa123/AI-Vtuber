@@ -7,6 +7,7 @@ import logging
 class WebSocketManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
+        self.shutting_down = False  # Add shutdown flag
         
     async def connect(self, websocket: WebSocket):
 
@@ -21,14 +22,17 @@ class WebSocketManager:
             logging.info(f"[WebSocket] Connection closed. Total: {len(self.active_connections)}")
     
     async def broadcast(self, message: Dict[str, Any]):
- 
+        # Don't broadcast if we're shutting down
+        if self.shutting_down:
+            return
+        
         disconnected = []
         
         for connection in self.active_connections:
             try:
                 await connection.send_json(message)
             except Exception as e:
-                logging.error(f"[WebSocket] Error broadcasting to client: {e}")
+                logging.debug(f"[WebSocket] Error broadcasting to client: {e}")
                 disconnected.append(connection)
         
         # Clean up disconnected clients
@@ -104,5 +108,16 @@ class WebSocketManager:
             "type": "stream_end",
             "timestamp": asyncio.get_event_loop().time()
         })
+    
+    async def close_all(self):
+        """Close all active WebSocket connections gracefully during shutdown."""
+        self.shutting_down = True  # Signal shutdown first
+        connections_to_close = self.active_connections.copy()
+        for connection in connections_to_close:
+            try:
+                await connection.close()
+            except Exception as e:
+                logging.debug(f"[WebSocket] Error closing connection: {e}")
+            self.disconnect(connection)
 
 ws_manager = WebSocketManager()
