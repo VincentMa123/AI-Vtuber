@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 18
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
     nodejs \
@@ -51,6 +51,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV PATH="/opt/venv/bin:$PATH"
 ENV NODE_ENV=production
+ENV PYTHONPATH=/app
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -65,7 +66,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     librsvg2-bin \
     ca-certificates \
+    xvfb \
     && rm -rf /var/lib/apt/lists/*
+
 
 # Copy virtual environment and node_modules from builder
 COPY --from=builder /opt/venv /opt/venv
@@ -91,7 +94,8 @@ TWITCH_CLIENT_ID=\n\
 TWITCH_STREAM_KEY=" > src/.env; \
     fi
 
-# Make scripts executable
+# Create logs directory and make scripts executable
+RUN mkdir -p /app/logs
 RUN chmod +x scripts/*.sh
 
 # Expose ports
@@ -103,13 +107,5 @@ EXPOSE 8000 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/docs || exit 1
 
-# Default command: start both backend and frontend
-CMD ["/bin/bash", "-c", "\
-    echo 'Starting AI VTuber Application...' && \
-    echo 'Building Next.js frontend...' && \
-    cd /app/vtuber && npm run build && \
-    echo 'Starting FastAPI backend...' & \
-    cd /app && python -m uvicorn src.api_server:app --host 0.0.0.0 --port 8000 & \
-    sleep 5 && \
-    echo 'Starting Next.js production server...' && \
-    cd /app/vtuber && npm start"]
+# Default command: keep container alive for manual debugging
+CMD ["tail", "-f", "/dev/null"]

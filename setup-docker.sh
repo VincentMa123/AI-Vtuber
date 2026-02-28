@@ -17,8 +17,8 @@ NC='\033[0m' # No Color
 DOCKER_IMAGE_NAME="vtuber-app"
 DOCKER_CONTAINER_NAME="vtuber-container"
 DOCKER_IMAGE_TAG="latest"
-BACKEND_PORT=8000
-FRONTEND_PORT=3000
+BACKEND_PORT=8001
+FRONTEND_PORT=3001
 
 # Functions
 print_header() {
