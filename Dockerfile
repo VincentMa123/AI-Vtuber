@@ -41,7 +41,8 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir torch==2.10.0 torchaudio==2.10.0 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install and build npm dependencies
+# Copy full vtuber source and build
+COPY vtuber/ ./vtuber/
 RUN cd vtuber && npm ci && npm run build && cd ..
 
 # Stage 2: Runtime stage
@@ -71,17 +72,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy virtual environment and node_modules from builder
+# Copy virtual environment and vtuber (with node_modules + .next) from builder
 COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /app/vtuber ./vtuber
 WORKDIR /app
-COPY --from=builder /app/vtuber/node_modules ./vtuber/node_modules
-COPY --from=builder /app/vtuber/.next ./vtuber/.next
 
 # Copy application code
 COPY src/ ./src/
-COPY vtuber/ ./vtuber/
 COPY scripts/ ./scripts/
-COPY README.md DEPLOYMENT.md ./
 
 # Create .env template if it doesn't exist
 RUN if [ ! -f src/.env ]; then \
