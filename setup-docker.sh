@@ -64,12 +64,12 @@ build_image() {
     fi
     
     print_info "Building image: $DOCKER_IMAGE_NAME:$TAG"
-    docker build -t "$DOCKER_IMAGE_NAME:$TAG" .
+    sudo docker build -t "$DOCKER_IMAGE_NAME:$TAG" .
     
     if [ $? -eq 0 ]; then
         print_success "Docker image built successfully"
         echo -e "\nImage details:"
-        docker images "$DOCKER_IMAGE_NAME:$TAG"
+        sudo docker images "$DOCKER_IMAGE_NAME:$TAG"
     else
         print_error "Failed to build Docker image"
         exit 1
@@ -128,12 +128,12 @@ run_container() {
     # Remove old container if exists
     if docker ps -a | grep -q "$DOCKER_CONTAINER_NAME"; then
         print_info "Removing old container..."
-        docker rm "$DOCKER_CONTAINER_NAME"
+        sudo docker rm "$DOCKER_CONTAINER_NAME"
     fi
     
     # Run with port mapping and environment file
     print_info "Starting container: $DOCKER_CONTAINER_NAME"
-    docker run -d \
+    sudo docker run -d \
         --name "$DOCKER_CONTAINER_NAME" \
         -p "$BACKEND_PORT:8000" \
         -p "$FRONTEND_PORT:3000" \
@@ -144,7 +144,7 @@ run_container() {
     if [ $? -eq 0 ]; then
         print_success "Container started successfully"
         echo -e "\n${BLUE}Container Details:${NC}"
-        docker ps | grep "$DOCKER_CONTAINER_NAME"
+        sudo docker ps | grep "$DOCKER_CONTAINER_NAME"
         
         echo -e "\n${BLUE}Access Points:${NC}"
         echo "  Backend API: http://localhost:$BACKEND_PORT"
@@ -165,15 +165,15 @@ run_container() {
 # View container logs
 view_logs() {
     print_header "Container Logs"
-    docker logs -f "$DOCKER_CONTAINER_NAME"
+    sudo docker logs -f "$DOCKER_CONTAINER_NAME"
 }
 
 # Stop container
 stop_container() {
     print_header "Stopping Container"
     
-    if docker ps | grep -q "$DOCKER_CONTAINER_NAME"; then
-        docker stop "$DOCKER_CONTAINER_NAME"
+    if sudo docker ps | grep -q "$DOCKER_CONTAINER_NAME"; then
+        sudo docker stop "$DOCKER_CONTAINER_NAME"
         print_success "Container stopped"
     else
         print_warning "Container is not running"
@@ -184,8 +184,8 @@ stop_container() {
 restart_container() {
     print_header "Restarting Container"
     
-    if docker ps -a | grep -q "$DOCKER_CONTAINER_NAME"; then
-        docker restart "$DOCKER_CONTAINER_NAME"
+    if sudo docker ps -a | grep -q "$DOCKER_CONTAINER_NAME"; then
+        sudo docker restart "$DOCKER_CONTAINER_NAME"
         print_success "Container restarted"
         
         echo -e "\n${BLUE}Access Points:${NC}"
@@ -206,15 +206,15 @@ cleanup() {
     
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Stop and remove container
-        if docker ps -a | grep -q "$DOCKER_CONTAINER_NAME"; then
-            docker stop "$DOCKER_CONTAINER_NAME" || true
-            docker rm "$DOCKER_CONTAINER_NAME"
+        if sudo docker ps -a | grep -q "$DOCKER_CONTAINER_NAME"; then
+            sudo docker stop "$DOCKER_CONTAINER_NAME" || true
+            sudo docker rm "$DOCKER_CONTAINER_NAME"
             print_success "Container removed"
         fi
         
         # Remove image
-        if docker images | grep -q "$DOCKER_IMAGE_NAME"; then
-            docker rmi "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+        if sudo docker images | grep -q "$DOCKER_IMAGE_NAME"; then
+            sudo docker rmi "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
             print_success "Docker image removed"
         fi
     else
