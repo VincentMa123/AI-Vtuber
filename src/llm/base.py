@@ -39,7 +39,7 @@ class BaseLLMProvider(ABC):
         self, 
         message: str, 
         history: Optional[List[Dict[str, Any]]] = None, 
-        image_base64: Optional[str] = None,
+        image_base64: Optional[Any] = None,
         **kwargs
     ) -> AsyncGenerator[str, None]:        
         # Abstract method, must be implemented by subclasses
@@ -63,17 +63,27 @@ async def parse_sse_stream(response) -> AsyncGenerator[str, None]:
         except json.JSONDecodeError:
             continue
 
-def build_user_content(message: str, image_base64: Optional[str] = None, mime_type: str = "image/jpeg") -> List[Dict[str, Any]]:
-    """Build user message content with optional image.
+def build_user_content(message: str, image_base64: Optional[Any] = None, mime_type: str = "image/jpeg") -> List[Dict[str, Any]]:
+    """Build user message content with optional image or list of images.
     
     Args:
+        image_base64: Single base64 string or List of base64 strings.
         mime_type: Image MIME type (default jpeg since compress_image_for_vlm outputs JPEG)
     """
     content = []
+    
     if image_base64:
-        content.append({
-            "type": "image_url",
-            "image_url": {"url": f"data:{mime_type};base64,{image_base64}"}
-        })
+        if isinstance(image_base64, list):
+            for img in image_base64:
+                content.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:{mime_type};base64,{img}"}
+                })
+        else:
+            content.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:{mime_type};base64,{image_base64}"}
+            })
+            
     content.append({"type": "text", "text": message})
     return content

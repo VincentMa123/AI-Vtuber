@@ -96,6 +96,7 @@ class BrowserController:
             # 3. Create context with FlareSolverr credentials
             context = await self.browser.new_context(
                 viewport={"width": 1920, "height": 1080},
+                no_viewport=True,
                 # user_agent=user_agent,
                 ignore_https_errors=True,
             )
@@ -124,7 +125,13 @@ class BrowserController:
             
             # Hide cursor on all pages (including navigations)
             await self.page.add_style_tag(content="* { cursor: none !important; }")
-            self.page.on("framenavigated", lambda frame: asyncio.create_task(frame.add_style_tag(content="* { cursor: none !important; }")) if frame == self.page.main_frame else None)
+            async def _hide_cursor_on_frame_nav(frame):
+                if frame == self.page.main_frame:
+                    try:
+                        await frame.add_style_tag(content="* { cursor: none !important; }")
+                    except Exception as e:
+                        logging.debug(f"[Browser] Failed to hide cursor on frame nav: {e}")
+            self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
             
             # Verify Cloudflare bypass
             title = await self.page.title()
@@ -347,6 +354,38 @@ class BrowserController:
             logging.error(f"[Browser] Click failed: {e}")
             return False
     
+    async def go_home(self) -> bool:
+        if not self.page:
+            return False
+        try:
+            logging.info(f"[Browser] Going home to {self.base_url}")
+            await self.page.goto(self.base_url, wait_until="domcontentloaded")
+            return True
+        except Exception as e:
+            logging.error(f"[Browser] Failed to go home: {e}")
+            return False
+
+    async def navigate_to_page(self, url: str) -> bool:
+        if not self.page:
+            return False
+        try:
+            logging.info(f"[Browser] Navigating to {url} (background)...")
+            # Using 'commit' allows the method to return as soon as the navigation starts,
+            # which prevents blocking the audio stream generation.
+            await self.page.goto(url, wait_until="commit", timeout=30000)
+            
+            # Re-apply cursor hide
+            async def _apply_style():
+                try:
+                    await self.page.add_style_tag(content="* { cursor: none !important; }")
+                except Exception as e:
+                    logging.debug(f"[Browser] Failed to apply cursor hide style: {e}")
+            asyncio.create_task(_apply_style())
+            return True
+        except Exception as e:
+            logging.error(f"[Browser] Failed to navigate to {url}: {e}")
+            return False
+    
     async def go_back(self):
         if self.page:
             await self.page.go_back()
@@ -487,7 +526,7 @@ class BrowserController:
                     scrollHeight,
                     viewportHeight,
                     scrollPercent,
-                    atBottom: scrollPercent > 0.85,
+                    atBottom: scrollPercent > 0.95,
                     atTop: scrollPercent < 0.15
                 };
             }""")
@@ -505,7 +544,7 @@ class BrowserController:
             await self.go_home()
             return "recovered_from_blank"
 
-        await self.check_and_close_popup()
+        # await self.check_and_close_popup()
         
         current_url = await self.get_current_url()
         is_product_page = "/xpress/" in current_url or "/product/" in current_url
@@ -519,12 +558,8 @@ class BrowserController:
             await self.go_back()
             return "go_back"
         
-        if at_bottom:
-            actions = ['scroll_up'] * 4 + ['click_product']
-        elif at_top:
-            actions = ['scroll_down'] * 4 + ['click_product']
-        else:
-            actions = ['scroll_down'] * 3 + ['scroll_up'] + ['click_product']
+     
+        actions = ['scroll_down'] * 15 + ['scroll_up']
         
         action = random.choice(actions)
         

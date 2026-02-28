@@ -22,30 +22,62 @@ class VisionHeartbeat:
         self._on_browser_update: Optional[Callable] = None  # Callback for WS updates
         self._last_analysis_time = 0
         self._last_auto_refresh_time = 0
+        self.visited_urls = set()
+        self.screenshot_buffer = []  # Buffer for multi-image vision
         
         logging.info("[VisionHeartbeat] Initialized with CooldownManager")
 
 
-    async def _generate_reaction_stream(self, image_base64: str):
+    async def _generate_reaction_stream(self, images_base64: Any):
         provider_key = config.VLLM_PROVIDER
         provider = self.vllm_providers.get(provider_key)
         
-        # Load specialized vision persona
-        system_prompt = utils.load_prompt_file("vision_reaction.md")
-        if not system_prompt:
-             system_prompt = utils.get_system_prompt() # Fallback
-             logging.warning("Failed to load vision_reaction.md, using default system prompt")
+        # Determine current page context for the prompt
+        scroll_status = "Middle of page"
+        current_url = "Unknown"
+        page_title = "Unknown"
+        
+        if self.browser_controller and self.browser_controller.page:
+            try:
+                current_url = self.browser_controller.page.url
+                page_title = await self.browser_controller.page.title()
+                pos = await self.browser_controller.get_scroll_position()
+                if pos.get("atBottom"):
+                    scroll_status = "At Bottom"
+                elif pos.get("atTop"):
+                    scroll_status = "At Top"
+            except Exception as e:
+                logging.warning(f"[Vision] Could not get page status: {e}")
+
+        # Track current URL in history (normalize to avoid trailing slash issues)
+        if current_url != "Unknown":
+            norm_url = current_url.rstrip("/")
+            self.visited_urls.add(norm_url)
+
+        # Get the full persona prompt with dynamic context
+        vision_task = utils.load_prompt_file("vision_reaction.md")
+        system_prompt = utils.get_system_prompt(
+            scroll_status=scroll_status,
+            current_url=current_url,
+            page_title=page_title,
+            visited_urls=list(self.visited_urls)
+        )
+        
+        # Merge specialized vision instructions into the system prompt
+        full_system_prompt = f"{system_prompt}\n\nCURRENT VISION TASK:\n{vision_task}"
 
         try:
             # Use shared history for context
             history = state.get_history()
             
+            message = "React to the currently visible content. You might see multiple screenshots representing a sequence as I scroll down the page. Use them to understand the page flow. If you are at the end of the page (At Bottom), transition to the next logical section using your navigation tool."
+            
             async for token in provider.generate_stream(
-                message="React to this image.", 
+                message=message, 
                 history=history, 
-                image_base64=image_base64,
-                system_prompt=system_prompt,
-                max_tokens=128
+                image_base64=images_base64,
+                system_prompt=full_system_prompt,
+                max_tokens=512
             ):
                 yield token
         except Exception as e:
@@ -54,15 +86,15 @@ class VisionHeartbeat:
 
     async def process_heartbeat_stream(self, request: HeartbeatRequest):
 
-        image_base64 = request.image_base64
+        images_base64 = request.image_base64
             
-        if not image_base64:
+        if not images_base64:
              yield {"type": "status", "content": "Capture Failed"}
              yield {"type": "stop"}
              return
         
         # Create text generator
-        text_stream = self._generate_reaction_stream(image_base64)
+        text_stream = self._generate_reaction_stream(images_base64)
     
         full_text = ""
 
@@ -143,28 +175,25 @@ class VisionHeartbeat:
             logging.error(f"[VisionHeartbeat] Orchestrator error: {e}")
             action_task.cancel()
 
-    async def _process_vision_cycle(self):
+    async def _process_vision_cycle(self, images: Optional[Any] = None):
 
         try:
-            # 1. Capture screenshot
-            screenshot = await self.browser_controller.get_screenshot()
-
-            if self._on_browser_update:
-                await self._on_browser_update({
-                    "type": "browser_screenshot",
-                    "image_base64": screenshot
-                })
-
-
-            if is_similar_to_last(screenshot):
-                logging.info("[Vision Cycle] Screenshot similar to last, skipping VLM")
-                return
-
-            compressed_screenshot = compress_image_for_vlm(screenshot)
+            # If no images provided, use the latest from browser
+            if not images:
+                screenshot = await self.browser_controller.get_screenshot()
+                if not screenshot: return
+                
+                if self._on_browser_update:
+                    await self._on_browser_update({
+                        "type": "browser_screenshot",
+                        "image_base64": screenshot
+                    })
+                
+                images = compress_image_for_vlm(screenshot)
 
             async with state.acquire_speech_slot("vision"):
                 request = HeartbeatRequest(
-                    image_base64=compressed_screenshot,
+                    image_base64=images,
                     timestamp=asyncio.get_event_loop().time(),
                     use_native_capture=False
                 )
@@ -178,7 +207,7 @@ class VisionHeartbeat:
                         await self._on_browser_update(chunk)
                 
                 # Wait for frontend to signal audio playback is complete
-                await state.wait_for_audio_complete(timeout=10.0)
+                await state.wait_for_audio_complete(timeout=20.0)
                 
                 logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
                         
@@ -229,18 +258,43 @@ class VisionHeartbeat:
                         "image_base64": screenshot
                     })
 
-                # 2. Check Triggers
-                current_time = asyncio.get_event_loop().time()
-                is_click = (action == "click_product")
-
-                is_overdue = (current_time - self._last_analysis_time) >= random.uniform(20, 25)
+                # 2. Check Triggers (Scroll-based or Click-based)
+                pos = await self.browser_controller.get_scroll_position()
+                at_bottom = pos.get("atBottom", False)
                 
-                should_analyze = is_click or is_overdue
+                is_scroll = (action == "scroll_down")
+                is_click = (action == "click_product")
+                
+                # Capture current view for buffering or analysis
+                current_screenshot_compressed = compress_image_for_vlm(screenshot)
+
+                # Buffer logic: add to sequence if scrolling
+                if is_scroll:
+                    self.screenshot_buffer.append(current_screenshot_compressed)
+                    logging.info(f"[Action Loop] Buffered screenshot ({len(self.screenshot_buffer)}/3)")
+
+                # Analysis Trigger logic:
+                # - Full buffer (3 scrolls)
+                # - Explicit click (immediate reaction)
+                # - Reached page bottom (essential for transition rules)
+                should_analyze = (len(self.screenshot_buffer) >= 3) or is_click or at_bottom
                 
                 if should_analyze:
-                    logging.info(f"[Action Loop] Triggering Vision (Click={is_click}, Overdue={is_overdue})")
+                    logging.info(f"[Action Loop] Triggering Vision (Buffer={len(self.screenshot_buffer)}, Click={is_click}, AtBottom={at_bottom})")
                     
-                    await self._process_vision_cycle()
+                    # Construct analysis set
+                    if is_click or at_bottom:
+                        # For immediate events, ensure the current view is part of the set
+                        # If buffer is empty, it becomes a single-image analysis
+                        # If buffer has images, append current view as the 'final' state
+                        if current_screenshot_compressed not in self.screenshot_buffer:
+                            self.screenshot_buffer.append(current_screenshot_compressed)
+                    
+                    # Use whatever is in the buffer (1 to 4 images depending on timing)
+                    analysis_images = self.screenshot_buffer if self.screenshot_buffer else current_screenshot_compressed
+                    
+                    await self._process_vision_cycle(images=analysis_images)
+                    self.screenshot_buffer = [] # Reset buffer
                     self._last_analysis_time = asyncio.get_event_loop().time()
                     
                 else:

@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 from PIL import Image
 
 VLM_TARGET_SIZE = (1280, 720)
-SIMILARITY_THRESHOLD = 0.2
+SIMILARITY_THRESHOLD = 0.05
 
 _last_image_hash: Optional[int] = None
 _last_image_bytes: Optional[bytes] = None
@@ -29,21 +29,105 @@ def load_prompt_file(filename):
         logging.error(f"Error loading prompt file {filename}: {e}")
         return ""
 
-def get_system_prompt(user_message: str = ""):
+def pick_next_url(visited_urls: Optional[list] = None, current_url: str = "") -> Optional[str]:
+    """
+    Pick a next URL from crawl_result.json.
+    Priority: unvisited (not current) -> any other URL not current.
+    """
+    visited_urls = visited_urls or []
+    try:
+        import json
+        if os.path.exists("crawl_result.json"):
+            with open("crawl_result.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                sitemap = data.get("sitemap", [])
+                if not sitemap:
+                    return None
+                
+                norm_visited = [u.rstrip("/") for u in visited_urls]
+                norm_current = current_url.rstrip("/")
+                
+                unvisited = [
+                    item for item in sitemap
+                    if item.get("url") and item["url"].rstrip("/") not in norm_visited
+                    and item["url"].rstrip("/") != norm_current
+                ]
+                if unvisited:
+                    return unvisited[0]["url"]
+                
+                # Fallback: any URL not equal to current
+                for item in sitemap:
+                    url = item.get("url")
+                    if url and url.rstrip("/") != norm_current:
+                        return url
+    except Exception as e:
+        logging.warning(f"Error picking next URL from sitemap: {e}")
+    return None
+
+
+def get_system_prompt(user_message: str = "", **kwargs):
     
     identity = load_prompt_file("soul.md")
     rules = load_prompt_file("rules.md")
+
+    # Load sitemap for context
+    sitemap_context = ""
+    visited = kwargs.get("visited_urls", [])
+    current_url = kwargs.get("current_url", "")
+    try:
+        import json
+        if os.path.exists("crawl_result.json"):
+            with open("crawl_result.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                sitemap = data.get("sitemap", [])
+                if sitemap:
+                    norm_visited = [u.rstrip("/") for u in visited]
+                    norm_current = current_url.rstrip("/")
+                    
+                    unvisited = [item for item in sitemap if item['url'].rstrip("/") not in norm_visited and item['url'].rstrip("/") != norm_current]
+                    explored = [item for item in sitemap if item['url'].rstrip("/") in norm_visited or item['url'].rstrip("/") == norm_current]
+                    
+                    sitemap_str = "Available New Sections (Priority):\n"
+                    if unvisited:
+                        sitemap_str += "\n".join([f"- {item['name']}: {item['url']}" for item in unvisited[:20]])
+                        # Suggest the very first unvisited one as recommendation
+                        recommendation = unvisited[0]['url']
+                        kwargs["next_recommendation"] = recommendation
+                    else:
+                        sitemap_str += "(No new sections found in sitemap)\n"
+                    
+                    if explored:
+                        sitemap_str += "\n\nAlready Explored Sections:\n"
+                        sitemap_str += "\n".join([f"- {item['url']}" for item in explored[:5]])
+                    
+                    sitemap_context = f"\nWebsite Sitemap Context:\n{sitemap_str}\n"
+    except Exception as e:
+        logging.warning(f"Error loading sitemap for prompt: {e}")
 
     # DeepSeek discovers tools from the API 'tools' parameter, not the system prompt.
     # Do NOT mention tools here — it confuses the model into outputting fake XML.
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     
+    # Previously Explored Sections is now handled within Sitemap Context
+
+    # Navigation Hint
+    nav_hint = ""
+    scroll_status = kwargs.get("scroll_status", "Middle of page")
+    if isinstance(scroll_status, str) and scroll_status.startswith("At Bottom"):
+        rec = kwargs.get("next_recommendation", "(Check Unvisited List)")
+        nav_hint = f"\n[SYSTEM HINT]: Position: At Bottom. You MUST call the 'navigate_to_page' tool now. \nRecommended Target: {rec}\nFor your verbal response, ONLY say: 'Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya'.\n"
+
     context = f"""
     Current Context:
     - Time: {current_time}
     - Environment: You are currently live streaming.
     - System Status: All systems nominal.
+    - Current URL: {kwargs.get("current_url", "Unknown")}
+    - Current Page: {kwargs.get("page_title", "Unknown")}
+    - Scroll Position: {scroll_status}
+    {sitemap_context}
+    {nav_hint}
     """
 
     full_prompt = f"{identity}\n\n{rules}\n\n{context}"
@@ -105,7 +189,7 @@ def is_similar_to_last(image_base64: str, threshold: float = SIMILARITY_THRESHOL
             _last_image_bytes = image_data
             return False
         
-        difference = bin(current_hash ^ _last_image_hash).count('1') / 64
+        difference = bin(current_hash ^ _last_image_hash).count('1') / 256
         
         _last_image_hash = current_hash
         _last_image_bytes = image_data
@@ -125,7 +209,7 @@ def _compute_image_hash(image_data: bytes) -> int:
 
     try:
         image = Image.open(io.BytesIO(image_data))
-        image = image.resize((8, 8), Image.Resampling.LANCZOS).convert('L')
+        image = image.resize((16, 16), Image.Resampling.LANCZOS).convert('L')
         
         pixels = list(image.getdata())
         avg = sum(pixels) / len(pixels)

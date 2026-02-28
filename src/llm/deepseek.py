@@ -25,7 +25,7 @@ class DeepSeekProvider(BaseLLMProvider):
         self, 
         message: str, 
         history: Optional[List[Dict[str, Any]]] = None, 
-        image_base64: Optional[str] = None,
+        image_base64: Optional[Any] = None,
         **kwargs
     ) -> AsyncGenerator[str, None]:
 
@@ -37,16 +37,32 @@ class DeepSeekProvider(BaseLLMProvider):
         
         system_prompt = kwargs.get("system_prompt")
         if not system_prompt:
-             system_prompt = utils.get_system_prompt(user_message=message)
+             # Fetch dynamic scroll status for the prompt
+             scroll_status = "Middle of page"
+             try:
+                 from browser.controller import get_browser_controller
+                 controller = await get_browser_controller()
+                 if controller and controller.page:
+                     pos = await controller.get_scroll_position()
+                     if pos.get("atBottom"):
+                         scroll_status = "At Bottom of page"
+                     elif pos.get("atTop"):
+                         scroll_status = "At Top of page"
+             except Exception as e:
+                 logging.warning(f"[DeepSeek] Failed to get scroll status for prompt: {e}")
+                 
+             system_prompt = utils.get_system_prompt(user_message=message, scroll_status=scroll_status)
 
         messages = [{"role": "system", "content": system_prompt}]
         
         if history:
             messages.extend(sanitize_history(history))
         
-        messages.append({"role": "user", "content": message})
+        from .base import build_user_content
+        user_content = build_user_content(message, image_base64)
+        messages.append({"role": "user", "content": user_content})
         
-        max_tokens = kwargs.get("max_tokens", 256)
+        max_tokens = kwargs.get("max_tokens", 512)
         
         try:
             # First call: non-streaming with tools to check for tool calls
@@ -63,15 +79,21 @@ class DeepSeekProvider(BaseLLMProvider):
                 return
                 
             choice = first_response.choices[0]
+            tool_calls = getattr(choice.message, "tool_calls", None)
             
             # Check if the model wants to call a tool
-            if choice.finish_reason == "tool_calls" and choice.message.tool_calls:
-                logging.info(f"[DeepSeek] Tool call detected: {len(choice.message.tool_calls)} calls")
+            if tool_calls:
+                logging.info(f"[DeepSeek] Tool call detected: {len(tool_calls)} calls")
                 
+                # If there's content in the first message (e.g., transition speech), yield it
+                if choice.message.content:
+                    yield choice.message.content
+
                 # Add the assistant's tool call message
                 messages.append(choice.message.model_dump())
                 
                 # Execute each tool call
+                has_navigated = False
                 for tool_call in choice.message.tool_calls:
                     tool_name = tool_call.function.name
                     try:
@@ -82,12 +104,20 @@ class DeepSeekProvider(BaseLLMProvider):
                     logging.info(f"[DeepSeek] Executing tool: {tool_name}({tool_args})")
                     tool_result = await execute_tool_call(tool_name, tool_args)
                     
+                    if tool_name == "navigate_to_page":
+                        has_navigated = True
+
                     # Add tool result message
                     messages.append({
                         "role": "tool",
                         "tool_call_id": tool_call.id,
                         "content": tool_result,
                     })
+                
+                if has_navigated:
+                    # Break here for navigation tools to ensure speech is standalone
+                    logging.info("[DeepSeek] Navigation detected, stopping recursion.")
+                    return
                 
                 # Second call: stream the final response with tool results
                 stream = await self.client.chat.completions.create(

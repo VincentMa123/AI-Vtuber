@@ -19,7 +19,7 @@ REMOTE_VLLM_MODEL = "Qwen3-VL-2B"
 
 # Qwen (DashScope) Configuration
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", os.getenv("DASHSCOPE_API_KEY", ""))
-QWEN_MODEL = "qwen3-vl-plus" 
+QWEN_MODEL = "qwen3.5-flash-2026-02-23" 
 QWEN_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"  
 
 TTS_PROVIDER = "qwen" #qwen, realtimetts
@@ -56,7 +56,7 @@ YOUTUBE_ENABLED = True
 YOUTUBE_VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID", "")
 
 # Browser Automation
-BROWSER_BASE_URL = "https://www.klikindomaret.com/"
+BROWSER_BASE_URL = "https://www.weforum.org/publications/global-cybersecurity-outlook-2026/"
 BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
 BROWSER_SCROLL_AMOUNT_MAX = 600
