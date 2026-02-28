@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  vtuber-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vtuber-container
+    ports:
+      - "8000:8000"  # FastAPI backend
+      - "3000:3000"  # Next.js frontend
+    environment:
+      - PYTHONUNBUFFERED=1
+      - NODE_ENV=production
+    env_file:
+      - src/.env
+    volumes:
+      - ./src/logs:/app/src/logs
+      # Optional: Mount src for live development
+      # - ./src:/app/src
+      # - ./vtuber:/app/vtuber
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Uncomment for resource limits
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "2.0"
+    #       memory: 4G
+    #     reservations:
+    #       cpus: "1.0"
+    #       memory: 2G
+
+  # Optional: Add a reverse proxy (Nginx) for production
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: vtuber-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./certs:/etc/nginx/certs:ro
+  #   depends_on:
+  #     - vtuber-app
+  #   restart: unless-stopped
+
+volumes: {}
+
+networks:
+  default:
+    name: vtuber-network
