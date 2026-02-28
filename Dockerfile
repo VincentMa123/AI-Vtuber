@@ -38,6 +38,7 @@ COPY vtuber/package.json vtuber/package-lock.json ./vtuber/
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir torch==2.10.0 torchaudio==2.10.0 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install npm dependencies
