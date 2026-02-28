@@ -6,19 +6,15 @@ FROM ubuntu:20.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install basic build tools and Python 3.11
+# Install basic build tools and Python 3.10 (default for Ubuntu 20.04)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    software-properties-common \
     curl \
     wget \
     git \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-venv \
-    python3.11-dev \
+    python3.10 \
+    python3.10-venv \
+    python3.10-dev \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,7 +33,7 @@ COPY requirements.txt ./
 COPY vtuber/package.json vtuber/package-lock.json ./vtuber/
 
 # Create Python virtual environment and install dependencies
-RUN python3.11 -m venv /opt/venv
+RUN python3.10 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
@@ -55,8 +51,8 @@ ENV NODE_ENV=production
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-distutils \
+    python3.10 \
+    python3.10-distutils \
     curl \
     libsndfile1 \
     libsndfile1-dev \
