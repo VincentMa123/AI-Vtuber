@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     python3-full \
     python3-pip \
+    portaudio19-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 18
@@ -55,6 +56,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-full \
     curl \
+    libportaudio2 \
     libsndfile1 \
     libsndfile1-dev \
     ffmpeg \
