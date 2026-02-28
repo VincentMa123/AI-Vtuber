@@ -30,6 +30,8 @@ class QwenTTSCallback(QwenTtsRealtimeCallback):
     def on_close(self, close_status_code, close_msg) -> None:
         logging.info(f'[QwenTTS] WebSocket closed. Code={close_status_code}, Msg={close_msg}')
         self.provider.is_connected = False
+        # Signal immediate end of stream when connection closes
+        self.provider.audio_queue.put(('finished', None))
 
     def on_event(self, response: dict) -> None:
         try:
@@ -53,7 +55,7 @@ class QwenTTSCallback(QwenTtsRealtimeCallback):
                 
             elif event_type == 'error':
                  logging.error(f'[QwenTTS] Error event: {response}')
-                 self.provider.audio_queue.put(('error', response.get('message')))
+                 self.provider.audio_queue.put(('error', response.get('message', 'Unknown error')))
 
         except Exception as e:
             logging.error(f'[QwenTTS] Callback error: {e}')
@@ -244,12 +246,22 @@ class QwenTTSProvider(BaseTTSProvider):
 
             audio_chunk_buffer = []
             chunks_yielded = 0
+            timeout_counter = 0
+            max_empty_iterations = 300  # ~3 seconds with 0.01s sleep
             
             while True:
                 try:
                     try:
                         item = self.audio_queue.get_nowait()
+                        timeout_counter = 0  # Reset timeout on message received
                     except queue.Empty:
+                        timeout_counter += 1
+                        
+                        # Break if connection is lost and no messages for extended period
+                        if not self.is_connected and timeout_counter > max_empty_iterations:
+                            logging.warning("[QwenTTS] WebSocket disconnected with no audio received. Breaking loop.")
+                            break
+                        
                         await asyncio.sleep(0.01)
                         continue
 

@@ -25,6 +25,11 @@ class VisionHeartbeat:
         self.visited_urls = set()
         self.screenshot_buffer = []  # Buffer for multi-image vision
         
+        # Vision processing synchronization
+        self._vision_lock = asyncio.Lock()  # Prevent concurrent vision cycles
+        self._last_tool_execution_time = 0  # Cooldown after tool calls
+        self._vision_processing = False  # Flag to track active vision processing
+        
         logging.info("[VisionHeartbeat] Initialized with CooldownManager")
 
 
@@ -176,43 +181,54 @@ class VisionHeartbeat:
             action_task.cancel()
 
     async def _process_vision_cycle(self, images: Optional[Any] = None):
-
-        try:
-            # If no images provided, use the latest from browser
-            if not images:
-                screenshot = await self.browser_controller.get_screenshot()
-                if not screenshot: return
+        # Acquire lock to prevent concurrent vision cycles
+        if self._vision_lock.locked():
+            logging.debug("[Vision Cycle] Skipping - already processing a vision cycle")
+            return
+        
+        async with self._vision_lock:
+            try:
+                self._vision_processing = True
                 
-                if self._on_browser_update:
-                    await self._on_browser_update({
-                        "type": "browser_screenshot",
-                        "image_base64": screenshot
-                    })
-                
-                images = compress_image_for_vlm(screenshot)
-
-            async with state.acquire_speech_slot("vision"):
-                request = HeartbeatRequest(
-                    image_base64=images,
-                    timestamp=asyncio.get_event_loop().time(),
-                    use_native_capture=False
-                )
-                
-                captured_text = ""
-                async for chunk in self.process_heartbeat_stream(request):
-                    if chunk.get("type") == "text":
-                        captured_text = chunk.get("content", "")
-                        
+                # If no images provided, use the latest from browser
+                if not images:
+                    screenshot = await self.browser_controller.get_screenshot()
+                    if not screenshot: return
+                    
                     if self._on_browser_update:
-                        await self._on_browser_update(chunk)
-                
-                # Wait for frontend to signal audio playback is complete
-                await state.wait_for_audio_complete(timeout=20.0)
-                
-                logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
-                        
-        except Exception as e:
-            logging.error(f"[Vision Cycle] Error: {e}")
+                        await self._on_browser_update({
+                            "type": "browser_screenshot",
+                            "image_base64": screenshot
+                        })
+                    
+                    images = compress_image_for_vlm(screenshot)
+
+                async with state.acquire_speech_slot("vision"):
+                    request = HeartbeatRequest(
+                        image_base64=images,
+                        timestamp=asyncio.get_event_loop().time(),
+                        use_native_capture=False
+                    )
+                    
+                    captured_text = ""
+                    async for chunk in self.process_heartbeat_stream(request):
+                        if chunk.get("type") == "text":
+                            captured_text = chunk.get("content", "")
+                            
+                        if self._on_browser_update:
+                            await self._on_browser_update(chunk)
+                    
+                    # Wait for frontend to signal audio playback is complete
+                    await state.wait_for_audio_complete(timeout=20.0)
+                    
+                    logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
+                    # Mark tool execution time for cooldown
+                    self._last_tool_execution_time = asyncio.get_event_loop().time()
+                            
+            except Exception as e:
+                logging.error(f"[Vision Cycle] Error: {e}")
+            finally:
+                self._vision_processing = False
 
 
 
@@ -280,22 +296,31 @@ class VisionHeartbeat:
                 should_analyze = (len(self.screenshot_buffer) >= 3) or is_click or at_bottom
                 
                 if should_analyze:
-                    logging.info(f"[Action Loop] Triggering Vision (Buffer={len(self.screenshot_buffer)}, Click={is_click}, AtBottom={at_bottom})")
+                    # Check cooldown after tool execution (prevent immediate re-analysis after tool calls)
+                    current_time = asyncio.get_event_loop().time()
+                    time_since_tool = current_time - self._last_tool_execution_time
                     
-                    # Construct analysis set
-                    if is_click or at_bottom:
-                        # For immediate events, ensure the current view is part of the set
-                        # If buffer is empty, it becomes a single-image analysis
-                        # If buffer has images, append current view as the 'final' state
-                        if current_screenshot_compressed not in self.screenshot_buffer:
-                            self.screenshot_buffer.append(current_screenshot_compressed)
-                    
-                    # Use whatever is in the buffer (1 to 4 images depending on timing)
-                    analysis_images = self.screenshot_buffer if self.screenshot_buffer else current_screenshot_compressed
-                    
-                    await self._process_vision_cycle(images=analysis_images)
-                    self.screenshot_buffer = [] # Reset buffer
-                    self._last_analysis_time = asyncio.get_event_loop().time()
+                    if time_since_tool < 2.0:  # 2 second cooldown after tool execution
+                        logging.debug(f"[Action Loop] Skipping vision due to tool execution cooldown ({time_since_tool:.1f}s elapsed)")
+                    elif self._vision_processing:
+                        logging.debug("[Action Loop] Skipping vision - already processing")
+                    else:
+                        logging.info(f"[Action Loop] Triggering Vision (Buffer={len(self.screenshot_buffer)}, Click={is_click}, AtBottom={at_bottom})")
+                        
+                        # Construct analysis set
+                        if is_click or at_bottom:
+                            # For immediate events, ensure the current view is part of the set
+                            # If buffer is empty, it becomes a single-image analysis
+                            # If buffer has images, append current view as the 'final' state
+                            if current_screenshot_compressed not in self.screenshot_buffer:
+                                self.screenshot_buffer.append(current_screenshot_compressed)
+                        
+                        # Use whatever is in the buffer (1 to 4 images depending on timing)
+                        analysis_images = self.screenshot_buffer if self.screenshot_buffer else current_screenshot_compressed
+                        
+                        await self._process_vision_cycle(images=analysis_images)
+                        self.screenshot_buffer = [] # Reset buffer
+                        self._last_analysis_time = asyncio.get_event_loop().time()
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
