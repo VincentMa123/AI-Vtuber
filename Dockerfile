@@ -41,8 +41,8 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir torch==2.10.0 torchaudio==2.10.0 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install npm dependencies
-RUN cd vtuber && npm ci && cd ..
+# Install and build npm dependencies
+RUN cd vtuber && npm ci && npm run build && cd ..
 
 # Stage 2: Runtime stage
 FROM ubuntu:24.04
@@ -67,13 +67,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     librsvg2-bin \
     ca-certificates \
     xvfb \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
-
 
 # Copy virtual environment and node_modules from builder
 COPY --from=builder /opt/venv /opt/venv
 WORKDIR /app
 COPY --from=builder /app/vtuber/node_modules ./vtuber/node_modules
+COPY --from=builder /app/vtuber/.next ./vtuber/.next
 
 # Copy application code
 COPY src/ ./src/
