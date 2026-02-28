@@ -1,20 +1,21 @@
     # Multi-stage build for AI VTuber project
 # Stage 1: Build stage
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:24.04 AS builder
 
 # Prevent interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install basic build tools and Python 3.10 (default for Ubuntu 20.04)
+# Install basic build tools and Python 3
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     wget \
     git \
-    python3.10 \
-    python3.10-venv \
-    python3.10-dev \
+    python3 \
+    python3-venv \
+    python3-dev \
+    python3-full \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -33,7 +34,7 @@ COPY requirements.txt ./
 COPY vtuber/package.json vtuber/package-lock.json ./vtuber/
 
 # Create Python virtual environment and install dependencies
-RUN python3.10 -m venv /opt/venv
+RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
@@ -42,7 +43,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN cd vtuber && npm ci && cd ..
 
 # Stage 2: Runtime stage
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -51,8 +52,8 @@ ENV NODE_ENV=production
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.10 \
-    python3.10-distutils \
+    python3 \
+    python3-full \
     curl \
     libsndfile1 \
     libsndfile1-dev \
