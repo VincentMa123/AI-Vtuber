@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y \
     libasound2t64 \
     libxshmfence1 \
     libgbm1 \
+    libgl1-mesa-dri \
+    libegl1-mesa \
     fonts-liberation \
     libappindicator3-1 \
     xdg-utils \
@@ -54,5 +56,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+
+# Build Next.js frontend (required for `npm run start` / production mode)
+RUN cd vtuber && npm install && npm run build
 
 CMD ["bash"]

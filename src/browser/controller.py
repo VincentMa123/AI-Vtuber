@@ -76,6 +76,12 @@ class BrowserController:
                 '--test-type',
                 '--disable-infobars',
                 '--disable-features=CrossOriginOpenerPolicy,CrossOriginEmbedderPolicy',
+                # WebGL via software rendering (needed for Live2D on headless/Xvfb)
+                '--enable-webgl',
+                '--use-gl=angle',
+                '--use-angle=swiftshader-webgl',
+                '--enable-unsafe-swiftshader',
+                '--ignore-gpu-blocklist',
             ]
 
             try:
@@ -98,11 +104,16 @@ class BrowserController:
 
             context = await self.browser.new_context(
                 viewport={"width": 1920, "height": 1080},
+                no_viewport=True,
                 ignore_https_errors=True,
                 bypass_csp=True,
             )
 
             self.page = await context.new_page()
+
+            # Forward browser console logs to Python logging (for debugging VTuber iframe)
+            self.page.on("console", lambda msg: logging.info(f"[Browser Console] [{msg.type}] {msg.text}"))
+            self.page.on("pageerror", lambda err: logging.error(f"[Browser PageError] {err}"))
 
             # Capture WAF tokens from network requests (fires for all frame requests)
             def _on_request(request):

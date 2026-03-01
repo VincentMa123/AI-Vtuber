@@ -278,7 +278,6 @@ class QwenTTSProvider(BaseTTSProvider):
                             
                             wav_bytes = create_wav_buffer(full_audio)
                             
-                            logging.info(f"[QwenTTS] Yielding WAV #{chunks_yielded}")
                             yield wav_bytes
                             
                     elif msg_type == 'done':
