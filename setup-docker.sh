@@ -134,12 +134,10 @@ run_container() {
     # Run with port mapping and environment file
     print_info "Starting container: $DOCKER_CONTAINER_NAME"
     sudo docker run -d \
-        --name "$DOCKER_CONTAINER_NAME" \
-        -p "$BACKEND_PORT:8000" \
-        -p "$FRONTEND_PORT:3000" \
-        --env-file src/.env \
-        -v "$(pwd)/src/logs:/app/src/logs" \
-        "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
+    --name vtuber_container \
+    -v /home/redteam/AI-Vtuber:/app \
+    vtuber \
+    tail -f /dev/null
     
     if [ $? -eq 0 ]; then
         print_success "Container started successfully"

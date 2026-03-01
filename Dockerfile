@@ -1,111 +1,58 @@
-    # Multi-stage build for AI VTuber project
-# Stage 1: Build stage
-FROM ubuntu:24.04 AS builder
-
-# Prevent interactive prompts during build
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
-
-# Install basic build tools and Python 3
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    wget \
-    git \
-    python3 \
-    python3-venv \
-    python3-dev \
-    python3-full \
-    python3-pip \
-    portaudio19-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js 18
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-    nodejs \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create app directory
-WORKDIR /app
-
-# Copy requirements and package files
-COPY requirements.txt ./
-COPY vtuber/package.json vtuber/package-lock.json ./vtuber/
-
-# Create Python virtual environment and install dependencies
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir torch==2.10.0 torchaudio==2.10.0 --index-url https://download.pytorch.org/whl/cpu
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy full vtuber source and build
-COPY vtuber/ ./vtuber/
-RUN cd vtuber && npm ci && npm run build && cd ..
-
-# Stage 2: Runtime stage
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
-ENV PATH="/opt/venv/bin:$PATH"
-ENV NODE_ENV=production
-ENV PYTHONPATH=/app
 
-# Install runtime dependencies only
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system dependencies + python full (needed for venv)
+RUN apt-get update && apt-get install -y \
     python3 \
+    python3-venv \
+    python3-pip \
     python3-full \
-    curl \
-    libportaudio2 \
-    libsndfile1 \
-    libsndfile1-dev \
-    ffmpeg \
-    libssl-dev \
-    libffi-dev \
-    librsvg2-bin \
-    ca-certificates \
     xvfb \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
+    ffmpeg \
+    pulseaudio \
+    portaudio19-dev \
+    espeak-ng \
+    libnss3 \
+    libatk1.0-0t64 \
+    libatk-bridge2.0-0t64 \
+    libcups2t64 \
+    libxcomposite1 \
+    libxrandr2 \
+    libxdamage1 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libasound2t64 \
+    libxshmfence1 \
+    libgbm1 \
+    fonts-liberation \
+    libappindicator3-1 \
+    xdg-utils \
+    wget \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy virtual environment and vtuber (with node_modules + .next) from builder
-COPY --from=builder /opt/venv /opt/venv
-COPY --from=builder /app/vtuber ./vtuber
+RUN apt-get update && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+    
+# Install Chrome
+RUN wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && dpkg -i /tmp/chrome.deb || apt-get install -f -y \
+    && rm /tmp/chrome.deb
+
+# Create virtual environment
+RUN python3 -m venv /venv
+
+# Activate venv for all future RUN/CMD
+ENV PATH="/venv/bin:$PATH"
+
 WORKDIR /app
 
-# Copy application code
-COPY src/ ./src/
-COPY scripts/ ./scripts/
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Create .env template if it doesn't exist
-RUN if [ ! -f src/.env ]; then \
-    echo "# Environment variables - configure these\n\
-DEEPSEEK_API_KEY=\n\
-OPENROUTER_API_KEY=\n\
-QWEN_API_KEY=\n\
-ELEVENLABS_API_KEY=\n\
-TWITCH_BOT_TOKEN=\n\
-TWITCH_CHANNEL=\n\
-TWITCH_CLIENT_ID=\n\
-TWITCH_STREAM_KEY=" > src/.env; \
-    fi
+COPY . .
 
-# Create logs directory and make scripts executable
-RUN mkdir -p /app/logs
-RUN chmod +x scripts/*.sh
-
-# Expose ports
-# 8000: FastAPI backend
-# 3000: Next.js frontend
-EXPOSE 8000 3000
-
-# Health check for FastAPI backend
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/docs || exit 1
-
-# Default command: keep container alive for manual debugging
-CMD ["tail", "-f", "/dev/null"]
+CMD ["bash"]
