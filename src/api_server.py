@@ -2,6 +2,7 @@ import json
 import asyncio
 import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -211,6 +212,40 @@ async def _init_services():
     )
     await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
     logging.info("[Startup] Vision heartbeat & browser loop started")
+
+@app.get("/shell")
+async def get_shell():
+    overlay_url = config.VTUBER_FRONTEND_URL
+    if '?' in overlay_url:
+        overlay_url += '&autoplay=1'
+    else:
+        overlay_url += '?autoplay=1'
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>VTuber Shell</title>
+        <style>
+            body, html {{ margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #fff; cursor: none !important; }}
+            iframe {{ border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
+            #content-frame {{ z-index: 1; }}
+            #vtuber-frame {{ z-index: 9999; pointer-events: none; }}
+        </style>
+    </head>
+    <body>
+        <iframe id="content-frame" name="content-frame" src="{config.BROWSER_BASE_URL}"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads allow-modals"
+            allow="autoplay; microphone; camera; geolocation; payment">
+        </iframe>
+        <iframe id="vtuber-frame" name="vtuber-frame" src="{overlay_url}"
+            allow="autoplay; microphone; camera" allowtransparency="true">
+        </iframe>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):

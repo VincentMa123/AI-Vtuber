@@ -6,7 +6,7 @@ import asyncio
 import random
 import base64
 from typing import Optional
-from playwright.async_api import async_playwright, Browser, Page, Playwright
+from playwright.async_api import async_playwright, Browser, Page, Playwright, Frame
 from .behavior import Behavior
 import core.config as config
 from core.utils import get_flaresolverr_cookies
@@ -48,21 +48,23 @@ class BrowserController:
         self.is_running = False
         self._loop_task: Optional[asyncio.Task] = None
         self.base_url = config.BROWSER_BASE_URL
-    
+        self.shell_url = "http://localhost:8000/shell"
+
+    def _get_content_frame(self) -> Optional[Frame]:
+        """Get the content iframe from the shell page."""
+        if not self.page:
+            return None
+        if config.SHELL_ENABLED:
+            frame = self.page.frame(name="content-frame")
+            return frame if frame else self.page
+        return self.page
+
     async def start(self) -> bool:
         try:
             self.playwright = await async_playwright().start()
-            
-            # 1. Get FlareSolverr solution
-            # cookies, user_agent = get_flaresolverr_cookies(self.base_url)
-            
-            # if not cookies:
-            #     logging.error(f"[Browser] FlareSolverr failed to get cookies")
-            #     return False
-            
-            # 2. Launch single browser instance
+
             display = os.environ.get('DISPLAY', ':55')
-            
+
             launch_args = [
                 f'--display={display}',
                 '--start-maximized',
@@ -73,8 +75,9 @@ class BrowserController:
                 '--disable-blink-features=AutomationControlled',
                 '--test-type',
                 '--disable-infobars',
+                '--disable-features=CrossOriginOpenerPolicy,CrossOriginEmbedderPolicy',
             ]
-            
+
             try:
                 self.browser = await self.playwright.chromium.launch(
                     channel="chrome",
@@ -83,7 +86,7 @@ class BrowserController:
                     env={'DISPLAY': display},
                     ignore_default_args=["--enable-automation"]
                 )
-                logging.info("[Browser] ✓ Chrome launched")
+                logging.info("[Browser] Chrome launched")
             except:
                 self.browser = await self.playwright.chromium.launch(
                     headless=False,
@@ -91,25 +94,18 @@ class BrowserController:
                     env={'DISPLAY': display},
                     ignore_default_args=["--enable-automation"]
                 )
-                logging.info("[Browser] ✓ Chromium launched")
-            
-            # 3. Create context with FlareSolverr credentials
+                logging.info("[Browser] Chromium launched")
+
             context = await self.browser.new_context(
                 viewport={"width": 1920, "height": 1080},
                 no_viewport=True,
-                # user_agent=user_agent,
                 ignore_https_errors=True,
+                bypass_csp=True,
             )
-            
-            # for cookie in cookies:
-            #     if "sameSite" not in cookie:
-            #         cookie["sameSite"] = "Lax"
-            # await context.add_cookies(cookies)
-            
-            # 4. Create page and navigate to content
+
             self.page = await context.new_page()
-            
-            # Capture WAF tokens from network requests to share with the API service
+
+            # Capture WAF tokens from network requests (fires for all frame requests)
             def _on_request(request):
                 try:
                     waf_token = request.headers.get('x-aws-waf-token')
@@ -117,34 +113,106 @@ class BrowserController:
                         set_waf_token(waf_token)
                 except Exception as e:
                     logging.warning(f"[Browser] Error in request interceptor: {e}")
-            
+
             self.page.on("request", _on_request)
-            
-            logging.info(f"[Browser] Loading {self.base_url}...")
-            await self.page.goto(self.base_url, timeout=30000, wait_until='domcontentloaded')
-            
-            # Hide cursor on all pages (including navigations)
-            await self.page.add_style_tag(content="* { cursor: none !important; }")
-            async def _hide_cursor_on_frame_nav(frame):
-                if frame == self.page.main_frame:
+
+            # Strip X-Frame-Options and CSP headers so content sites load in the shell iframe
+            if config.SHELL_ENABLED:
+                async def _strip_frame_headers(route):
+                    if route.request.resource_type != "document":
+                        await route.continue_()
+                        return
                     try:
-                        await frame.add_style_tag(content="* { cursor: none !important; }")
-                    except Exception as e:
-                        logging.debug(f"[Browser] Failed to hide cursor on frame nav: {e}")
-            self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
-            
-            # Verify Cloudflare bypass
-            title = await self.page.title()
-            if "Verify you are human" in title or "Just a moment" in title:
-                logging.error("[Browser] ✗ Cloudflare challenge detected!")
-                return False
-            
-            logging.info(f"[Browser] ✓ Content loaded: {title}")
-            
-            # 5. Position window
+                        response = await route.fetch()
+                        headers = dict(response.headers)
+                        headers.pop('x-frame-options', None)
+                        headers.pop('content-security-policy', None)
+                        headers.pop('content-security-policy-report-only', None)
+                        await route.fulfill(response=response, headers=headers)
+                    except Exception:
+                        await route.continue_()
+                await self.page.route("**/*", _strip_frame_headers)
+
+            # Navigate to shell page or directly to content
+            if config.SHELL_ENABLED:
+                target_url = self.shell_url
+                logging.info(f"[Browser] Loading shell at {target_url}...")
+            else:
+                target_url = self.base_url
+                logging.info(f"[Browser] Loading {target_url}...")
+
+            await self.page.goto(target_url, timeout=30000, wait_until='domcontentloaded')
+
+            # Hide cursor on shell page
+            await self.page.add_style_tag(content="* { cursor: none !important; }")
+
+            if config.SHELL_ENABLED:
+                # Wait for content iframe to load
+                logging.info("[Browser] Waiting for content frame...")
+                content_frame = None
+                for _ in range(30):
+                    content_frame = self.page.frame(name="content-frame")
+                    if content_frame:
+                        break
+                    await asyncio.sleep(1)
+
+                if not content_frame:
+                    logging.error("[Browser] Content frame not found!")
+                    return False
+
+                try:
+                    await content_frame.wait_for_load_state('domcontentloaded', timeout=30000)
+                except Exception as e:
+                    logging.warning(f"[Browser] Content frame load timeout: {e}")
+
+                # Hide cursor in content frame
+                try:
+                    await content_frame.add_style_tag(content="* { cursor: none !important; }")
+                except:
+                    pass
+
+                # Verify Cloudflare bypass on content frame
+                try:
+                    title = await content_frame.title()
+                except:
+                    title = "Unknown"
+
+                if "Verify you are human" in title or "Just a moment" in title:
+                    logging.error("[Browser] Cloudflare challenge detected!")
+                    return False
+
+                logging.info(f"[Browser] Content loaded in shell: {title}")
+
+                # Hide cursor on content frame navigations
+                async def _hide_cursor_on_frame_nav(frame):
+                    cf = self._get_content_frame()
+                    if cf and frame == cf:
+                        try:
+                            await frame.add_style_tag(content="* { cursor: none !important; }")
+                        except:
+                            pass
+                self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
+            else:
+                # Non-shell mode (direct navigation)
+                async def _hide_cursor_on_frame_nav(frame):
+                    if frame == self.page.main_frame:
+                        try:
+                            await frame.add_style_tag(content="* { cursor: none !important; }")
+                        except:
+                            pass
+                self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
+
+                title = await self.page.title()
+                if "Verify you are human" in title or "Just a moment" in title:
+                    logging.error("[Browser] Cloudflare challenge detected!")
+                    return False
+
+                logging.info(f"[Browser] Content loaded: {title}")
+
+            # Position window
             try:
                 await self.page.evaluate("window.moveTo(0, 0); window.resizeTo(1920, 1080);")
-                
+
                 result = subprocess.run(
                     ['xdotool', 'search', '--class', 'chrome'],
                     capture_output=True,
@@ -152,61 +220,60 @@ class BrowserController:
                     env={'DISPLAY': display},
                     timeout=5
                 )
-                
+
                 window_ids = [w.strip() for w in result.stdout.strip().split('\n') if w.strip()]
                 if window_ids:
                     for wid in window_ids:
-                        subprocess.run(['xdotool', 'windowmove', wid, '0', '0'], 
+                        subprocess.run(['xdotool', 'windowmove', wid, '0', '0'],
                                      env={'DISPLAY': display}, timeout=5)
                         subprocess.run(['xdotool', 'windowsize', wid, '1920', '1080'],
                                      env={'DISPLAY': display}, timeout=5)
-                    logging.info("[Browser] ✓ Window positioned")
-                
+                    logging.info("[Browser] Window positioned")
+
             except Exception as e:
                 logging.warning(f"[Browser] Window positioning: {e}")
-            
+
             self.is_running = True
-            logging.info("[Browser] ✓ Single-window setup complete!")
-            logging.info("[Browser] VTuber overlay will be added by FFmpeg")
-            
-            # 6. Warm up WAF token — trigger a search so the AWS WAF JS attaches the token
+            if config.SHELL_ENABLED:
+                logging.info("[Browser] Shell mode setup complete (single window)")
+            else:
+                logging.info("[Browser] Single-window setup complete!")
+                logging.info("[Browser] VTuber overlay will be added by FFmpeg")
+
+            # Warm up WAF token
             try:
                 logging.info("[Browser] Warming up WAF token...")
-                await self.page.wait_for_timeout(2000)  # Short initial wait
-                
-                # Try selectors: ID first (most reliable), then name
-                search_input = self.page.locator('#search-submited').or_(self.page.locator('input[name="keyword"]')).first
-                
-                try:
+                frame = self._get_content_frame()
+                await self.page.wait_for_timeout(2000)
 
+                search_input = frame.locator('#search-submited').or_(frame.locator('input[name="keyword"]')).first
+
+                try:
                     await search_input.wait_for(state="visible", timeout=10000)
-                    
                     await search_input.fill('susu')
                     await self.page.wait_for_timeout(1000)
-
                     await search_input.press("Enter")
-                    await self.page.wait_for_load_state('networkidle', timeout=10000)                    
-                    # Verify token was captured
+                    await frame.wait_for_load_state('networkidle', timeout=10000)
+
                     token = get_waf_token()
                     if token:
-                        logging.info("[Browser] ✓ WAF token captured during warmup")
+                        logging.info("[Browser] WAF token captured during warmup")
                     else:
                         logging.warning("[Browser] WAF token not captured during warmup")
-                        
+
                 except Exception as e:
                     logging.warning(f"[Browser] Search input missing/timeout: {e}")
-                   
-                    
+
             except Exception as e:
                 logging.warning(f"[Browser] WAF warmup failed: {e}")
-            
+
             return True
-            
+
         except Exception as e:
             logging.error(f"[Browser] Failed to start: {e}")
             traceback.print_exc()
             return False
-    
+
     async def stop(self):
         self.is_running = False
         if self._loop_task:
@@ -229,8 +296,9 @@ class BrowserController:
         self.playwright = None
         self.page = None
         logging.info("[Browser] Stopped")
-    
+
     async def get_screenshot(self) -> Optional[str]:
+        """Capture the full shell page (content + VTuber overlay composited)."""
         if not self.page or not self.is_running:
             return None
         try:
@@ -242,24 +310,26 @@ class BrowserController:
                 logging.error("[Browser] Connection lost — marking browser as stopped")
                 self.is_running = False
             return None
-    
+
     async def get_current_url(self) -> str:
-        return self.page.url if self.page else ""
-    
+        frame = self._get_content_frame()
+        return frame.url if frame else ""
+
     async def scroll_down(self, amount: Optional[int] = None):
         if not self.page or not self.is_running:
             return
         if amount is None:
-            amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN, 
+            amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN,
                                    config.BROWSER_SCROLL_AMOUNT_MAX)
         try:
-            logging.info(f"[Browser] ◌ Smooth scrolling down {amount}px...")
-            await Behavior.smooth_scroll(self.page, amount, direction=1)
+            logging.info(f"[Browser] Smooth scrolling down {amount}px...")
+            frame = self._get_content_frame()
+            await Behavior.smooth_scroll(frame, amount, direction=1)
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
             if "Connection closed" in str(e) or "connection" in str(e).lower():
                 self.is_running = False
-    
+
     async def scroll_up(self, amount: Optional[int] = None):
         if not self.page or not self.is_running:
             return
@@ -267,22 +337,24 @@ class BrowserController:
             amount = random.randint(config.BROWSER_SCROLL_AMOUNT_MIN,
                                    config.BROWSER_SCROLL_AMOUNT_MAX)
         try:
-            logging.info(f"[Browser] ◌ Smooth scrolling up {amount}px...")
-            await Behavior.smooth_scroll(self.page, amount, direction=-1)
+            logging.info(f"[Browser] Smooth scrolling up {amount}px...")
+            frame = self._get_content_frame()
+            await Behavior.smooth_scroll(frame, amount, direction=-1)
         except Exception as e:
             logging.error(f"[Browser] Scroll failed: {e}")
             if "Connection closed" in str(e) or "connection" in str(e).lower():
                 self.is_running = False
-    
+
     async def click_random_product(self) -> bool:
         if not self.page:
             return False
         try:
+            frame = self._get_content_frame()
             for selector in BROWSER_SELECTORS.get("product", []):
-                products = await self.page.query_selector_all(selector)
+                products = await frame.query_selector_all(selector)
                 if not products:
                     continue
-                
+
                 # Filter to only visible, in-viewport elements
                 visible_products = []
                 for p in products[:20]:
@@ -292,178 +364,167 @@ class BrowserController:
                         box = await p.bounding_box()
                         if not box:
                             continue
-                        viewport = await self.page.evaluate(
+                        viewport = await frame.evaluate(
                             "() => ({ w: window.innerWidth, h: window.innerHeight })"
                         )
-                        # Check element is actually within the viewport
                         if (box['y'] + box['height'] > 0 and box['y'] < viewport['h'] and
                                 box['x'] + box['width'] > 0 and box['x'] < viewport['w']):
                             visible_products.append(p)
                     except:
                         continue
-                
+
                 if not visible_products:
                     continue
-                
+
                 product = random.choice(visible_products[:10])
-                
+
                 # Listen for new tabs (target="_blank" links)
                 new_page_event = asyncio.get_event_loop().create_future()
-                
+
                 def on_popup(popup):
                     if not new_page_event.done():
                         new_page_event.set_result(popup)
-                
+
                 self.page.once("popup", on_popup)
-                
+
                 try:
                     await product.click(timeout=5000)
                 except Exception:
                     self.page.remove_listener("popup", on_popup)
                     raise
-                
+
                 # Check if a new tab was opened
                 try:
                     new_page = await asyncio.wait_for(
                         asyncio.shield(new_page_event), timeout=2.0
                     )
-                    # A new tab opened — switch to it
                     await new_page.wait_for_load_state("domcontentloaded", timeout=10000)
                     old_page = self.page
                     self.page = new_page
-                    
-                    # Hide cursor on the new page too
+
                     await self.page.add_style_tag(content="* { cursor: none !important; }")
-                    
+
                     try:
                         await old_page.close()
                     except:
                         pass
                     logging.info(f"[Browser] Clicked product (new tab) via selector: {selector}")
                 except asyncio.TimeoutError:
-                    # No new tab — normal navigation, which is fine
+                    # No new tab — content navigated within iframe, which is fine
                     self.page.remove_listener("popup", on_popup)
                     logging.info(f"[Browser] Clicked product via selector: {selector}")
-                
+
                 await asyncio.sleep(2)
                 return True
-                
+
             logging.warning("[Browser] No visible products found with any selector")
             return False
         except Exception as e:
             logging.error(f"[Browser] Click failed: {e}")
             return False
-    
-    async def go_home(self) -> bool:
-        if not self.page:
-            return False
-        try:
-            logging.info(f"[Browser] Going home to {self.base_url}")
-            await self.page.goto(self.base_url, wait_until="domcontentloaded")
-            return True
-        except Exception as e:
-            logging.error(f"[Browser] Failed to go home: {e}")
-            return False
 
     async def navigate_to_page(self, url: str) -> bool:
-        if not self.page:
+        frame = self._get_content_frame()
+        if not frame:
             return False
         try:
             logging.info(f"[Browser] Navigating to {url} (background)...")
-            # Using 'commit' allows the method to return as soon as the navigation starts,
-            # which prevents blocking the audio stream generation.
-            await self.page.goto(url, wait_until="commit", timeout=30000)
-            
-            # Re-apply cursor hide
+            await frame.goto(url, wait_until="commit", timeout=30000)
+
             async def _apply_style():
                 try:
-                    await self.page.add_style_tag(content="* { cursor: none !important; }")
-                except Exception as e:
-                    logging.debug(f"[Browser] Failed to apply cursor hide style: {e}")
+                    await frame.add_style_tag(content="* { cursor: none !important; }")
+                except:
+                    pass
             asyncio.create_task(_apply_style())
             return True
         except Exception as e:
             logging.error(f"[Browser] Failed to navigate to {url}: {e}")
             return False
-    
+
     async def go_back(self):
-        if self.page:
-            await self.page.go_back()
+        frame = self._get_content_frame()
+        if frame:
+            await frame.go_back()
             await asyncio.sleep(2)
-            # Safety: if go_back landed on about:blank, recover to home
-            current_url = self.page.url
-            if "about:blank" in current_url:
-                logging.warning("[Browser] ⚠ go_back landed on about:blank, recovering to home...")
+            if "about:blank" in frame.url:
+                logging.warning("[Browser] go_back landed on about:blank, recovering to home...")
                 await self.go_home()
-    
+
     async def refresh(self, force_home: bool = False):
-        if self.page:
+        frame = self._get_content_frame()
+        if frame:
             try:
                 if force_home:
                     logging.info("[Browser] Forcing navigation to home for refresh...")
-                    await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=30000)
+                    await frame.goto(self.base_url, wait_until='domcontentloaded', timeout=30000)
                 else:
                     logging.info("[Browser] Reloading page...")
-                    await self.page.reload(wait_until='domcontentloaded', timeout=30000)
+                    await frame.evaluate("location.reload()")
+                    try:
+                        await frame.wait_for_load_state('domcontentloaded', timeout=30000)
+                    except:
+                        pass
                 await asyncio.sleep(3)
-                logging.info("[Browser] ✓ Refresh complete")
+                logging.info("[Browser] Refresh complete")
             except Exception as e:
                 logging.error(f"[Browser] Refresh failed: {e}")
-                # Fallback to home if reload fails
                 try:
-                    await self.page.goto(self.base_url, wait_until='domcontentloaded', timeout=30000)
+                    await frame.goto(self.base_url, wait_until='domcontentloaded', timeout=30000)
                 except:
                     pass
-    
+
     async def go_home(self):
-        if self.page:
-            await self.page.goto(self.base_url, wait_until='domcontentloaded')
+        frame = self._get_content_frame()
+        if frame:
+            await frame.goto(self.base_url, wait_until='domcontentloaded')
             await asyncio.sleep(2)
-    
+
     async def is_in_viewport(self, element) -> bool:
-        if not self.page:
+        frame = self._get_content_frame()
+        if not frame:
             return False
         try:
             box = await element.bounding_box()
             if not box:
                 return False
-            viewport = await self.page.evaluate("""() => ({
+            viewport = await frame.evaluate("""() => ({
                 width: window.innerWidth,
                 height: window.innerHeight
             })""")
-            return (box['x'] < viewport['width'] and 
-                    box['x'] + box['width'] > 0 and 
-                    box['y'] < viewport['height'] and 
+            return (box['x'] < viewport['width'] and
+                    box['x'] + box['width'] > 0 and
+                    box['y'] < viewport['height'] and
                     box['y'] + box['height'] > 0)
         except:
             return False
-    
-    async def check_and_close_popup(self) -> bool:
 
-        if not self.page:
+    async def check_and_close_popup(self) -> bool:
+        frame = self._get_content_frame()
+        if not frame:
             return False
-            
+
         try:
-            # Get all frames (main frame + any iframes)
-            frames = self.page.frames
-            for frame in frames:
+            # Check the content frame and its child frames
+            frames_to_check = [frame] + frame.child_frames
+            for f in frames_to_check:
                 try:
                     # Layer 1: Specific Selectors
                     for selector in BROWSER_SELECTORS.get("popup_close", []):
                         try:
-                            button = await frame.query_selector(selector)
+                            button = await f.query_selector(selector)
                             if button and await button.is_visible():
                                 box = await button.bounding_box()
                                 if box:
-                                    logging.info(f"[Browser] ◌ Popup detected in frame ({frame.name or 'main'}) via selector ({selector}) at ({box['x']}, {box['y']}), closing...")
+                                    logging.info(f"[Browser] Popup detected in frame ({f.name or 'main'}) via selector ({selector}) at ({box['x']}, {box['y']}), closing...")
                                     await button.click()
                                     await asyncio.sleep(1)
                                     return True
                         except:
                             continue
-                    
+
                     # Layer 2: JS-based heuristic detection & click
-                    did_click = await frame.evaluate("""() => {
+                    did_click = await f.evaluate("""() => {
                         const closeChars = ['×', 'x', 'X', 'Close', 'Tutup'];
                         const elements = document.querySelectorAll('button, span, i, div, a, img');
                         for (const el of elements) {
@@ -475,16 +536,14 @@ class BrowserController:
                                     const id = (el.id || '').toLowerCase();
                                     const src = (el.getAttribute('src') || '').toLowerCase();
                                     const alt = (el.getAttribute('alt') || '').toLowerCase();
-                                    
-                                    // Does it look like a close button?
-                                    if (closeChars.includes(text) || 
-                                        className.includes('close') || 
+
+                                    if (closeChars.includes(text) ||
+                                        className.includes('close') ||
                                         className.includes('modal_button') ||
                                         id.includes('close') ||
                                         src.includes('close') ||
                                         alt.includes('close')) {
-                                        
-                                        // Visibility check
+
                                         const style = window.getComputedStyle(el);
                                         if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
                                             el.click();
@@ -496,26 +555,26 @@ class BrowserController:
                         }
                         return false;
                     }""")
-                    
+
                     if did_click:
-                        logging.info(f"[Browser] ◌ Popup detected and clicked in frame ({frame.name or 'main'}) via JS Heuristics")
+                        logging.info(f"[Browser] Popup detected and clicked in frame ({f.name or 'main'}) via JS Heuristics")
                         await asyncio.sleep(1)
                         return True
-                        
+
                 except Exception as e:
-                    # Some frames might be cross-origin and inaccessible
                     continue
-            
+
             return False
         except Exception as e:
             logging.error(f"[Browser] Popup check failed: {e}")
             return False
-    
+
     async def get_scroll_position(self) -> dict:
-        if not self.page:
+        frame = self._get_content_frame()
+        if not frame:
             return {"scrollY": 0, "atBottom": False, "atTop": True}
         try:
-            return await self.page.evaluate("""() => {
+            return await frame.evaluate("""() => {
                 const scrollY = window.scrollY;
                 const scrollHeight = document.documentElement.scrollHeight;
                 const viewportHeight = window.innerHeight;
@@ -532,37 +591,37 @@ class BrowserController:
             }""")
         except:
             return {"scrollY": 0, "atBottom": False, "atTop": True}
-    
+
     async def perform_random_action(self) -> str:
         if not self.page or not self.is_running:
             return "no_page"
-        
+
         # 1. Recovery: If we are on about:blank, go home
         current_url = await self.get_current_url()
         if "about:blank" in current_url:
-            logging.warning("[Browser] ⚠ Detected about:blank! Navigating home...")
+            logging.warning("[Browser] Detected about:blank! Navigating home...")
             await self.go_home()
             return "recovered_from_blank"
 
         # await self.check_and_close_popup()
-        
+
         current_url = await self.get_current_url()
         is_product_page = "/xpress/" in current_url or "/product/" in current_url
-        
+
         scroll_pos = await self.get_scroll_position()
         at_bottom = scroll_pos.get("atBottom", False)
         at_top = scroll_pos.get("atTop", True)
-        
+
         if is_product_page and random.random() < 0.7:
             await Behavior.sleep(0.5, 1.5)
             await self.go_back()
             return "go_back"
-        
-     
+
+
         actions = ['scroll_down'] * 15 + ['scroll_up']
-        
+
         action = random.choice(actions)
-        
+
         if action == 'scroll_down':
             await self.scroll_down()
             return "scroll_down"
@@ -572,7 +631,7 @@ class BrowserController:
         elif action == 'click_product':
             success = await self.click_random_product()
             return "click_product" if success else "click_failed"
-        
+
         return action
 
 

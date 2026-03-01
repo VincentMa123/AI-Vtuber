@@ -44,8 +44,9 @@ class VisionHeartbeat:
         
         if self.browser_controller and self.browser_controller.page:
             try:
-                current_url = self.browser_controller.page.url
-                page_title = await self.browser_controller.page.title()
+                content_frame = self.browser_controller._get_content_frame()
+                current_url = content_frame.url if content_frame else "Unknown"
+                page_title = await content_frame.title() if content_frame else "Unknown"
                 pos = await self.browser_controller.get_scroll_position()
                 if pos.get("atBottom"):
                     scroll_status = "At Bottom"
@@ -324,7 +325,7 @@ class VisionHeartbeat:
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
-                    await Behavior.guarded_sleep(self.browser_controller.page, 1, 3)
+                    await Behavior.guarded_sleep(self.browser_controller._get_content_frame(), 1, 3)
 
             except asyncio.CancelledError:
                 break

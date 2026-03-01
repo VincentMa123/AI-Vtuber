@@ -1,6 +1,7 @@
 #!/bin/bash
-# Efficient Streaming with FFmpeg Overlay
-# Single browser window + FFmpeg composites VTuber overlay
+# Shell Mode Streaming — Single Display
+# Playwright opens /shell page (content iframe + VTuber iframe)
+# FFmpeg captures one display, no overlay filter needed
 
 set +e
 
@@ -11,9 +12,7 @@ fi
 
 # Configuration
 DISPLAY_NUM=55
-OVERLAY_DISPLAY_NUM=56  # Separate small display for VTuber
 RESOLUTION="1920x1080"
-OVERLAY_SIZE="600x800"  # Smaller VTuber window
 FPS=30
 BITRATE="1500k"
 TWITCH_URL="rtmps://live.twitch.tv:443/app"
@@ -31,7 +30,6 @@ fi
 cleanup() {
     echo "Stopping stream..."
     pkill -f "Xvfb :$DISPLAY_NUM" 2>/dev/null || true
-    pkill -f "Xvfb :$OVERLAY_DISPLAY_NUM" 2>/dev/null || true
     pkill -f "ffmpeg.*twitch" 2>/dev/null || true
     pkill -f "ffmpeg.*youtube" 2>/dev/null || true
     pkill -f "chrome" 2>/dev/null || true
@@ -41,20 +39,12 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM
 
-# Start main display (content)
-echo "=== Starting Main Display :$DISPLAY_NUM ==="
+# Start display
+echo "=== Starting Display :$DISPLAY_NUM ==="
 Xvfb :$DISPLAY_NUM -screen 0 ${RESOLUTION}x24 \
     +extension GLX +render \
     -nolisten unix -listen tcp -ac &
 XVFB_PID=$!
-sleep 2
-
-# Start small display for VTuber overlay
-echo "=== Starting Overlay Display :$OVERLAY_DISPLAY_NUM ==="
-Xvfb :$OVERLAY_DISPLAY_NUM -screen 0 ${OVERLAY_SIZE}x24 \
-    +extension GLX +render \
-    -nolisten unix -listen tcp -ac &
-XVFB_OVERLAY_PID=$!
 sleep 2
 
 # Audio FIFO
@@ -83,11 +73,11 @@ MAX_RETRIES=60
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     if curl -s http://localhost:3000 > /dev/null 2>&1; then
-        echo "✓ Frontend is ready"
+        echo "Frontend is ready"
         break
     fi
     if ! kill -0 $FRONTEND_PID 2>/dev/null; then
-        echo "✗ Frontend failed to start (check logs/frontend_dev.log)"
+        echo "Frontend failed to start (check logs/frontend_dev.log)"
         exit 1
     fi
     RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -106,60 +96,33 @@ MAX_RETRIES=60
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     if curl -s http://localhost:8000 > /dev/null 2>&1; then
-        echo "✓ Backend is running"
+        echo "Backend is running"
         break
     fi
     if ! kill -0 $BACKEND_PID 2>/dev/null; then
-        echo "✗ Backend died"
+        echo "Backend died"
         exit 1
     fi
     RETRY_COUNT=$((RETRY_COUNT + 1))
     sleep 1
 done
 
-# Start small Chrome for VTuber overlay on separate display
-echo "=== Starting VTuber Overlay Browser ==="
-# Use a fresh temp profile every time to ensure no popups
-OVERLAY_PROFILE="/tmp/vtuber_profile_$(date +%s)"
-mkdir -p "$OVERLAY_PROFILE"
+# Backend starts Playwright which opens the /shell page on this display.
+# The shell page contains both the content iframe and the VTuber iframe.
+# Wait for browser to initialize
+echo "Waiting for browser to initialize..."
+sleep 15
 
-DISPLAY=:$OVERLAY_DISPLAY_NUM google-chrome \
-    --no-sandbox \
-    --test-type \
-    --no-first-run \
-    --no-default-browser-check \
-    --password-store=basic \
-    --user-data-dir="$OVERLAY_PROFILE" \
-    --window-size=600,800 \
-    --window-position=0,0 \
-    --app="http://localhost:3000?autoplay=1&green=1" \
-    --disable-infobars \
-    --disable-extensions \
-    --disable-notifications \
-    --disable-translate \
-    --disable-features=Translate,PrivacySandboxSettings4,OptimizationHints \
-    --use-gl=angle \
-    --use-angle=swiftshader \
-    --enable-webgl \
-    --ignore-gpu-blocklist \
-    &
-OVERLAY_CHROME_PID=$!
-
-sleep 10
-
-# FFmpeg with overlay filter
-echo "=== Starting Stream with Overlay ==="
+# FFmpeg — single display capture, no overlay filter
+echo "=== Starting Stream ==="
 
 ffmpeg \
     -thread_queue_size 1024 \
     -f x11grab -video_size $RESOLUTION -framerate $FPS -i :$DISPLAY_NUM \
-    -thread_queue_size 1024 \
-    -f x11grab -video_size $OVERLAY_SIZE -framerate $FPS -i :$OVERLAY_DISPLAY_NUM \
     -thread_queue_size 2048 \
     -use_wallclock_as_timestamps 1 \
     -f s16le -ar 48000 -ac 1 -i "$AUDIO_PIPE" \
-    -filter_complex "[1:v]colorkey=0x00ff00:0.1:0.1[ckey];[0:v][ckey]overlay=main_w-overlay_w:main_h-overlay_h[outv]" \
-    -map "[outv]" -map 2:a \
+    -map 0:v -map 1:a \
     -c:v libx264 -preset veryfast -tune zerolatency \
     -b:v 6800k -maxrate 6800k -bufsize 13600k \
     -pix_fmt yuv420p \
@@ -172,11 +135,10 @@ ffmpeg \
 FFMPEG_PID=$!
 
 echo ""
-echo "=== Stream Started ==="
-echo "Content: Display :$DISPLAY_NUM (1920x1080)"
-echo "Overlay: Display :$OVERLAY_DISPLAY_NUM (600x800) - bottom-right"
+echo "=== Stream Started (Shell Mode) ==="
+echo "Display: :$DISPLAY_NUM (1920x1080) - Content + VTuber in single window"
 echo "Check: https://dashboard.twitch.tv"
 echo ""
-echo "PIDs: Xvfb=$XVFB_PID, Overlay=$XVFB_OVERLAY_PID, Backend=$BACKEND_PID, FFmpeg=$FFMPEG_PID"
+echo "PIDs: Xvfb=$XVFB_PID, Backend=$BACKEND_PID, FFmpeg=$FFMPEG_PID"
 
 wait $FFMPEG_PID
