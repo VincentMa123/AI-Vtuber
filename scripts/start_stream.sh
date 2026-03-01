@@ -72,7 +72,7 @@ echo "Waiting for frontend to be ready on http://localhost:3000..."
 MAX_RETRIES=60
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if curl -s http://localhost:3000 > /dev/null 2>&1; then
+    if curl -sf http://localhost:3000 > /dev/null 2>&1; then
         echo "Frontend is ready"
         break
     fi
