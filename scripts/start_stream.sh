@@ -62,6 +62,12 @@ elif [ -f "$PROJECT_DIR/venv/bin/activate" ]; then
     source "$PROJECT_DIR/venv/bin/activate"
 fi
 
+# Kill stale processes from previous runs
+echo "=== Cleaning up stale processes ==="
+pkill -f "node.*next-server" 2>/dev/null || true
+pkill -f "python3.*api_server" 2>/dev/null || true
+sleep 1
+
 # Start frontend
 echo "=== Starting Frontend (Next.js) ==="
 cd "$PROJECT_DIR/vtuber"
