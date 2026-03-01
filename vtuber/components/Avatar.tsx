@@ -29,9 +29,11 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
         let mounted = true;
 
         const init = async () => {
+            console.log("[Avatar] === INIT START ===");
             setDebugStatus("Loading PIXI...");
             (window as any).PIXI = PIXI;
             PIXI.utils.skipHello();
+            console.log("[Avatar] PIXI assigned to window");
 
             try {
                 let attempts = 0;
@@ -44,14 +46,21 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                     attempts++;
                 }
 
+                console.log("[Avatar] Live2D check:", {
+                    Live2D: !!(window as any).Live2D,
+                    Live2DCubismCore: !!(window as any).Live2DCubismCore,
+                    attempts
+                });
+
                 if (!(window as any).Live2D && !(window as any).Live2DCubismCore) {
                     const msg = 'Live2D runtimes not loaded from script';
-                    console.error(msg);
+                    console.error("[Avatar]", msg);
                     setError(msg);
                     setDebugStatus("Error: No Live2D Runtime");
                     return;
                 }
 
+                console.log("[Avatar] Live2D runtime found, importing display library...");
                 setDebugStatus("Importing Display Library...");
                 const { Live2DModel } = await import('pixi-live2d-display/cubism4');
                 if (!mounted) return;
@@ -72,10 +81,16 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
                 appRef.current = app;
 
                 const modelUrl = 'model/hiyori/hiyori_pro_t11.model3.json';
+                console.log("[Avatar] Loading model from:", modelUrl);
                 setDebugStatus(`Loading Model: ${modelUrl}`);
 
                 Live2DModel.from(modelUrl).then((loadedModel: any) => {
                     if (!mounted || !app) return;
+                    console.log("[Avatar] MODEL LOADED SUCCESSFULLY!", {
+                        width: loadedModel.width,
+                        height: loadedModel.height,
+                        internalModel: !!loadedModel.internalModel
+                    });
                     setDebugStatus("Model Loaded Successfully!");
 
                     app.stage.addChild(loadedModel);
@@ -243,17 +258,16 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
     }, [model, emotion]);
 
     return (
-        <div className="w-full h-full flex items-center justify-center overflow-visible relative">
+        <div className="w-full h-full flex items-center justify-center overflow-visible relative" style={{ border: '3px solid red' }}>
             <canvas ref={canvasRef} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
 
-            {/* Debug Overlay - Hidden for production */}
-            {/* 
+            {/* Debug Overlay */}
             <div className="absolute top-0 left-0 bg-black/80 text-white p-2 text-xs font-mono z-50 pointer-events-none w-full break-words">
                 <div className="font-bold mb-1">Avatar Debug</div>
                 <div>Status: {debugStatus}</div>
+                <div>Model: {model ? 'LOADED' : 'NOT LOADED'}</div>
                 {error && <div className="text-red-400 font-bold mt-1">Error: {error}</div>}
             </div>
-            */}
         </div>
     );
 };
