@@ -56,7 +56,7 @@ YOUTUBE_ENABLED = True
 YOUTUBE_VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID", "")
 
 # Browser Automation
-BROWSER_BASE_URL = "https://www.weforum.org/publications/global-cybersecurity-outlook-2026/"
+BROWSER_BASE_URL = "https://www.weforum.org/publications/global-cybersecurity-outlook-2026/in-full/"
 BROWSER_HEADLESS = False
 BROWSER_SCROLL_AMOUNT_MIN = 150
 BROWSER_SCROLL_AMOUNT_MAX = 600

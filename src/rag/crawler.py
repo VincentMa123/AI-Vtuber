@@ -135,21 +135,3 @@ class WebsiteCrawler:
             "sitemap": self.sitemap,
             "content": self.content_index
         }
-
-if __name__ == "__main__":
-    # Test script
-    import json
-    async def test():
-        logging.basicConfig(level=logging.INFO)
-        # Testing with the user's provided site from the screenshot
-        crawler = WebsiteCrawler("https://www.weforum.org/publications/global-cybersecurity-outlook-2026/")
-        result = await crawler.crawl(max_pages=5)
-        
-        output_file = "crawl_result.json"
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(result, f, indent=2, ensure_ascii=False)
-            
-        print(f"\n--- CRAWL COMPLETE ---")
-        print(f"Result saved to: {output_file}")
-        
-    asyncio.run(test())

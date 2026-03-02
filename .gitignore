@@ -48,6 +48,10 @@ next-env.d.ts
 __pycache__/
 *.py[cod]
 
+# RAG generated data
+src/rag/data/crawl_result.json
+src/rag/data/website_index.json
+
 # logs
 logs/
 *.log

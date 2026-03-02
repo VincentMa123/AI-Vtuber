@@ -10,6 +10,12 @@
 - Mantap jiwa!
 - Seneng banget dengernya!
 - Asik, makasih ya!
+- Lucu banget si kamu
+- Ngakak gw wkwk
+- Suka banget sama kontennya
+- Gg sih ini keren
+- Auto senyum gw liatnya
+- Bagus banget emang
 
 # sad
 - I'm feeling sad and disappointed.
@@ -22,6 +28,16 @@
 - Yah, sayang banget.
 - Turut prihatin ya kak.
 - Lagi galau nih.
+- Nangis gw dengernya
+- Kasian banget sih
+- Mati aja lu
+- Bunuh diri aja sana
+- Gak guna hidup lo
+- Gw pengen mati
+- Capek hidup gw
+- Nyesel banget sih
+- Gw sedih banget anjir
+- Pengen nangis rasanya
 
 # angry
 - That's really frustrating and annoying!
@@ -34,6 +50,19 @@
 - Apaan sih gak jelas banget!
 - Parah banget sih ini.
 - Gak terima aku digigin.
+- Bangsat emang
+- Anjing lo
+- Tai sih ini
+- Bacot lu
+- Bego banget sih
+- Tolol emang
+- Kampret lo
+- Kontol
+- Goblok sumpah
+- Brengsek emang
+- Sialan lo
+- Gw emosi anjir
+- Nyebelin banget sih
 
 # excited
 - Oh wow! This is incredible!
@@ -47,6 +76,12 @@
 - Seru banget kayaknya!
 - Wihhh mantap!
 - Hype banget nih!
+- Gokil abis!
+- Anjir keren banget!
+- Auto subscribe gw
+- Gaspol bang!
+- Ayo lanjut terus!
+- Penasaran banget nih lanjutannya
 
 # neutral
 - I understand what you're saying.
@@ -59,3 +94,9 @@
 - Oh begitu ya.
 - Ada yang bisa dibantu lagi?
 - Selamat pagi kak.
+- Hmm gitu ya
+- Oh oke
+- Nanya dong
+- Gimana caranya
+- Itu apa ya
+- Bisa dijelasin gak

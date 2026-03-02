@@ -7,8 +7,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+_RAG_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+_DEFAULT_INDEX_PATH = os.path.join(_RAG_DATA_DIR, "website_index.json")
+
 class WebsiteIndexer:
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2", index_path: str = "website_index.json"):
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2", index_path: str = _DEFAULT_INDEX_PATH):
         self.model_name = model_name
         self.index_path = index_path
         self._model: Optional[SentenceTransformer] = None
@@ -135,23 +138,3 @@ class WebsiteIndexer:
             })
             
         return results
-
-if __name__ == "__main__":
-    # Test indexer
-    logging.basicConfig(level=logging.INFO)
-    indexer = WebsiteIndexer()
-    indexer.build_index("crawl_result.json")
-    
-    # Test search
-    try:
-        test_query = "What are the key trends in 2026?"
-        results = indexer.search(test_query)
-        print(f"\nSearch results for: '{test_query}'")
-        for r in results:
-            # Use .encode().decode() trick or repr to avoid Windows console encoding issues
-            title_clean = r['title'].encode('ascii', 'ignore').decode('ascii')
-            content_clean = r['content'][:200].encode('ascii', 'ignore').decode('ascii')
-            print(f"[{r['score']:.4f}] {title_clean} ({r['url']})")
-            print(f"Content: {content_clean}...\n")
-    except Exception as e:
-        print(f"Search result print error (likely Unicode): {e}")

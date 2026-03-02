@@ -8,6 +8,7 @@ import io
 import numpy as np
 from typing import Optional, Tuple
 from PIL import Image
+from rag import CRAWL_RESULT_PATH
 
 VLM_TARGET_SIZE = (1280, 720)
 SIMILARITY_THRESHOLD = 0.05
@@ -37,8 +38,8 @@ def pick_next_url(visited_urls: Optional[list] = None, current_url: str = "") ->
     visited_urls = visited_urls or []
     try:
         import json
-        if os.path.exists("crawl_result.json"):
-            with open("crawl_result.json", "r", encoding="utf-8") as f:
+        if os.path.exists(CRAWL_RESULT_PATH):
+            with open(CRAWL_RESULT_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 sitemap = data.get("sitemap", [])
                 if not sitemap:
@@ -76,8 +77,8 @@ def get_system_prompt(user_message: str = "", **kwargs):
     current_url = kwargs.get("current_url", "")
     try:
         import json
-        if os.path.exists("crawl_result.json"):
-            with open("crawl_result.json", "r", encoding="utf-8") as f:
+        if os.path.exists(CRAWL_RESULT_PATH):
+            with open(CRAWL_RESULT_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 sitemap = data.get("sitemap", [])
                 if sitemap:

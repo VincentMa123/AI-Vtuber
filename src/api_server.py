@@ -1,4 +1,5 @@
 import json
+import os
 import asyncio
 import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -23,6 +24,10 @@ from audio.pipe import AudioPipe
 from audio.interceptor import install_tts_interceptor
 from twitch.bot import start_twitch_bot, get_twitch_bot
 from youtube.bot import start_youtube_bot, get_youtube_bot, stop_youtube_task
+from rag.crawler import WebsiteCrawler
+from rag.indexer import WebsiteIndexer
+from rag import CRAWL_RESULT_PATH, WEBSITE_INDEX_PATH
+
 
 app = FastAPI()
 
@@ -140,6 +145,23 @@ async def shutdown_event():
 
 
 async def _init_services():
+
+    # Crawl and index the website for RAG (search_website tool)
+    try:
+        logging.info(f"[Startup] Crawling website: {config.BROWSER_BASE_URL}")
+        crawler = WebsiteCrawler(config.BROWSER_BASE_URL)
+        result = await crawler.crawl(max_pages=10)
+        
+        os.makedirs(os.path.dirname(CRAWL_RESULT_PATH), exist_ok=True)
+        with open(CRAWL_RESULT_PATH, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+        logging.info(f"[Startup] Crawl complete: {len(result.get('sitemap', []))} nav links, {len(result.get('content', []))} pages indexed")
+
+        indexer = WebsiteIndexer(index_path=WEBSITE_INDEX_PATH)
+        indexer.build_index(CRAWL_RESULT_PATH)
+        logging.info("[Startup] Website index built")
+    except Exception as e:
+        logging.error(f"[Startup] Crawl/index failed (search_website may not work): {e}")
 
     state.tts_manager = TTSManager()
     await state.tts_manager.initialize()
