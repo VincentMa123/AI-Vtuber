@@ -62,3 +62,6 @@ tests/
 # virtual environment
 venv/
 venv_wsl/
+
+.claude
+CLAUDE.md

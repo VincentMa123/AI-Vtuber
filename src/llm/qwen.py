@@ -5,7 +5,7 @@ from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
 from .base import BaseLLMProvider, sanitize_history, build_user_content
-from rag.tools import ALL_TOOLS, execute_tool_call
+from rag.tools import ALL_TOOLS, CHAT_TOOLS, execute_tool_call
 
 class QwenProvider(BaseLLMProvider):
     
@@ -54,14 +54,15 @@ class QwenProvider(BaseLLMProvider):
         })
         
         max_tokens = kwargs.get("max_tokens", 512)
-        
+        tools = kwargs.get("tools", ALL_TOOLS)
+
         try:
             # First call: determine if it needs tools
             first_response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 max_tokens=max_tokens,
-                tools=ALL_TOOLS,
+                tools=tools,
                 stream=False,
             )
             

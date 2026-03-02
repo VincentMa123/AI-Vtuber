@@ -6,6 +6,7 @@ import core.state as state
 import core.utils as utils
 from chat.emotions import detect_emotion
 from ws.manager import ws_manager
+from rag.tools import CHAT_TOOLS
 import asyncio
 
 EMOTION_CONTEXT = {
@@ -85,7 +86,7 @@ async def handle_streaming_response(
         # Store user message in history
         state.add_to_history("user", enhanced_message)
         
-        text_stream = provider.generate_stream(enhanced_message, history, None)
+        text_stream = provider.generate_stream(enhanced_message, history, None, tools=CHAT_TOOLS)
         
         text_queue = asyncio.Queue()
         min_tts_chunk = 1  

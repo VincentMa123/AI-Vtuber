@@ -62,6 +62,10 @@ NAVIGATE_PAGE_TOOL = {
 
 ALL_TOOLS = [PRODUCT_SEARCH_TOOL, WEBPAGE_SEARCH_TOOL, NAVIGATE_PAGE_TOOL]
 
+# Chat-only tools: excludes navigate_to_page so the LLM cannot navigate
+# when answering user questions — it should use search_website instead.
+CHAT_TOOLS = [PRODUCT_SEARCH_TOOL, WEBPAGE_SEARCH_TOOL]
+
 
 async def execute_tool_call(tool_name: str, arguments: dict) -> str:
     """
