@@ -98,7 +98,7 @@ const Avatar: React.FC<AvatarProps> = ({ emotion, getCurrentVolume }) => {
 
                     loadedModel.x = app.screen.width / 2 - (loadedModel.width * 0.5) / 2; // Better centering
                     loadedModel.y = app.screen.height - 900; // Adjust Y for smaller canvas
-                    loadedModel.scale.set(0.5);
+                    loadedModel.scale.set(0.3);
                     loadedModel.interactive = false; // Disable hit testing
                     loadedModel.buttonMode = false;
 

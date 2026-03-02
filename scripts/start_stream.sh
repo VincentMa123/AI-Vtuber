@@ -71,14 +71,14 @@ sleep 1
 # Start frontend
 echo "=== Starting Frontend (Next.js) ==="
 cd "$PROJECT_DIR/vtuber"
-npm run start > "$PROJECT_DIR/logs/frontend_dev.log" 2>&1 &
+npm run dev -- -p 3001 > "$PROJECT_DIR/logs/frontend_dev.log" 2>&1 &
 FRONTEND_PID=$!
 
-echo "Waiting for frontend to be ready on http://localhost:3000..."
+echo "Waiting for frontend to be ready on http://localhost:3001..."
 MAX_RETRIES=60
 RETRY_COUNT=0
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+    if curl -sf http://localhost:3001 > /dev/null 2>&1; then
         echo "Frontend is ready"
         break
     fi

@@ -104,7 +104,6 @@ class BrowserController:
 
             context = await self.browser.new_context(
                 viewport={"width": 1920, "height": 1080},
-                no_viewport=True,
                 ignore_https_errors=True,
                 bypass_csp=True,
             )

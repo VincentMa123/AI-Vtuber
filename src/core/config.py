@@ -63,7 +63,7 @@ BROWSER_SCROLL_AMOUNT_MAX = 600
 
 # Shell Mode (single-window streaming)
 SHELL_ENABLED = True
-VTUBER_FRONTEND_URL = "http://localhost:3000"
+VTUBER_FRONTEND_URL = "http://localhost:3001"
 
 # FlareSolverr
 FLARESOLVERR_URL = os.getenv("FLARESOLVERR_URL", "http://localhost:8191/v1")
