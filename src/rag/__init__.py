@@ -3,6 +3,7 @@
 import os
 
 _RAG_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+os.makedirs(_RAG_DATA_DIR, exist_ok=True)
 CRAWL_RESULT_PATH = os.path.join(_RAG_DATA_DIR, "crawl_result.json")
 WEBSITE_INDEX_PATH = os.path.join(_RAG_DATA_DIR, "website_index.json")
 
