@@ -54,6 +54,7 @@ TWITCH_BOT_ID = os.getenv("TWITCH_BOT_ID", "")
 # YouTube Integration
 YOUTUBE_ENABLED = True
 YOUTUBE_VIDEO_ID = os.getenv("YOUTUBE_VIDEO_ID", "")
+YOUTUBE_CHANNEL_HANDLE = os.getenv("YOUTUBE_CHANNEL_HANDLE", "")  # e.g. "@YourChannel" — auto-detects current live stream
 
 # Browser Automation
 BROWSER_BASE_URL = "https://www.weforum.org/publications/global-cybersecurity-outlook-2026/in-full/"
@@ -63,7 +64,7 @@ BROWSER_SCROLL_AMOUNT_MAX = 600
 
 # Shell Mode (single-window streaming)
 SHELL_ENABLED = True
-VTUBER_FRONTEND_URL = "http://localhost:3001"
+VTUBER_FRONTEND_URL = "http://localhost:3000"
 
 # FlareSolverr
 FLARESOLVERR_URL = os.getenv("FLARESOLVERR_URL", "http://localhost:8191/v1")

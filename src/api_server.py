@@ -206,9 +206,11 @@ async def _init_services():
     if config.YOUTUBE_ENABLED:
         await start_youtube_bot(
             video_id=config.YOUTUBE_VIDEO_ID,
+            channel_handle=config.YOUTUBE_CHANNEL_HANDLE,
             aggregator=state.chat_aggregator,
         )
-        logging.info(f"[Startup] YouTube bot initialized for video: {config.YOUTUBE_VIDEO_ID}")
+        target = config.YOUTUBE_CHANNEL_HANDLE or config.YOUTUBE_VIDEO_ID
+        logging.info(f"[Startup] YouTube bot initialized for: {target}")
     else:
         logging.info("[Startup] YouTube integration disabled")
 
