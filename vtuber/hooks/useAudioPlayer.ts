@@ -233,7 +233,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}): UseAudioPla
                 // If nextStartTime is in the past (gap happened or first chunk), reset to now
                 // Adding a small buffer (0.05s) to allow for scheduling processing time
                 if (nextStartTimeRef.current < currentTime) {
-                    nextStartTimeRef.current = currentTime + 0.05;
+                    nextStartTimeRef.current = currentTime + 0.15;
                 }
 
                 const source = ctx.createBufferSource();

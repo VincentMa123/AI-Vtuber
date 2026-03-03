@@ -269,7 +269,7 @@ class QwenTTSProvider(BaseTTSProvider):
                         chunk = data
                         audio_chunk_buffer.append(chunk)
 
-                        if sum(len(c) for c in audio_chunk_buffer) >= 32000:
+                        if sum(len(c) for c in audio_chunk_buffer) >= 16000:
                             full_audio = b''.join(audio_chunk_buffer)
                             audio_chunk_buffer = []
                             chunks_yielded += 1
