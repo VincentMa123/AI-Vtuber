@@ -11,6 +11,8 @@ logging.getLogger('pytchat').setLevel(logging.WARNING)
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logging.getLogger('httpcore').setLevel(logging.WARNING)
 
+logger = logging.getLogger(__name__)
+
 class YouTubeBot:
     def __init__(self, video_id: str, aggregator=None):
         self.video_id = video_id
@@ -25,20 +27,20 @@ class YouTubeBot:
         self.running = True
         while self.running and not self.shutting_down:
             try:
-                logging.info(f"[YouTubeBot] Connecting to live chat for video: {self.video_id}")
+                logger.info(f"[YouTubeBot] Connecting to live chat for video: {self.video_id}")
                 self._livechat = pytchat.create(video_id=self.video_id, interruptable=False)
-                logging.info(f"[YouTubeBot] ✅ Connected to YouTube live chat (video: {self.video_id})")
+                logger.info(f"[YouTubeBot] ✅ Connected to YouTube live chat (video: {self.video_id})")
                 poll_start = asyncio.get_event_loop().time()
                 await self._poll_loop()
                 # Only reset delay if the chat was alive for a meaningful duration
                 if asyncio.get_event_loop().time() - poll_start > 10:
                     self._reconnect_delay = 3
             except asyncio.CancelledError:
-                logging.info("[YouTubeBot] Task cancelled.")
+                logger.info("[YouTubeBot] Task cancelled.")
                 self.running = False
                 break
             except Exception as e:
-                logging.error(f"[YouTubeBot] Error: {e}")
+                logger.error(f"[YouTubeBot] Error: {e}")
             finally:
                 self._cleanup_livechat()
 
@@ -47,7 +49,7 @@ class YouTubeBot:
                 break
 
             # Apply backoff delay before reconnecting (handles BOTH exceptions and is_alive() failures)
-            logging.info(f"[YouTubeBot] Reconnecting in {self._reconnect_delay}s...")
+            logger.info(f"[YouTubeBot] Reconnecting in {self._reconnect_delay}s...")
             try:
                 end_time = asyncio.get_event_loop().time() + self._reconnect_delay
                 while asyncio.get_event_loop().time() < end_time and not self.shutting_down:
@@ -61,7 +63,7 @@ class YouTubeBot:
    
         while self.running and not self.shutting_down:
             if self._livechat is None or not self._livechat.is_alive():
-                logging.warning("[YouTubeBot] LiveChat is no longer alive.")
+                logger.warning("[YouTubeBot] LiveChat is no longer alive.")
                 break
 
             try:
@@ -83,7 +85,7 @@ class YouTubeBot:
             except asyncio.CancelledError:
                 raise
             except Exception as e:
-                logging.error(f"[YouTubeBot] Poll error: {e}")
+                logger.error(f"[YouTubeBot] Poll error: {e}")
                 # Check if we should exit
                 if self.shutting_down:
                     break
@@ -92,7 +94,7 @@ class YouTubeBot:
             await asyncio.sleep(0.5)
 
     async def handle_message(self, author: str, message: str):
-        logging.debug(f"[YouTubeBot] handle_message called: {author}: {message}")
+        logger.debug(f"[YouTubeBot] handle_message called: {author}: {message}")
 
         # Broadcast to frontend UI
         await ws_manager.broadcast_chat_message(
@@ -112,10 +114,10 @@ class YouTubeBot:
             )
             await self.aggregator.submit_message(chat_msg)
         else:
-            logging.warning(f"[YouTubeBot] No aggregator available")
+            logger.warning(f"[YouTubeBot] No aggregator available")
 
     async def stop(self):
-        logging.info("[YouTubeBot] Stopping...")
+        logger.info("[YouTubeBot] Stopping...")
         self.shutting_down = True  # Set shutdown flag first
         self.running = False
         self._cleanup_livechat()
@@ -142,20 +144,20 @@ async def start_youtube_bot(video_id: str, aggregator=None):
     global youtube_bot, _youtube_task
 
     if not video_id:
-        logging.warning("[YouTubeBot] Video ID not configured. Skipping YouTube integration.")
+        logger.warning("[YouTubeBot] Video ID not configured. Skipping YouTube integration.")
         return None
 
     try:
-        logging.info(f"[YouTubeBot] Initializing for video: {video_id}")
+        logger.info(f"[YouTubeBot] Initializing for video: {video_id}")
         youtube_bot = YouTubeBot(video_id=video_id, aggregator=aggregator)
 
-        logging.info("[YouTubeBot] Starting background task...")
+        logger.info("[YouTubeBot] Starting background task...")
         _youtube_task = asyncio.create_task(youtube_bot.start())
 
         return youtube_bot
 
     except Exception as e:
-        logging.error(f"[YouTubeBot] Failed to start: {e}")
+        logger.error(f"[YouTubeBot] Failed to start: {e}")
         return None
 
 
@@ -173,5 +175,5 @@ async def stop_youtube_task():
         except asyncio.CancelledError:
             pass
         except Exception as e:
-            logging.warning(f"[YouTubeBot] Error stopping task: {e}")
+            logger.warning(f"[YouTubeBot] Error stopping task: {e}")
         _youtube_task = None

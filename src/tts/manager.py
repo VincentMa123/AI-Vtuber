@@ -2,7 +2,7 @@ import logging
 import base64
 import core.config as config
 
-from typing import Optional, Dict, AsyncGenerator
+from typing import Dict, AsyncGenerator
 from .realtimetts import RealtimeTTSProvider
 from .qwen_tts import QwenTTSProvider
 

@@ -4,7 +4,7 @@ from typing import Optional, List, Dict, Any, AsyncGenerator
 from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history
+from .base import BaseLLMProvider, sanitize_history, build_user_content
 from rag.tools import ALL_TOOLS, CHAT_TOOLS, execute_tool_call
 
 
@@ -58,7 +58,6 @@ class DeepSeekProvider(BaseLLMProvider):
         if history:
             messages.extend(sanitize_history(history))
         
-        from .base import build_user_content
         user_content = build_user_content(message, image_base64)
         messages.append({"role": "user", "content": user_content})
         

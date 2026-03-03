@@ -10,6 +10,8 @@ import core.state as state
 
 TWITCH_WS_URL = "wss://irc-ws.chat.twitch.tv:443"
 
+logger = logging.getLogger(__name__)
+
 class TwitchBot:
     def __init__(self, token: str, channel: str, prefix: str = "!", aggregator=None,
                  client_id: str = "", client_secret: str = "", bot_id: str = ""):
@@ -36,28 +38,28 @@ class TwitchBot:
                 await self._connect()
                 await self._listen()
             except asyncio.CancelledError:
-                logging.info("[TwitchBot] Task cancelled.")
+                logger.info("[TwitchBot] Task cancelled.")
                 self.running = False
                 break
             except Exception as e:
-                logging.error(f"[TwitchBot] Connection error: {e}")
-                logging.info(f"[TwitchBot] Reconnecting in {self.reconnect_delay}s...")
+                logger.error(f"[TwitchBot] Connection error: {e}")
+                logger.info(f"[TwitchBot] Reconnecting in {self.reconnect_delay}s...")
                 await asyncio.sleep(self.reconnect_delay)
             finally:
                 await self._disconnect()
 
     async def _connect(self):
-        logging.info(f"[TwitchBot] Connecting to Twitch IRC via WebSocket ({TWITCH_WS_URL})...")
+        logger.info(f"[TwitchBot] Connecting to Twitch IRC via WebSocket ({TWITCH_WS_URL})...")
         self.ws = await websockets.connect(TWITCH_WS_URL, open_timeout=10)
 
         # Authenticate
         await self.ws.send(f"PASS {self.token}")
         await self.ws.send(f"NICK {self.username}")
         await self.ws.send(f"JOIN {self.channel}")
-        logging.info(f"[TwitchBot] Auth sent. Joining {self.channel}...")
+        logger.info(f"[TwitchBot] Auth sent. Joining {self.channel}...")
 
     async def stop(self):
-        logging.info("[TwitchBot] Stopping...")
+        logger.info("[TwitchBot] Stopping...")
         self.running = False
         if self.ws:
             try:
@@ -86,7 +88,7 @@ class TwitchBot:
             try:
                 raw = await self.ws.recv()
             except websockets.ConnectionClosed:
-                logging.warning("[TwitchBot] WebSocket connection closed by server.")
+                logger.warning("[TwitchBot] WebSocket connection closed by server.")
                 break
 
             # Twitch can send multiple IRC lines in a single WS frame
@@ -98,13 +100,13 @@ class TwitchBot:
                 # Keep-alive
                 if line.startswith("PING"):
                     pong = line.replace("PING", "PONG")
-                    logging.debug(f"[TwitchBot] Sending {pong}")
+                    logger.debug(f"[TwitchBot] Sending {pong}")
                     await self.ws.send(pong)
                     continue
 
                 # Handle Login Success
                 if "001" in line and ":Welcome" in line:
-                    logging.info(f"[TwitchBot] ✅ Login Successful! Connected as {self.username}")
+                    logger.info(f"[TwitchBot] ✅ Login Successful! Connected as {self.username}")
                     continue
 
                 # Handle Chat Messages
@@ -116,7 +118,7 @@ class TwitchBot:
                     msg = match.group(3)
                     await self.handle_message(user, msg)
                 elif "PRIVMSG" in line:
-                    logging.debug(f"[TwitchBot] Unparsed PRIVMSG: {line}")
+                    logger.debug(f"[TwitchBot] Unparsed PRIVMSG: {line}")
 
     async def handle_message(self, user: str, message: str):
 
@@ -156,7 +158,7 @@ class TwitchBot:
 
     async def send_response(self, text: str):
         if not self.ws:
-            logging.warning("[TwitchBot] Cannot send message: Not connected.")
+            logger.warning("[TwitchBot] Cannot send message: Not connected.")
             return
 
         try:
@@ -167,9 +169,9 @@ class TwitchBot:
             # IRC command: PRIVMSG #channel :message
             cmd = f"PRIVMSG {self.channel} :{text}"
             await self.ws.send(cmd)
-            logging.info(f"[TwitchBot] Sent: {text}")
+            logger.info(f"[TwitchBot] Sent: {text}")
         except Exception as e:
-            logging.error(f"[TwitchBot] Error sending message: {e}")
+            logger.error(f"[TwitchBot] Error sending message: {e}")
 
 
 # Global bot instance
@@ -181,11 +183,11 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
     global twitch_bot
 
     if not token or not channel:
-        logging.warning("[TwitchBot] Token or channel not configured. Skipping Twitch integration.")
+        logger.warning("[TwitchBot] Token or channel not configured. Skipping Twitch integration.")
         return None
 
     try:
-        logging.info(f"[TwitchBot] Initializing WebSocket Bot for channel: {channel}")
+        logger.info(f"[TwitchBot] Initializing WebSocket Bot for channel: {channel}")
 
         twitch_bot = TwitchBot(
             token=token,
@@ -197,13 +199,13 @@ async def start_twitch_bot(token: str, channel: str, prefix: str = "!", aggregat
             bot_id=bot_id
         )
 
-        logging.info("[TwitchBot] Starting background task...")
+        logger.info("[TwitchBot] Starting background task...")
         asyncio.create_task(twitch_bot.start())
 
         return twitch_bot
 
     except Exception as e:
-        logging.error(f"[TwitchBot] Failed to start: {e}")
+        logger.error(f"[TwitchBot] Failed to start: {e}")
         return None
 
 

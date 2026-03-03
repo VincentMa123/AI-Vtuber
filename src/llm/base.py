@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, AsyncGenerator
 
@@ -24,9 +25,7 @@ def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 clean_msg["content"] = new_content[0]["text"]
             else:
                 clean_msg["content"] = new_content
-        
 
-            
         clean_history.append(clean_msg)
     
     return clean_history[-10:]
@@ -47,7 +46,6 @@ class BaseLLMProvider(ABC):
 
 async def parse_sse_stream(response) -> AsyncGenerator[str, None]:
     """Parse SSE streaming responses from OpenAI-compatible APIs."""
-    import json
     async for line in response.aiter_lines():
         if not line or not line.startswith("data: "):
             continue

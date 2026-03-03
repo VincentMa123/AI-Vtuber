@@ -1,7 +1,7 @@
 import io
 import wave
 from abc import ABC, abstractmethod
-from typing import Optional, AsyncGenerator
+from typing import AsyncGenerator
 
 
 class BaseTTSProvider(ABC):

@@ -60,9 +60,6 @@ def _load_emotion_references() -> dict:
 def _get_emotion_embeddings():
     global _emotion_embeddings_cache
     
-    if _emotion_embeddings_cache is not None:
-        pass
-    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(base_dir, "data")
     cache_file = os.path.join(data_dir, "emotion_embeddings.pkl")

@@ -1,7 +1,7 @@
 import asyncio
 import time
 import logging
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 from .models import ChatMessage, AggregationConfig
 from .scoring import ChatScorer
 from .filters import ChatFilter
@@ -114,9 +114,10 @@ class ChatAggregator:
             emotions = []
             for msg in batch:
                 # Remove [TEST] prefix to detect emotion (only for testing)
-                clean_msg = msg.message.replace("[TEST] ", "") 
+                clean_msg = msg.message.replace("[TEST] ", "")
                 emotions.append(detect_emotion(clean_msg))
 
+            dominant_emotion = "neutral"
             if emotions:
                 dominant_emotion = Counter(emotions).most_common(1)[0][0]
             
@@ -160,7 +161,8 @@ class ChatAggregator:
                 formatted_parts.append(f"{i}. {msg.username}: {msg.message}")
             formatted = "\n".join(formatted_parts)
         
-        return formatted    
+        return formatted
+
     def get_status(self) -> Dict:
 
         return {

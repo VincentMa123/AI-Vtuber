@@ -1,5 +1,5 @@
 import base64
-from typing import List
+import time
 import logging
 import core.config as config
 import core.state as state
@@ -69,7 +69,6 @@ async def handle_streaming_response(
     user_emotion: str,
 ) -> None:
 
-    import time
     start_time = time.time()
     logging.info("[Response Handler] Starting streaming response...")
     

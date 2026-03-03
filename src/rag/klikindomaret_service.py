@@ -2,9 +2,6 @@ import logging
 import asyncio
 import requests
 import threading
-import time
-import json
-from datetime import datetime, timedelta
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from playwright.async_api import async_playwright

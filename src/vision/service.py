@@ -1,13 +1,12 @@
 import logging
 import asyncio
-from typing import Dict, Tuple, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any
 import core.config as config
 import core.state as state
 import core.utils as utils
-from core.utils import compress_image_for_vlm, is_similar_to_last
+from core.utils import compress_image_for_vlm
 from .models import HeartbeatRequest
 from browser import BrowserController, get_browser_controller, Behavior
-import random
 import uuid
 
 class VisionHeartbeat:
@@ -237,10 +236,7 @@ class VisionHeartbeat:
 
         loop_id = str(uuid.uuid4())[:8]
         logging.info(f"[VisionHeartbeat] Sync Action Loop started. ID: {loop_id}")
-        
-        if not hasattr(self, '_last_analysis_time'):
-            self._last_analysis_time = 0
-            
+
         while self._browser_loop_running:
             try:
                 # Check if browser connection is still alive

@@ -1,5 +1,4 @@
 import os
-import io
 import time
 import queue
 import logging
@@ -8,7 +7,6 @@ import asyncio
 import base64
 import requests
 import pathlib
-import wave
 from typing import Optional, AsyncGenerator
 
 import dashscope
@@ -127,7 +125,7 @@ class QwenTTSProvider(BaseTTSProvider):
             if self.cached_voice_id:
                 return self.cached_voice_id
             
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             try:
                 self.cached_voice_id = await loop.run_in_executor(None, self._create_voice, self.voice_file)
             except Exception as e:

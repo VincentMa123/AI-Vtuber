@@ -1,8 +1,11 @@
 from fastapi import WebSocket
 from typing import List, Dict, Any
-import json
 import asyncio
 import logging
+
+
+def _timestamp() -> float:
+    return _timestamp()
 
 class WebSocketManager:
     def __init__(self):
@@ -46,7 +49,7 @@ class WebSocketManager:
             "username": username,
             "message": message,
             "user_id": user_id,
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
     
     async def broadcast_ai_response(self, response: str, audio_base64: str = None, emotion: str = "neutral"):
@@ -60,7 +63,7 @@ class WebSocketManager:
             "message": response,
             "audio_base64": audio_base64,
             "emotion": emotion,
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
     
     async def broadcast_text_chunk(self, chunk: str, is_complete: bool = False):
@@ -69,7 +72,7 @@ class WebSocketManager:
             "type": "text_chunk",
             "chunk": chunk,
             "complete": is_complete,
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
     
     async def broadcast_audio_chunk(self, audio_base64: str = None, volume: float = 0.0, is_complete: bool = False):
@@ -79,7 +82,7 @@ class WebSocketManager:
             "audio_base64": audio_base64,
             "volume": volume,
             "complete": is_complete,
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
 
     async def broadcast_vision_status(self, content: str):
@@ -99,14 +102,14 @@ class WebSocketManager:
         await self.broadcast({
             "type": "stream_start",
             "emotion": emotion,
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
     
     async def broadcast_stream_end(self):
 
         await self.broadcast({
             "type": "stream_end",
-            "timestamp": asyncio.get_event_loop().time()
+            "timestamp": _timestamp()
         })
     
     async def close_all(self):

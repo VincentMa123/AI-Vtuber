@@ -4,7 +4,6 @@ from typing import Optional, List, Dict, Any, AsyncGenerator
 import core.config as config
 import core.utils as utils
 from .base import BaseLLMProvider, sanitize_history, parse_sse_stream, build_user_content
-import json
 
 
 async def get_remote_model_name() -> Optional[str]:

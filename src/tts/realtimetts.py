@@ -1,16 +1,12 @@
-import io
-import wave
 import time
 import threading
 import traceback
 import asyncio
 from queue import Queue, Empty
-
-from typing import Optional, AsyncGenerator
+from typing import AsyncGenerator
 from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
-from queue import Queue as ThreadQueue
 from .text_normalizer import normalize_for_tts, is_sentence_boundary
 import logging
 
@@ -66,7 +62,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
                     logging.debug(f"[RealtimeTTS] Audio chunk received: {len(chunk)} bytes")
             
 
-            text_queue = ThreadQueue()
+            text_queue = Queue()
             feed_complete = False
             
             async def feed_tokens_to_queue():

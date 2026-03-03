@@ -1,7 +1,6 @@
 import requests
 import datetime
 import os
-import sys
 import logging
 import base64
 import io

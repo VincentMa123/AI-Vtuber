@@ -54,8 +54,6 @@ class CustomFormatter(logging.Formatter):
     
 def setup_logger():
     """Initialize the global logger with file and console handlers"""
-    global START_TIME
-    
     # Create logs directory if it doesn't exist
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)

@@ -2,6 +2,7 @@ import json
 import os
 import asyncio
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +17,7 @@ from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenPr
 from tts import TTSManager
 from vision import VisionHeartbeat
 from chat.aggregator import ChatAggregator
+from chat.emotions import preload as preload_emotions
 from chat.models import AggregationConfig
 from chat.response_handler import handle_aggregated_response
 from ws.manager import ws_manager
@@ -29,16 +31,7 @@ from rag.indexer import WebsiteIndexer
 from rag import CRAWL_RESULT_PATH, WEBSITE_INDEX_PATH
 
 
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+AUDIO_PLAYBACK_COMPLETE_EVENT = "audio_playback_complete"
 
 llm_providers = {
     "openrouter": OpenRouterProvider(),
@@ -51,24 +44,28 @@ vllm_providers = {
 }
 
 
-@app.on_event("startup")
-async def startup_event():
+async def _aggregation_callback(message: str, dominant_emotion: str = None, platform: str = "twitch"):
+    if dominant_emotion:
+        logging.info(f"[ChatAggregator] Emotion: {dominant_emotion}")
+    await handle_aggregated_response(
+        message=message,
+        llm_providers=llm_providers,
+        tts_manager=state.tts_manager,
+    )
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     logger.setup_logger()
     await check_models.check_models()
-    
-    # Preload emotion model to avoid cold-start latency on first query
-    from chat.emotions import preload as preload_emotions
     preload_emotions()
-    
     await _init_services()
     logging.info("[Startup] System fully initialized")
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown_event():
     logging.info("[Shutdown] Initiating graceful shutdown...")
-    
+
     try:
         # 1. Stop vision heartbeat FIRST (stops all broadcasting)
         logging.info("[Shutdown] Stopping vision heartbeat...")
@@ -94,7 +91,7 @@ async def shutdown_event():
                 logging.warning("[Shutdown] Twitch bot timeout")
             except Exception as e:
                 logging.warning(f"[Shutdown] Error stopping Twitch bot: {e}")
-        
+
         yt_bot = get_youtube_bot()
         if yt_bot:
             try:
@@ -106,11 +103,11 @@ async def shutdown_event():
                 logging.warning("[Shutdown] YouTube bot timeout, forcing cancellation")
                 try:
                     await stop_youtube_task()
-                except:
+                except Exception:
                     pass
             except Exception as e:
                 logging.warning(f"[Shutdown] Error stopping YouTube bot: {e}")
-        
+
     except Exception as e:
         logging.warning(f"[Shutdown] Error in bot stop: {e}")
 
@@ -142,6 +139,17 @@ async def shutdown_event():
         logging.warning(f"[Shutdown] Error stopping YouTube task: {e}")
 
     logging.info("[Shutdown] Shutdown complete")
+
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 async def _init_services():
@@ -204,8 +212,7 @@ async def _init_services():
     else:
         logging.info("[Startup] YouTube integration disabled")
 
-    # 4. Audio Pipe (headless streaming)
-
+    # Audio Pipe (headless streaming)
     state.audio_pipe = AudioPipe()
     await state.audio_pipe.start()
     logging.info("[Startup] AudioPipe initialized")
@@ -217,16 +224,7 @@ async def _init_services():
     except Exception as e:
         logging.error(f"[Startup] Failed to install TTS interceptor: {e}")
 
-    async def aggregation_callback(message: str, dominant_emotion: str = None, platform: str = "twitch"):
-        if dominant_emotion:
-            logging.info(f"[ChatAggregator] Emotion: {dominant_emotion}")
-        await handle_aggregated_response(
-            message=message,
-            llm_providers=llm_providers,
-            tts_manager=state.tts_manager,
-        )
-
-    state.chat_aggregator.response_callback = aggregation_callback
+    state.chat_aggregator.response_callback = _aggregation_callback
 
     state.vision_heartbeat = VisionHeartbeat(
         llm_providers=vllm_providers,
@@ -277,7 +275,7 @@ async def websocket_chat(websocket: WebSocket):
             raw_data = await websocket.receive_text()
             try:
                 data = json.loads(raw_data)
-                if data.get("type") == "audio_playback_complete":
+                if data.get("type") == AUDIO_PLAYBACK_COMPLETE_EVENT:
                     state.signal_audio_complete()
             except json.JSONDecodeError:
                 pass
