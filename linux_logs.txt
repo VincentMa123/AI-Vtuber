@@ -1,381 +1,190 @@
-[2026-03-04 11:20:51] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.241
-[2026-03-04 11:20:52] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.241
-[2026-03-04 11:20:53] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.320
-[2026-03-04 11:20:53] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Negara mana yang paling kena serangan cyber?'
-[2026-03-04 11:20:54] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.204
-[2026-03-04 11:20:55] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Kalo jadi hewan kamu mau jadi apa?'
-[2026-03-04 11:20:55] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.304
-[2026-03-04 11:20:55] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.304
-[2026-03-04 11:20:57] [WARNI] [state.py::49 wait_for_audio_complete]: [State] Audio complete wait timed out after 20.0s
-[2026-03-04 11:20:57] [INFO ] [service.py::228 _process_vision_cycle]: [Vision Cycle] Text length: 616 chars
-[2026-03-04 11:20:57] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Main game yuk'
-[2026-03-04 11:20:57] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.216
-[2026-03-04 11:20:58] [INFO ] [state.py::67 acquire_speech_slot]: [State] vision released speech slot
-[2026-03-04 11:20:58] [INFO ] [state.py::60 acquire_speech_slot]: [State] chat acquired speech slot
-[2026-03-04 11:20:58] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: Multiple chat messages:
+[2026-03-04 11:42:18] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: [TEST] Ceritain dong masa kecilmu...
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.13it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.07it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.14it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.28it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.56it/s]
+[2026-03-04 11:42:22] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:42:22] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.45it/s]
+[2026-03-04 11:42:23] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'sad' (score: 0.358)
+[2026-03-04 11:42:23] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: sad
+[2026-03-04 11:42:23] [INFO ] [response_handler.py::73 handle_streaming_response]: [Response Handler] Starting streaming response...
+[2026-03-04 11:42:23] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
+[2026-03-04 11:42:23] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
+[2026-03-04 11:42:23] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
+[2026-03-04 11:42:23] [INFO ] [filters.py::46 should_filter]: [ChatFilter] Filtered: gibberish - '[TEST] GG'
+[2026-03-04 11:42:23] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] No WA kamu berapa?'
+[2026-03-04 11:42:23] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 335px...
+[2026-03-04 11:42:23] [INFO ] [_logging.py::89 info]: Websocket connected
+[2026-03-04 11:42:23] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_B4qdRK4NK92A9sVRdOgJg
+[2026-03-04 11:42:23] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
+[2026-03-04 11:42:23] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.2179253101348877 seconds.
+[2026-03-04 11:42:23] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
+[2026-03-04 11:42:23] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: sad → Playing motion: Flick@Body
+[2026-03-04 11:42:23] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Kamu suka warna apa sih?'
+[2026-03-04 11:42:24] [INFO ] [service.py::341 _action_loop]: [Action Loop] Buffered screenshot (1/3)
+[2026-03-04 11:42:25] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Kamu suka warna apa sih?'
+[2026-03-04 11:42:26] [INFO ] [qwen_tts.py::209 feed_text]: [QwenTTS] Sending to TTS: 'Kita fokus ke konten ya! Nah di layar sekarang ada laporan Global Cybersecurity ...'
+[2026-03-04 11:42:26] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
+[2026-03-04 11:42:26] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
+[2026-03-04 11:42:26] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
+[2026-03-04 11:42:26] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Instagram kamu apa?'
+[2026-03-04 11:42:27] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 562px...
+[2026-03-04 11:42:27] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.388
+[2026-03-04 11:42:27] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.237
+[2026-03-04 11:42:28] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.=0.938x    
+[2026-03-04 11:42:28] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
+[2026-03-04 11:42:28] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
+[2026-03-04 11:42:28] [INFO ] [qwen_tts.py::257 generate_audio_stream]: [QwenTTS] Turn complete signal received.
+[2026-03-04 11:42:28] [INFO ] [qwen_tts.py::278 generate_audio_stream]: [QwenTTS] Yielded final WAV.
+[2026-03-04 11:42:28] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 17 chunks (433920 bytes PCM) to pipe. Duration: 9.04s
+[2026-03-04 11:42:28] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 153
+[2026-03-04 11:42:28] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
+[2026-03-04 11:42:29] [INFO ] [service.py::341 _action_loop]: [Action Loop] Buffered screenshot (2/3)
+[2026-03-04 11:42:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: neutral → Playing motion: Idle
+[2026-03-04 11:42:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.202
+[2026-03-04 11:42:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.202
+[2026-03-04 11:42:30] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
+[2026-03-04 11:42:32] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 199px...
+[2026-03-04 11:42:32] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Ada statistik tentang kerugian cyber attack gak?'
+[2026-03-04 11:42:33] [INFO ] [filters.py::56 should_filter]: [ChatFilter] Filtered: rate limit - user vincentmato1000
+[2026-03-04 11:42:33] [INFO ] [service.py::341 _action_loop]: [Action Loop] Buffered screenshot (3/3)
+[2026-03-04 11:42:33] [INFO ] [service.py::359 _action_loop]: [Action Loop] Triggering Vision (Buffer=3, Click=False, AtBottom=False)
+[2026-03-04 11:42:34] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.315
+[2026-03-04 11:42:34] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.232
+[2026-03-04 11:42:34] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.232
+[2026-03-04 11:42:34] [INFO ] [filters.py::46 should_filter]: [ChatFilter] Filtered: gibberish - '[TEST] GG'
+[2026-03-04 11:42:35] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Audio] Playback finished (event-driven)
+[2026-03-04 11:42:35] [INFO ] [state.py::32 signal_audio_complete]: [State] Received audio_playback_complete signal from frontend
+[2026-03-04 11:42:35] [INFO ] [response_handler.py::162 handle_streaming_response]: [Response Handler] Streaming complete: 119 chars
+[2026-03-04 11:42:35] [INFO ] [response_handler.py::163 handle_streaming_response]: [Response Handler] Streaming took 12.78s
+[2026-03-04 11:42:36] [INFO ] [filters.py::61 should_filter]: [ChatFilter] Filtered: duplicate - '[TEST] Ada statistik tentang kerugian cyber attack gak?'
+[2026-03-04 11:42:36] [INFO ] [state.py::67 acquire_speech_slot]: [State] chat released speech slot
+[2026-03-04 11:42:36] [INFO ] [aggregator.py::144 _process_batch]: [ChatAggregator] Response processing took 39.75s
+[2026-03-04 11:42:36] [INFO ] [state.py::60 acquire_speech_slot]: [State] vision acquired speech slot
+[2026-03-04 11:42:36] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
+[2026-03-04 11:42:36] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
+[2026-03-04 11:42:36] [INFO ] [_logging.py::89 info]: Websocket connected
+[2026-03-04 11:42:36] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_PInRxy4Fy4itg1XcLkoXT
+[2026-03-04 11:42:37] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
+[2026-03-04 11:42:37] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20708680152893066 seconds.
+[2026-03-04 11:42:37] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Main game yuk'
+[2026-03-04 11:42:39] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Umur kamu berapa?'
+[2026-03-04 11:42:40] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Main game yuk'
+[2026-03-04 11:42:41] [INFO ] [filters.py::51 should_filter]: [ChatFilter] Filtered: off-topic - '[TEST] Instagram kamu apa?'
+[2026-03-04 11:42:41] [INFO ] [aggregator.py::102 _process_batch]: [ChatAggregator] Processing batch of 10 messages:
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.15it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.11it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.10it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.25it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.23it/s]
+[2026-03-04 11:42:46] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:42:46] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+[2026-03-04 11:42:46] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'happy' (score: 0.378)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.14it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.03it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.03it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.07it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.12it/s]
+[2026-03-04 11:42:51] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:42:51] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.95it/s]
+[2026-03-04 11:42:51] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'happy' (score: 0.252)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.04it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:01<00:00,  1.02s/it]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.03it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.10it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.12it/s]
+[2026-03-04 11:42:56] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:42:56] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.92it/s]
+[2026-03-04 11:42:56] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.117)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.09it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.18it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.15it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:01<00:00,  1.00s/it]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.08it/s]
+[2026-03-04 11:43:01] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:01] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.58it/s]
+[2026-03-04 11:43:01] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.431)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.24it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.06it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.03it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.15it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.14it/s]
+[2026-03-04 11:43:06] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:06] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.77it/s]
+[2026-03-04 11:43:06] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'angry' (score: 0.162)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.04it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.01it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.02it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.20it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.11it/s]
+[2026-03-04 11:43:11] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:11] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.96it/s]
+[2026-03-04 11:43:12] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.405)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:01<00:00,  1.14s/it]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:01<00:00,  1.14s/it]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.08it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.02it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.33it/s]
+[2026-03-04 11:43:16] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:17] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.01it/s]
+[2026-03-04 11:43:17] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'sad' (score: 0.186)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.25it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.40it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.69it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.46it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.27it/s]
+[2026-03-04 11:43:20] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:20] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.09it/s]
+[2026-03-04 11:43:21] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'angry' (score: 0.154)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.08it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.21it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.26it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.32it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.28it/s]
+[2026-03-04 11:43:25] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:25] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.00it/s]
+[2026-03-04 11:43:25] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'angry' (score: 0.630)
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.36it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.26it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.14it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.13it/s]
+Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.59it/s]
+[2026-03-04 11:43:29] [INFO ] [emotions.py::93 _get_emotion_embeddings]: [Emotions] Pre-computed embeddings for 5 emotions
+[2026-03-04 11:43:29] [INFO ] [emotions.py::99 _get_emotion_embeddings]: [Emotions] Saved embeddings to disk cache: /app/src/chat/data/emotion_embeddings.pkl
+Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.90it/s]
+[2026-03-04 11:43:29] [INFO ] [emotions.py::114 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.760)
+[2026-03-04 11:43:29] [INFO ] [aggregator.py::127 _process_batch]: [ChatAggregator] Generating AI response for: Multiple chat messages:
 1. vincentmato1000: [TEST] Kamu suka warna apa sih?
-2. vincentmato1000: [TES...
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.37it/s]
-[2026-03-04 11:20:59] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'excited' (score: 0.128)
-[2026-03-04 11:20:59] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: excited
-[2026-03-04 11:20:59] [INFO ] [response_handler.py::73 handle_streaming_response]: [Response Handler] Starting streaming response...
-[2026-03-04 11:20:59] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:20:59] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:20:59] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
-[2026-03-04 11:20:59] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 283px...
-[2026-03-04 11:20:59] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: excited → Playing motion: FlickUp
-[2026-03-04 11:20:59] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:20:59] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_JBvtvjqkM8s8ywNFBqUw7
-[2026-03-04 11:20:59] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:20:59] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20525646209716797 seconds.
-[2026-03-04 11:20:59] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:21:00] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 1.50)
-[2026-03-04 11:21:00] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (1/3)
-[2026-03-04 11:21:01] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.325
-[2026-03-04 11:21:03] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 504px...
-[2026-03-04 11:21:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.277
-[2026-03-04 11:21:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.277
-[2026-03-04 11:21:04] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Audio] Playback finished (event-driven)
-[2026-03-04 11:21:04] [INFO ] [deepseek.py::86 generate_stream]: [DeepSeek] Tool call detected: 1 calls
-[2026-03-04 11:21:04] [INFO ] [deepseek.py::104 generate_stream]: [DeepSeek] Executing tool: search_website({'query': 'negara paling kena serangan cyber'})
-[2026-03-04 11:21:04] [INFO ] [indexer.py::107 load_index]: [Indexer] Loaded index with 182 chunks.
-[2026-03-04 11:21:04] [INFO ] [indexer.py::24 model]: [Indexer] Loading model all-MiniLM-L6-v2...
-[2026-03-04 11:21:04] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cpu
-[2026-03-04 11:21:04] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: all-MiniLM-L6-v2
-Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.59it/s]
-[2026-03-04 11:21:08] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Wah banyak banget pertanyaannya! Kita fokus ke yang relevan sama laporan cyberse...'
-[2026-03-04 11:21:08] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (2/3)
-[2026-03-04 11:21:08] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:21:08] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:21:08] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:21:08] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:21:09] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.249
-[2026-03-04 11:21:09] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.206
-[2026-03-04 11:21:10] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.206
-[2026-03-04 11:21:11] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Nah, dari hasil pencarian, laporan ini membahas tentang bagaimana ketidakstabila...'
-[2026-03-04 11:21:11] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 444px...
-[2026-03-04 11:21:12] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Tapi untuk negara spesifik yang paling kena serangan, kayaknya tidak disebutkan ...'
-[2026-03-04 11:21:12] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:21:12] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (3/3)
-[2026-03-04 11:21:12] [INFO ] [service.py::338 _action_loop]: [Action Loop] Triggering Vision (Buffer=3, Click=False, AtBottom=False)
-[2026-03-04 11:21:12] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLinvoke name"searchwebsite"'
-[2026-03-04 11:21:13] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLparameter name"query" string"true"zero trust architectureDSMLparameter'
-[2026-03-04 11:21:13] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLinvoke'
-[2026-03-04 11:21:14] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.223
-[2026-03-04 11:21:14] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:21:14] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.187
-[2026-03-04 11:21:15] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.273
-[2026-03-04 11:21:18] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.284
-[2026-03-04 11:21:19] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.173
-[2026-03-04 11:21:20] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:21:20] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:21:20] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:21:20] [INFO ] [qwen_tts.py::303 generate_audio_stream]: [QwenTTS] Yielded final WAV.
-[2026-03-04 11:21:20] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 52 chunks (1701120 bytes PCM) to pipe. Duration: 35.44s
-[2026-03-04 11:21:20] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 582
-[2026-03-04 11:21:20] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:21:21] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: neutral → Playing motion: Idle
-[2026-03-04 11:21:21] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.303
-[2026-03-04 11:21:21] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.303
-[2026-03-04 11:21:26] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.252
-[2026-03-04 11:21:27] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.322
-[2026-03-04 11:21:28] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.251
-[2026-03-04 11:21:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.237
-[2026-03-04 11:21:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.237
-[2026-03-04 11:21:30] [WARNI] [state.py::49 wait_for_audio_complete]: [State] Audio complete wait timed out after 10.0s
-[2026-03-04 11:21:30] [INFO ] [response_handler.py::162 handle_streaming_response]: [Response Handler] Streaming complete: 670 chars
-[2026-03-04 11:21:30] [INFO ] [response_handler.py::163 handle_streaming_response]: [Response Handler] Streaming took 31.04s
-[2026-03-04 11:21:31] [INFO ] [state.py::67 acquire_speech_slot]: [State] chat released speech slot
-[2026-03-04 11:21:31] [INFO ] [aggregator.py::144 _process_batch]: [ChatAggregator] Response processing took 65.20s
-[2026-03-04 11:21:31] [INFO ] [state.py::60 acquire_speech_slot]: [State] vision acquired speech slot
-[2026-03-04 11:21:31] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:21:31] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:21:31] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:21:31] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_RwBPI3KBY8HMeMlGsaeeQ
-[2026-03-04 11:21:31] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:21:31] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20276379585266113 seconds.
-[2026-03-04 11:21:31] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.249
-[2026-03-04 11:21:36] [INFO ] [aggregator.py::102 _process_batch]: [ChatAggregator] Processing batch of 8 messages:
-Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.54it/s]
-[2026-03-04 11:21:36] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.405)
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.62it/s]
-[2026-03-04 11:21:36] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'happy' (score: 0.252)
-Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.81it/s]
-[2026-03-04 11:21:36] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'angry' (score: 0.405)
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.50it/s]
-[2026-03-04 11:21:37] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.246)
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.68it/s]
-[2026-03-04 11:21:37] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.353)
-Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.52it/s]
-[2026-03-04 11:21:37] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.431)
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.88it/s]
-[2026-03-04 11:21:38] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'sad' (score: 0.279)
-Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.15it/s]
-[2026-03-04 11:21:38] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'neutral' (score: 0.727)
-[2026-03-04 11:21:38] [INFO ] [aggregator.py::127 _process_batch]: [ChatAggregator] Generating AI response for: Multiple chat messages:
-1. vincentmato1000: [TEST] Kalo jadi hewan kamu mau jadi apa?
-2. vincentmato... (Emotion: neutral)
-[2026-03-04 11:21:38] [INFO ] [api_server.py::49 _aggregation_callback]: [ChatAggregator] Emotion: neutral
-[2026-03-04 11:21:38] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:21:38] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Wah banyak banget pertanyaan seru! Yang tentang pribadi kayak warna atau HP kita...'
-[2026-03-04 11:21:38] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:21:39] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:21:39] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:21:39] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:21:40] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.276
-[2026-03-04 11:21:40] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.182
-[2026-03-04 11:21:41] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.258
-[2026-03-04 11:21:42] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.273
-[2026-03-04 11:21:43] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.215
-[2026-03-04 11:21:44] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.150
-[2026-03-04 11:21:46] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.093
-[2026-03-04 11:21:47] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.123
-[2026-03-04 11:21:50] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.101
-[2026-03-04 11:21:50] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:21:50] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:21:50] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:21:50] [INFO ] [qwen_tts.py::303 generate_audio_stream]: [QwenTTS] Yielded final WAV.
-[2026-03-04 11:21:50] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 65 chunks (2092800 bytes PCM) to pipe. Duration: 43.60s
-[2026-03-04 11:21:50] [INFO ] [service.py::124 process_heartbeat_stream]: [Vision Response] Wah banyak banget pertanyaan seru! Yang tentang pribadi kayak warna atau HP kita skip dulu ya, fokus ke cybersecurity aja! 🎯
-
-Nah dari laporan di layar ini, aku bisa jelasin beberapa nih:
-
-Untuk **geopolitik sama cybersecurity**, teks di kiri bawah jelas banget bilang kalau deepening geopolitical fragmentation itu salah satu faktor yang memperparah risiko cyber global! Jadi politik dunia tuh memang impact langsung ke keamanan digital!
-
-Sekarang aku cariin dulu info soal zero trust architecture yang lagi jadi buzzword di industry! 🔍
-
-<｜DSML｜function_calls>
-<｜DSML｜invoke name="search_website">
-<｜DSML｜parameter name="query" string="true">zero trust architecture</｜DSML｜parameter>
-</｜DSML｜invoke>
-</｜DSML｜function_calls>
-[2026-03-04 11:21:50] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 739
-[2026-03-04 11:21:50] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:21:51] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.117
-[2026-03-04 11:21:54] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.136
-[2026-03-04 11:21:54] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.128
-[2026-03-04 11:21:55] [INFO ] [state.py::32 signal_audio_complete]: [State] Received audio_playback_complete signal from frontend
-[2026-03-04 11:21:55] [INFO ] [service.py::228 _process_vision_cycle]: [Vision Cycle] Text length: 724 chars
-[2026-03-04 11:21:55] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.124
-[2026-03-04 11:21:56] [INFO ] [state.py::67 acquire_speech_slot]: [State] vision released speech slot
-[2026-03-04 11:21:56] [INFO ] [state.py::60 acquire_speech_slot]: [State] chat acquired speech slot
-[2026-03-04 11:21:56] [INFO ] [response_handler.py::30 handle_aggregated_response]: [Response Handler] Generating response for: Multiple chat messages:
-1. vincentmato1000: [TEST] Kalo jadi hewan kamu mau jadi apa?
-2. vincentmato...
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.48it/s]
-[2026-03-04 11:21:57] [INFO ] [emotions.py::131 detect_emotion]: [Emotions] Detected 'excited' (score: 0.202)
-[2026-03-04 11:21:57] [INFO ] [response_handler.py::33 handle_aggregated_response]: [Response Handler] User emotion detected: excited
-[2026-03-04 11:21:57] [INFO ] [response_handler.py::73 handle_streaming_response]: [Response Handler] Starting streaming response...
-[2026-03-04 11:21:57] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:21:57] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:21:57] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 526px...
-[2026-03-04 11:21:57] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: excited → Playing motion: FlickUp
-[2026-03-04 11:21:57] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:21:57] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_Joi6Slk3RtMDqKdYSlPjZ
-[2026-03-04 11:21:57] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:21:57] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.2086811065673828 seconds.
-[2026-03-04 11:21:57] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:21:58] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (1/3)
-[2026-03-04 11:21:58] [INFO ] [service.py::338 _action_loop]: [Action Loop] Triggering Vision (Buffer=1, Click=False, AtBottom=True)
-[2026-03-04 11:21:59] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.105
-[2026-03-04 11:22:01] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.150
-[2026-03-04 11:22:02] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.141
-[2026-03-04 11:22:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.110
-[2026-03-04 11:22:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.110
-[2026-03-04 11:22:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.130
-[2026-03-04 11:22:04] [INFO ] [deepseek.py::86 generate_stream]: [DeepSeek] Tool call detected: 1 calls
-[2026-03-04 11:22:04] [INFO ] [deepseek.py::104 generate_stream]: [DeepSeek] Executing tool: search_website({'query': 'AI artificial intelligence hacking cybersecurity'})
-[2026-03-04 11:22:04] [INFO ] [indexer.py::107 load_index]: [Indexer] Loaded index with 182 chunks.
-[2026-03-04 11:22:04] [INFO ] [indexer.py::24 model]: [Indexer] Loading model all-MiniLM-L6-v2...
-[2026-03-04 11:22:04] [INFO ] [SentenceTransformer.py::219 __init__]: Use pytorch device_name: cpu
-[2026-03-04 11:22:04] [INFO ] [SentenceTransformer.py::227 __init__]: Load pretrained SentenceTransformer: all-MiniLM-L6-v2
-Batches:   0%|                                                          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.58it/s]
-[2026-03-04 11:22:07] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Kita fokus ke konten yang ada di layar ya! Wah pertanyaan tentang infografis dan...'
-[2026-03-04 11:22:07] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.156
-[2026-03-04 11:22:07] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.071
-[2026-03-04 11:22:07] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.071
-[2026-03-04 11:22:07] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.071
-[2026-03-04 11:22:08] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://api.deepseek.com/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:22:08] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:22:08] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:22:08] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:22:09] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Nah ketemu!'
-[2026-03-04 11:22:10] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Ternyata AI memang jadi topik utama di laporan ini.'
-[2026-03-04 11:22:11] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: '94 persen responden survei menganggap AI sebagai pendorong perubahan paling sign...'
-[2026-03-04 11:22:11] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.085
-[2026-03-04 11:22:11] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.092
-[2026-03-04 11:22:12] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Yang menarik, AI dipakai dua sisi: untuk memperkuat pertahanan cyber TAPI juga d...'
-[2026-03-04 11:22:13] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Untuk pertanyaan tentang apa saja yang dibahas di report ini, aku cariin daftar ...'
-[2026-03-04 11:22:13] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:22:14] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLinvoke name"searchwebsite"'
-[2026-03-04 11:22:14] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:15] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLparameter name"query" string"true"table of contents chapters sectionsDSMLpar...'
-[2026-03-04 11:22:15] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'DSMLinvoke'
-[2026-03-04 11:22:15] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:22:15] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.126
-[2026-03-04 11:22:15] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.111
-[2026-03-04 11:22:18] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.124
-[2026-03-04 11:22:19] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.141
-[2026-03-04 11:22:20] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.098
-[2026-03-04 11:22:21] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:22:21] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:22:21] [INFO ] [qwen_tts.py::303 generate_audio_stream]: [QwenTTS] Yielded final WAV.
-[2026-03-04 11:22:21] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 65 chunks (2100480 bytes PCM) to pipe. Duration: 43.76s
-[2026-03-04 11:22:21] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 710
-[2026-03-04 11:22:21] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:22:22] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Emotion changed to: neutral → Playing motion: Idle
-[2026-03-04 11:22:23] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.185
-[2026-03-04 11:22:24] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:22:24] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:22:25] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.112
-[2026-03-04 11:22:26] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.112
-[2026-03-04 11:22:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.109
-[2026-03-04 11:22:31] [WARNI] [state.py::49 wait_for_audio_complete]: [State] Audio complete wait timed out after 10.0s
-[2026-03-04 11:22:31] [INFO ] [response_handler.py::162 handle_streaming_response]: [Response Handler] Streaming complete: 966 chars
-[2026-03-04 11:22:31] [INFO ] [response_handler.py::163 handle_streaming_response]: [Response Handler] Streaming took 33.98s
-[2026-03-04 11:22:31] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.123
-[2026-03-04 11:22:32] [INFO ] [state.py::67 acquire_speech_slot]: [State] chat released speech slot
-[2026-03-04 11:22:32] [INFO ] [aggregator.py::144 _process_batch]: [ChatAggregator] Response processing took 53.80s
-[2026-03-04 11:22:32] [INFO ] [state.py::60 acquire_speech_slot]: [State] vision acquired speech slot
-[2026-03-04 11:22:32] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:22:32] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:22:32] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:22:32] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_Om1UaVzj5dyE2YTEUKGAc
-[2026-03-04 11:22:32] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:22:32] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20278525352478027 seconds.
-[2026-03-04 11:22:32] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.127
-[2026-03-04 11:22:33] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:33] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:35] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.137
-[2026-03-04 11:22:38] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:22:38] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Wah oke oke! Dari yang kelihatan di layar nih ada daftar isi laporan lengkap mul...'
-[2026-03-04 11:22:38] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya'
-[2026-03-04 11:22:38] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.118
-[2026-03-04 11:22:38] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:22:38] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:22:38] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:22:39] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:39] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:39] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:39] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:22:44] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:22:44] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:22:44] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:22:44] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 32 chunks (1105920 bytes PCM) to pipe. Duration: 23.04s
-[2026-03-04 11:22:44] [INFO ] [service.py::124 process_heartbeat_stream]: [Vision Response] Wah oke oke! Dari yang kelihatan di layar nih ada daftar isi laporan lengkap mulai dari chapter 3.4 sampai 3.7 yang bahas cybersecurity resilience sampe future threat vectors! Tapi karena kita udah sampe bawah halaman sekarang aku pindah ke bagian executive summary biar bisa kasih tau lebih banyak insight menariknya! Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya
-[2026-03-04 11:22:44] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 408
-[2026-03-04 11:22:44] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:22:44] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.115
-[2026-03-04 11:22:44] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.115
-[2026-03-04 11:22:45] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.080
-[2026-03-04 11:22:45] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.080
-[2026-03-04 11:22:49] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.105
-[2026-03-04 11:22:49] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.110
-[2026-03-04 11:22:50] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.092
-[2026-03-04 11:22:52] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.149
-[2026-03-04 11:22:54] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.141
-[2026-03-04 11:22:55] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.152
-[2026-03-04 11:22:58] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.112
-[2026-03-04 11:22:59] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.136
-[2026-03-04 11:23:01] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.130
-[2026-03-04 11:23:02] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.125
-[2026-03-04 11:23:03] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.102
-[2026-03-04 11:23:04] [WARNI] [state.py::49 wait_for_audio_complete]: [State] Audio complete wait timed out after 20.0s
-[2026-03-04 11:23:04] [INFO ] [service.py::228 _process_vision_cycle]: [Vision Cycle] Text length: 396 chars
-[2026-03-04 11:23:04] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.148
-[2026-03-04 11:23:05] [INFO ] [state.py::67 acquire_speech_slot]: [State] vision released speech slot
-[2026-03-04 11:23:05] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 378px...
-[2026-03-04 11:23:06] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.048
-[2026-03-04 11:23:06] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (1/3)
-[2026-03-04 11:23:06] [INFO ] [service.py::338 _action_loop]: [Action Loop] Triggering Vision (Buffer=1, Click=False, AtBottom=True)
-[2026-03-04 11:23:06] [INFO ] [state.py::60 acquire_speech_slot]: [State] vision acquired speech slot
-[2026-03-04 11:23:06] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:23:06] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:23:06] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:23:06] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_ZpNHNhzep1wgy21pyfERP
-[2026-03-04 11:23:06] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:23:06] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20517444610595703 seconds.
-[2026-03-04 11:23:08] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.117
-[2026-03-04 11:23:08] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.123
-[2026-03-04 11:23:09] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.108
-[2026-03-04 11:23:10] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.138
-[2026-03-04 11:23:11] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.138
-[2026-03-04 11:23:11] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:23:11] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya'
-[2026-03-04 11:23:11] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.138
-[2026-03-04 11:23:11] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:23:11] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:23:11] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:23:12] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.084
-[2026-03-04 11:23:12] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:23:12] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:23:12] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:23:12] [INFO ] [qwen_tts.py::303 generate_audio_stream]: [QwenTTS] Yielded final WAV.
-[2026-03-04 11:23:12] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 8 chunks (218880 bytes PCM) to pipe. Duration: 4.56s
-[2026-03-04 11:23:12] [INFO ] [service.py::124 process_heartbeat_stream]: [Vision Response] Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya
-[2026-03-04 11:23:12] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 72
-[2026-03-04 11:23:12] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:23:13] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.173
-[2026-03-04 11:23:13] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.173
-[2026-03-04 11:23:14] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.123
-[2026-03-04 11:23:15] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.111
-[2026-03-04 11:23:15] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.111
-[2026-03-04 11:23:16] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.131
-[2026-03-04 11:23:17] [INFO ] [state.py::32 signal_audio_complete]: [State] Received audio_playback_complete signal from frontend
-[2026-03-04 11:23:17] [INFO ] [service.py::228 _process_vision_cycle]: [Vision Cycle] Text length: 77 chars
-[2026-03-04 11:23:18] [INFO ] [state.py::67 acquire_speech_slot]: [State] vision released speech slot
-[2026-03-04 11:23:18] [INFO ] [controller.py::334 scroll_down]: [Browser] Smooth scrolling down 170px...
-[2026-03-04 11:23:19] [INFO ] [service.py::320 _action_loop]: [Action Loop] Buffered screenshot (1/3)
-[2026-03-04 11:23:19] [INFO ] [service.py::338 _action_loop]: [Action Loop] Triggering Vision (Buffer=1, Click=False, AtBottom=True)
-[2026-03-04 11:23:19] [INFO ] [state.py::60 acquire_speech_slot]: [State] vision acquired speech slot
-[2026-03-04 11:23:19] [INFO ] [interceptor.py::26 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting to intercept TTS stream...
-[2026-03-04 11:23:19] [INFO ] [qwen_tts.py::152 _ensure_connected]: [QwenTTS] Connecting to DashScope...
-[2026-03-04 11:23:19] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.143
-[2026-03-04 11:23:19] [INFO ] [_logging.py::89 info]: Websocket connected
-[2026-03-04 11:23:19] [INFO ] [qwen_tts.py::38 on_event]: [QwenTTS] Session created: sess_E8kHJXxvrKesgwYdhPEUX
-[2026-03-04 11:23:19] [INFO ] [qwen_tts.py::25 on_open]: [QwenTTS] WebSocket session established.
-[2026-03-04 11:23:19] [INFO ] [qwen_tts.py::193 generate_audio_stream]: [QwenTTS] Connected in 0.20552563667297363 seconds.
-[2026-03-04 11:23:23] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.103
-[2026-03-04 11:23:23] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.103
-[2026-03-04 11:23:24] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.147
-[2026-03-04 11:23:25] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
-[2026-03-04 11:23:25] [INFO ] [qwen_tts.py::226 feed_text]: [QwenTTS] Sending to TTS: 'Wah keren banget nih liat bagian penutup laporan ini! Dari yang aku lihat di lay...'
-[2026-03-04 11:23:25] [INFO ] [qwen_tts.py::234 feed_text]: [QwenTTS] Sending final to TTS: 'DSMLfunctioncalls'
-[2026-03-04 11:23:25] [INFO ] [interceptor.py::45 patched_generate_audio_stream]: [AudioPipe Interceptor] Detected WAV sample rate: 24000
-[2026-03-04 11:23:25] [INFO ] [interceptor.py::50 patched_generate_audio_stream]: [AudioPipe Interceptor] Starting pipe with input_rate=24000
-[2026-03-04 11:23:25] [INFO ] [pipe.py::127 stream_audio_flow]: [AudioPipe] Starting streaming conversion...
-[2026-03-04 11:23:25] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.108
-[2026-03-04 11:23:26] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.104
-[2026-03-04 11:23:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.089
-[2026-03-04 11:23:29] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.082
-[2026-03-04 11:23:30] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.143
-[2026-03-04 11:23:30] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.143
-[2026-03-04 11:23:31] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.070
-[2026-03-04 11:23:31] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.070
-[2026-03-04 11:23:33] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.108
-[2026-03-04 11:23:34] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.112
-[2026-03-04 11:23:35] [INFO ] [qwen_tts.py::45 on_event]: [QwenTTS] Response done.
-[2026-03-04 11:23:35] [INFO ] [qwen_tts.py::50 on_event]: [QwenTTS] Session finished.
-[2026-03-04 11:23:35] [INFO ] [qwen_tts.py::282 generate_audio_stream]: [QwenTTS] Turn complete signal received.
-[2026-03-04 11:23:35] [INFO ] [qwen_tts.py::303 generate_audio_stream]: [QwenTTS] Yielded final WAV.
-[2026-03-04 11:23:35] [INFO ] [interceptor.py::75 patched_generate_audio_stream]: [AudioPipe Interceptor] Stream finished. Sent 60 chunks (1946880 bytes PCM) to pipe. Duration: 40.56s
-[2026-03-04 11:23:35] [INFO ] [service.py::124 process_heartbeat_stream]: [Vision Response] Wah keren banget nih liat bagian penutup laporan ini! Dari yang aku lihat di layar, laporan Global Cybersecurity Outlook 2026 ini bener-bener full sama insight menarik soal AI dan cybersecurity ya guys!
-
-Aku udah selesai jelajahi seluruh halaman ini sampai akhir, sekarang kita lanjut ke bagian selanjutnya yang lebih detail lagi!
-
-Halo guys, webpage ini saya sudah jelaskan jadi kita ke section berikutnya ya
-
-<｜DSML｜function_calls>
-<｜DSML｜invoke name="navigate_to_page">
-<｜DSML｜parameter name="url" string="true">https://www.weforum.org/publications/global-cybersecurity-outlook-2026/in-full/executive-summary-6efae97d74</｜DSML｜parameter>
-</｜DSML｜invoke>
-</｜DSML｜function_calls>
-[2026-03-04 11:23:35] [INFO ] [pipe.py::109 read_stdout]: [AudioPipe] Converter finished. Total PCM chunks: 670
-[2026-03-04 11:23:35] [INFO ] [pipe.py::134 stream_audio_flow]: [AudioPipe] Streaming conversion finished successfully
-[2026-03-04 11:23:37] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.141
-[2026-03-04 11:23:37] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.141
-[2026-03-04 11:23:37] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.058
-[2026-03-04 11:23:38] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.100
-[2026-03-04 11:23:38] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.109
-[2026-03-04 11:23:39] [INFO ] [controller.py::114 <lambda>]: [Browser Console] [log] [Avatar] Volume: 0.381
-[2026-03-04 11:23:40] [INFO ] [controller.py::114 <lambda>]: [Browser Console] 
+2. vincentmato1000: [TES... (Emotion: neutral)
+[2026-03-04 11:43:29] [INFO ] [api_server.py::49 _aggregation_callback]: [ChatAggregator] Emotion: neutral
+[2026-03-04 11:43:29] [INFO ] [filters.py::46 should_filter]: [ChatFilter] Filtered: gibberish - '[TEST] GG'
+[2026-03-04 11:43:29] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
+[2026-03-04 11:43:29] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 4.50)
+[2026-03-04 11:43:29] [INFO ] [aggregator.py::66 submit_message]: [ChatAggregator] Queued message from vincentmato1000 (priority: 6.50)
+[2026-03-04 11:43:29] [INFO ] [filters.py::56 should_filter]: [ChatFilter] Filtered: rate limit - user vincentmato1000
+[2026-03-04 11:43:29] [INFO ] [_client.py::1740 _send_single_request]: HTTP Request: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions "HTTP/1.1 200 OK"
+[2026-03-04 11:43:29] [INFO ] [qwen_tts.py::209 feed_text]: [QwenTTS] Sending to TTS: 'Kita fokus ke konten ya! Halaman ini menampilkan Preface dari laporan Global Cyb...'
+[in#0/x11grab @ 0x5e1e31a7f140] Thread message queue blocking; consider raising the thread_queue_size option (current value: 1024)
+[flv @ 0x5e1e31f5ce40] Failed to update header with correct duration. drop=0 speed=0.623x    
+[flv @ 0x5e1e31f5ce40] Failed to update header with correct filesize.
+[tee @ 0x5e1e31a99ac0] Slave muxer #0 failed: End of file, continuing with 1/2 slaves.
+[tls @ 0x5e1e32305080] Error in the push function.
+[tls @ 0x5e1e32305080] IO error: Broken pipe
+[flv @ 0x5e1e32314100] Failed to update header with correct duration.
+[flv @ 0x5e1e32314100] Failed to update header with correct filesize.
+[tls @ 0x5e1e32305080] The specified session has been invalidated for some reason.
+    Last message repeated 1 times
+[tee @ 0x5e1e31a99ac0] All tee outputs failed.
+[aost#0:1/aac @ 0x5e1e31a9d680] Error submitting a packet to the muxer: Broken pipe
+[out#0/tee @ 0x5e1e31a98540] Error muxing a packet

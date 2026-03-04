@@ -4,7 +4,7 @@ import logging
 import core.config as config
 import core.state as state
 import core.utils as utils
-from chat.emotions import detect_emotion
+from chat.emotions import detect_emotion_async
 from ws.manager import ws_manager
 from rag.tools import CHAT_TOOLS
 import asyncio
@@ -29,7 +29,7 @@ async def handle_aggregated_response(
         try:
             logging.info(f"[Response Handler] Generating response for: {message[:100]}...")
             
-            user_emotion = detect_emotion(message)
+            user_emotion = await detect_emotion_async(message)
             logging.info(f"[Response Handler] User emotion detected: {user_emotion}")
             
             emotion_instruction = EMOTION_CONTEXT.get(user_emotion, "")

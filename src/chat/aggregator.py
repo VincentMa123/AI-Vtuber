@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 from .models import ChatMessage, AggregationConfig
 from .scoring import ChatScorer
 from .filters import ChatFilter
-from chat.emotions import detect_emotion
+from chat.emotions import detect_emotions_batch_async
 from collections import Counter
 
 class ChatAggregator:
@@ -110,12 +110,9 @@ class ChatAggregator:
         try:
             formatted_message = self.get_batch_for_llm(batch)
             
-            # Determine dominant emotion from the batch
-            emotions = []
-            for msg in batch:
-                # Remove [TEST] prefix to detect emotion (only for testing)
-                clean_msg = msg.message.replace("[TEST] ", "")
-                emotions.append(detect_emotion(clean_msg))
+            # Determine dominant emotion from the batch (non-blocking batch encode)
+            clean_texts = [msg.message.replace("[TEST] ", "") for msg in batch]
+            emotions = await detect_emotions_batch_async(clean_texts)
 
             dominant_emotion = "neutral"
             if emotions:
