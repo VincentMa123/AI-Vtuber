@@ -235,7 +235,7 @@ class VisionHeartbeat:
                             await self._on_browser_update(chunk)
 
                     # Wait for frontend to signal audio playback is complete
-                    await state.wait_for_audio_complete(timeout=20.0)
+                    await state.wait_for_audio_complete(timeout=10.0)
 
                     logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
 
