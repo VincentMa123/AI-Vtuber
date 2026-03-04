@@ -73,10 +73,6 @@ def _get_emotion_embeddings():
         except Exception as e:
             logging.error(f"[Emotions] Failed to load disk cache: {e}")
 
-    # Memory cache hit check after potential load
-    if _emotion_embeddings_cache is not None:
-        return _emotion_embeddings_cache
-
     model = _get_model()
     if model is None:
         return None
@@ -113,22 +109,9 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 def detect_emotion(text: str) -> EmotionType:
 
-    model = _get_model()
-    emotion_embeddings = _get_emotion_embeddings()
-    
-    if model is None or emotion_embeddings is None:
-        return "neutral"
-    
-    text_embedding = model.encode(text, convert_to_numpy=True)
-    
-    similarities = {}
-    for emotion, ref_embedding in emotion_embeddings.items():
-        similarities[emotion] = cosine_similarity(text_embedding, ref_embedding)
-
-    best_emotion = max(similarities, key=similarities.get)
-    best_score = similarities[best_emotion]
-    
-    logging.info(f"[Emotions] Detected '{best_emotion}' (score: {best_score:.3f})")
+    best_emotion, scores = detect_emotion_with_scores(text)
+    if scores:
+        logging.info(f"[Emotions] Detected '{best_emotion}' (score: {scores.get(best_emotion, 0):.3f})")
     return best_emotion
 
 

@@ -13,7 +13,7 @@ import dashscope
 from dashscope.audio.qwen_tts_realtime import QwenTtsRealtime, QwenTtsRealtimeCallback, AudioFormat
 
 from .base import BaseTTSProvider, create_wav_buffer
-from .text_normalizer import normalize_for_tts, is_sentence_boundary
+from .text_normalizer import buffer_sentences
 import core.config as config
 
 class QwenTTSCallback(QwenTtsRealtimeCallback):
@@ -203,40 +203,15 @@ class QwenTTSProvider(BaseTTSProvider):
             # Background task to feed text with sentence buffering for normalization
             async def feed_text():
                 try:
-                    # Buffer to accumulate text until sentence boundary
-                    text_buffer = ""
-                    
-                    async for text_chunk in text_stream:
-                        if not text_chunk or not self.stream_client:
-                            continue
-                        
-                        text_buffer += text_chunk
-                        
-                        last_boundary_idx = -1
-                        for i in range(len(text_buffer)):
-                            if is_sentence_boundary(text_buffer, i):
-                                last_boundary_idx = i
-                        
-                        if last_boundary_idx >= 0:
-                            complete_text = text_buffer[:last_boundary_idx + 1]
-                            text_buffer = text_buffer[last_boundary_idx + 1:]
-                
-                            normalized = normalize_for_tts(complete_text)
-                            if normalized:  # Only send if not empty after cleaning
-                                logging.info(f"[QwenTTS] Sending to TTS: '{normalized[:80]}{'...' if len(normalized) > 80 else ''}'")
-                                await asyncio.to_thread(self.stream_client.append_text, normalized)
-                            else:
-                                logging.debug(f"[QwenTTS] Skipped empty/short chunk: '{complete_text[:50]}'")
-                    
-                    if text_buffer and self.stream_client:
-                        normalized = normalize_for_tts(text_buffer)
-                        if normalized:
-                            logging.info(f"[QwenTTS] Sending final to TTS: '{normalized[:80]}{'...' if len(normalized) > 80 else ''}'")
-                            await asyncio.to_thread(self.stream_client.append_text, normalized)
-                    
+                    async for normalized in buffer_sentences(text_stream):
+                        if not self.stream_client:
+                            break
+                        logging.info(f"[QwenTTS] Sending to TTS: '{normalized[:80]}{'...' if len(normalized) > 80 else ''}'")
+                        await asyncio.to_thread(self.stream_client.append_text, normalized)
+
                     if self.stream_client:
                         await asyncio.to_thread(self.stream_client.finish)
-                    
+
                 except Exception as e:
                     logging.error(f"[QwenTTS] Error feeding text: {e}")
 

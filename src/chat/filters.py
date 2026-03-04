@@ -2,7 +2,7 @@ import time
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
-from collections import defaultdict
+from collections import defaultdict, Counter
 from .models import AggregationConfig
 import logging
 
@@ -106,7 +106,6 @@ class ChatFilter:
 
         # Check dominant character — real words rarely have one letter at 40%+
         if len(letters) >= 5:
-            from collections import Counter
             freq = Counter(letters.lower())
             max_freq = max(freq.values())
             if max_freq / len(letters) > 0.4:

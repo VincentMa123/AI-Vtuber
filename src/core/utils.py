@@ -29,41 +29,6 @@ def load_prompt_file(filename):
         logging.error(f"Error loading prompt file {filename}: {e}")
         return ""
 
-def pick_next_url(visited_urls: Optional[list] = None, current_url: str = "") -> Optional[str]:
-    """
-    Pick a next URL from crawl_result.json.
-    Priority: unvisited (not current) -> any other URL not current.
-    """
-    visited_urls = visited_urls or []
-    try:
-        import json
-        if os.path.exists(CRAWL_RESULT_PATH):
-            with open(CRAWL_RESULT_PATH, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                sitemap = data.get("sitemap", [])
-                if not sitemap:
-                    return None
-                
-                norm_visited = [u.rstrip("/") for u in visited_urls]
-                norm_current = current_url.rstrip("/")
-                
-                unvisited = [
-                    item for item in sitemap
-                    if item.get("url") and item["url"].rstrip("/") not in norm_visited
-                    and item["url"].rstrip("/") != norm_current
-                ]
-                if unvisited:
-                    return unvisited[0]["url"]
-                
-                # Fallback: any URL not equal to current
-                for item in sitemap:
-                    url = item.get("url")
-                    if url and url.rstrip("/") != norm_current:
-                        return url
-    except Exception as e:
-        logging.warning(f"Error picking next URL from sitemap: {e}")
-    return None
-
 
 def get_system_prompt(user_message: str = "", **kwargs):
     

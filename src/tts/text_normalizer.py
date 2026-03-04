@@ -148,6 +148,36 @@ _normalizer = IndonesianTextNormalizer()
 def normalize_for_tts(text: str, min_length: int = 3) -> str:
     return _normalizer.normalize_for_tts(text, min_length)
 
+async def buffer_sentences(text_stream):
+    """
+    Buffers text tokens from an async text stream, yielding normalized
+    complete sentences as detected by is_sentence_boundary.
+    Flushes any remaining text at stream end.
+    """
+    text_buffer = ""
+    async for token in text_stream:
+        if not token:
+            continue
+        text_buffer += token
+
+        last_boundary_idx = -1
+        for i in range(len(text_buffer)):
+            if is_sentence_boundary(text_buffer, i):
+                last_boundary_idx = i
+
+        if last_boundary_idx >= 0:
+            complete_text = text_buffer[:last_boundary_idx + 1]
+            text_buffer = text_buffer[last_boundary_idx + 1:]
+            normalized = normalize_for_tts(complete_text)
+            if normalized:
+                yield normalized
+
+    if text_buffer:
+        normalized = normalize_for_tts(text_buffer)
+        if normalized:
+            yield normalized
+
+
 def is_sentence_boundary(text: str, idx: int) -> bool:
     char = text[idx]
     

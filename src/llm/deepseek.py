@@ -4,8 +4,8 @@ from typing import Optional, List, Dict, Any, AsyncGenerator
 from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history, build_user_content
-from rag.tools import ALL_TOOLS, CHAT_TOOLS, execute_tool_call
+from .base import BaseLLMProvider, sanitize_history, build_user_content, strip_leaked_tool_calls
+from rag.tools import ALL_TOOLS, execute_tool_call
 
 
 class DeepSeekProvider(BaseLLMProvider):
@@ -131,11 +131,17 @@ class DeepSeekProvider(BaseLLMProvider):
                     if chunk.choices and len(chunk.choices) > 0:
                         delta = chunk.choices[0].delta
                         if delta.content:
+                            # Stop streaming if tool call markup leaks into text
+                            if '<｜' in delta.content or '｜>' in delta.content:
+                                logging.warning("[DeepSeek] Stripped leaked tool call markup from stream")
+                                break
                             yield delta.content
             else:
                 # No tool call — yield content directly
                 if choice.message.content:
-                    yield choice.message.content
+                    cleaned = strip_leaked_tool_calls(choice.message.content)
+                    if cleaned:
+                        yield cleaned
                         
         except APIError as e:
              logging.error(f"DeepSeek error: {e}")

@@ -27,7 +27,6 @@ def set_waf_token(token: str):
 
 def get_waf_token() -> Optional[str]:
 
-    global _waf_token, _waf_token_expires
     with _token_lock:
         if _waf_token and _waf_token_expires and datetime.now() < _waf_token_expires:
             return _waf_token

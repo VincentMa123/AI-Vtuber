@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 from .base import BaseTTSProvider, create_wav_buffer
 import core.config as config
 from RealtimeTTS import TextToAudioStream, SystemEngine, ElevenlabsEngine
-from .text_normalizer import normalize_for_tts, is_sentence_boundary
+from .text_normalizer import buffer_sentences
 import logging
 
 
@@ -68,37 +68,15 @@ class RealtimeTTSProvider(BaseTTSProvider):
             async def feed_tokens_to_queue():
 
                 nonlocal feed_complete
-                text_buffer = ""
 
                 try:
-                    async for token in text_stream:
-                        if not token: continue
-                        text_buffer += token
-                        
-                        last_boundary_idx = -1
-                        for i in range(len(text_buffer)):
-                            if is_sentence_boundary(text_buffer, i):
-                                last_boundary_idx = i
-                        
-                        if last_boundary_idx >= 0:
-                            complete_text = text_buffer[:last_boundary_idx + 1]
-                            text_buffer = text_buffer[last_boundary_idx + 1:]
-                            
-                            normalized = normalize_for_tts(complete_text)
-                            if normalized:
-                                logging.debug(f"[RealtimeTTS] Normalized segment: '{normalized}'")
-                                text_queue.put(normalized)
-                    
-                    # Flush remaining buffer
-                    if text_buffer:
-                        normalized = normalize_for_tts(text_buffer)
-                        if normalized:
-                            logging.debug(f"[RealtimeTTS] Normalized final segment: '{normalized}'")
-                            text_queue.put(normalized)
-                            
+                    async for normalized in buffer_sentences(text_stream):
+                        logging.debug(f"[RealtimeTTS] Normalized segment: '{normalized}'")
+                        text_queue.put(normalized)
+
                     text_queue.put(None)  # Signal end
                     feed_complete = True
-                    
+
                 except Exception as e:
                     logging.error(f"[RealtimeTTS] Error feeding tokens: {e}")
                     text_queue.put(None)
@@ -177,22 +155,7 @@ class RealtimeTTSProvider(BaseTTSProvider):
                         continue
                     
                     timeout_count = 0
-                    
-                    if chunk is None:
-                        # Play completed, get any remaining chunks
-                        try:
-                            while True:
-                                remaining = audio_queue.get_nowait()
-                                if remaining and remaining is not None:
-                                    if self.engine_name == "elevenlabs":
-                                        yield remaining
-                                        chunks_yielded += 1
-                                    else:
-                                        audio_chunk_buffer.append(remaining)
-                        except Empty:
-                            pass
-                        break
-                    
+
                     # Yield audio chunk
                     if self.engine_name == "elevenlabs":
                         chunks_yielded += 1

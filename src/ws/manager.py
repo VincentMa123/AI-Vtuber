@@ -5,7 +5,7 @@ import logging
 
 
 def _timestamp() -> float:
-    return asyncio.get_event_loop().time()
+    return asyncio.get_running_loop().time()
 
 class WebSocketManager:
     def __init__(self):

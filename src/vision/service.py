@@ -1,3 +1,4 @@
+import re
 import logging
 import asyncio
 from typing import Dict, Optional, Callable, Any
@@ -7,7 +8,15 @@ import core.utils as utils
 from core.utils import compress_image_for_vlm
 from .models import HeartbeatRequest
 from browser import BrowserController, get_browser_controller, Behavior
+from rag.tools import execute_tool_call
 import uuid
+
+# Pattern to extract leaked navigate_to_page URLs from VLM text output.
+# Uses ASCII-only URL char class because \S+ would consume fullwidth ｜ chars.
+_LEAKED_NAVIGATE_RE = re.compile(
+    r'navigate_to_page.*?(https?://[a-zA-Z0-9_.~:/?#@!$&()*+,;=%-]+)',
+    re.IGNORECASE | re.DOTALL
+)
 
 class VisionHeartbeat:
     def __init__(self, llm_providers: Dict, text_to_speech_stream_func=None):
@@ -20,7 +29,6 @@ class VisionHeartbeat:
         self._browser_loop_running = False
         self._on_browser_update: Optional[Callable] = None  # Callback for WS updates
         self._last_analysis_time = 0
-        self._last_auto_refresh_time = 0
         self.visited_urls = set()
         self.screenshot_buffer = []  # Buffer for multi-image vision
         
@@ -76,9 +84,13 @@ class VisionHeartbeat:
         full_system_prompt = f"{system_prompt}\n\nCURRENT VISION TASK:\n{vision_task}"
 
         try:
-            # Use shared history for context
-            history = state.get_history()
-            
+            # When at bottom, omit chat history to prevent the VLM from getting
+            # distracted by audience questions instead of navigating.
+            if scroll_status.startswith("At Bottom"):
+                history = []
+            else:
+                history = state.get_history()
+
             message = "React to the currently visible content. You might see multiple screenshots representing a sequence as I scroll down the page. Use them to understand the page flow. If you are at the end of the page (At Bottom), transition to the next logical section using your navigation tool."
             
             async for token in provider.generate_stream(
@@ -218,14 +230,23 @@ class VisionHeartbeat:
                     async for chunk in self.process_heartbeat_stream(request):
                         if chunk.get("type") == "text":
                             captured_text = chunk.get("content", "")
-                            
+
                         if self._on_browser_update:
                             await self._on_browser_update(chunk)
-                    
+
                     # Wait for frontend to signal audio playback is complete
                     await state.wait_for_audio_complete(timeout=20.0)
-                    
+
                     logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
+
+                    # Fallback: if the VLM leaked a navigate_to_page tool call as text
+                    # instead of a structured tool call, parse and execute it
+                    if captured_text:
+                        nav_match = _LEAKED_NAVIGATE_RE.search(captured_text)
+                        if nav_match:
+                            leaked_url = nav_match.group(1)
+                            logging.warning(f"[Vision Cycle] Detected leaked navigate_to_page in text, executing fallback: {leaked_url}")
+                            await execute_tool_call("navigate_to_page", {"url": leaked_url})
                     # Mark tool execution time for cooldown
                     self._last_tool_execution_time = asyncio.get_event_loop().time()
                             

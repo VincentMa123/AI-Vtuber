@@ -4,8 +4,8 @@ from typing import Optional, List, Dict, Any, AsyncGenerator
 from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
-from .base import BaseLLMProvider, sanitize_history, build_user_content
-from rag.tools import ALL_TOOLS, CHAT_TOOLS, execute_tool_call
+from .base import BaseLLMProvider, sanitize_history, build_user_content, strip_leaked_tool_calls
+from rag.tools import ALL_TOOLS, execute_tool_call
 
 class QwenProvider(BaseLLMProvider):
     
@@ -105,12 +105,17 @@ class QwenProvider(BaseLLMProvider):
                         if chunk.choices and len(chunk.choices) > 0:
                             delta = chunk.choices[0].delta
                             if delta.content:
+                                if '<｜' in delta.content or '｜>' in delta.content:
+                                    logging.warning("[Qwen] Stripped leaked tool call markup from transition stream")
+                                    break
                                 yield delta.content
                 else:
                     # For non-navigation tools: use model's text if available,
                     # otherwise force text generation from the original context
                     if choice.message.content:
-                        yield choice.message.content
+                        cleaned = strip_leaked_tool_calls(choice.message.content)
+                        if cleaned:
+                            yield cleaned
                     else:
                         logging.info("[Qwen] No text with tool call — forcing text generation via tool_choice='none'")
                         speech_stream = await self.client.chat.completions.create(
@@ -124,6 +129,9 @@ class QwenProvider(BaseLLMProvider):
                             if chunk.choices and len(chunk.choices) > 0:
                                 delta = chunk.choices[0].delta
                                 if delta.content:
+                                    if '<｜' in delta.content or '｜>' in delta.content:
+                                        logging.warning("[Qwen] Stripped leaked tool call markup from forced speech stream")
+                                        break
                                     yield delta.content
 
                 # Execute all tool calls
@@ -161,10 +169,15 @@ class QwenProvider(BaseLLMProvider):
                     if chunk.choices and len(chunk.choices) > 0:
                         delta = chunk.choices[0].delta
                         if delta.content:
+                            if '<｜' in delta.content or '｜>' in delta.content:
+                                logging.warning("[Qwen] Stripped leaked tool call markup from stream")
+                                break
                             yield delta.content
             else:
                 if choice.message.content:
-                    yield choice.message.content
+                    cleaned = strip_leaked_tool_calls(choice.message.content)
+                    if cleaned:
+                        yield cleaned
                         
         except APIError as e:
              logging.error(f"Qwen streaming error: {e}")

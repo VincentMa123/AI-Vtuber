@@ -1,6 +1,20 @@
+import re
 import json
 from abc import ABC, abstractmethod
 from typing import Optional, List, Dict, Any, AsyncGenerator
+
+
+# Pattern to detect leaked tool call markup from DeepSeek models
+# Matches fullwidth delimiter tags like <｜DSML｜function_calls> ... </｜DSML｜function_calls>
+_LEAKED_TOOL_CALL_RE = re.compile(
+    r'<[\uff5c｜].*?function_call.*$',
+    re.DOTALL | re.IGNORECASE
+)
+
+
+def strip_leaked_tool_calls(text: str) -> str:
+    """Remove leaked tool call XML markup that DeepSeek sometimes outputs as plain text."""
+    return _LEAKED_TOOL_CALL_RE.sub('', text).rstrip()
 
 
 def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
