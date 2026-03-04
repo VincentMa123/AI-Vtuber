@@ -1,38 +1,25 @@
 import time
 import re
+from pathlib import Path
 from typing import Dict, List, Tuple
 from collections import defaultdict
 from .models import AggregationConfig
 import logging
 
-# Off-topic patterns: personal questions, greetings, random chatter, spam
-OFF_TOPIC_PATTERNS = [
-    # Greetings / filler (Indonesian + English)
-    r'^(h[ae]llo|hi+|hey+|halo+|hai+|yo+|woi+|bang+|kak+|sis+|bro+|guys?)[!?.\s]*$',
-    r'^(selamat\s+(pagi|siang|sore|malam)|good\s+(morning|afternoon|evening|night))[!?.\s]*$',
-    r'^(assalamualaikum|waalaikumsalam|salam)[!?.\s]*$',
-    # Personal questions about the VTuber
-    r'\b(umur|usia|age)\s*(kamu|mu|lo|lu|nya|you)',
-    r'\b(nama\s*(asli|real)|real\s*name)\b',
-    r'\b(tinggal\s*di\s*mana|where.*live|domisili)\b',
-    r'\b(nomor|nomer|no)\s*(hp|telp|telepon|wa|whatsapp|phone)\b',
-    r'\b(ig|instagram|twitter|tiktok|sosmed|social\s*media)\s*(kamu|mu|lo|lu|nya|you)',
-    r'\b(pacar|jomblo|single|taken|married|nikah|suami|istri|boyfriend|girlfriend)\b',
-    r'\b(makan\s*apa|sarapan\s*apa|eat\s*what|breakfast|lunch|dinner)\b',
-    r'\b(agama|religion)\s*(kamu|mu|apa)',
-    r'\b(gaji|salary|penghasilan|income)\b',
-    # Random chatter / spam
-    r'^(wkwk|haha|lol|lmao|rofl|xixi|kwkw|awkwk|ngakak)+[!?.\s]*$',
-    r'^(gg|ez|noob|bot|L|W|ratio|cap|sus|sheesh|bruh|oof)[!?.\s]*$',
-    r'^(first|pertama|p$|f$|tes|test)[!?.\s]*$',
-    # Requests unrelated to content
-    r'\b(nyanyi|sing|dance|joget|goyang)\b',
-    r'\b(main\s*game|gaming|play\s*game)\b',
-    r'\b(follow|subscribe|sub)\s*(balik|back|dong|ya)\b',
-]
 
-# Compiled patterns for performance
-_OFF_TOPIC_COMPILED = [re.compile(p, re.IGNORECASE) for p in OFF_TOPIC_PATTERNS]
+def _load_off_topic_patterns() -> list[re.Pattern]:
+    """Load off-topic regex patterns from chat/data/off_topic_patterns.md."""
+    patterns_file = Path(__file__).parent / "data" / "off_topic_patterns.md"
+    patterns = []
+    for line in patterns_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        patterns.append(re.compile(line, re.IGNORECASE))
+    return patterns
+
+
+_OFF_TOPIC_COMPILED = _load_off_topic_patterns()
 
 
 class ChatFilter:
@@ -52,6 +39,11 @@ class ChatFilter:
         # Filter emote-only messages
         if self._is_emote_only(message_text):
             logging.info(f"[ChatFilter] Filtered: emote-only - '{message_text}'")
+            return True
+
+        # Filter gibberish / keyboard mashing
+        if self._is_gibberish(message_text):
+            logging.info(f"[ChatFilter] Filtered: gibberish - '{message_text}'")
             return True
 
         # Filter off-topic / unrelated messages
@@ -88,13 +80,47 @@ class ChatFilter:
                 return True
         return False
 
+    def _is_gibberish(self, message: str) -> bool:
+
+        # Strip to just letters
+        letters = re.sub(r'[^a-zA-Z]', '', message)
+        if len(letters) < 4:
+            return False  # Too short to judge
+
+        # Check vowel ratio — real words (Indonesian/English) have ~35-50% vowels
+        vowels = sum(1 for c in letters.lower() if c in 'aiueo')
+        vowel_ratio = vowels / len(letters)
+        if vowel_ratio < 0.15:
+            return True
+
+        # Check for long consonant clusters (3+ consonants in a row)
+        clusters = re.findall(r'[^aiueoAIUEO\s]{4,}', letters)
+        cluster_chars = sum(len(c) for c in clusters)
+        if cluster_chars / len(letters) > 0.6:
+            return True
+
+        # Check character variety — keyboard mashing often repeats few chars
+        unique_ratio = len(set(letters.lower())) / len(letters)
+        if len(letters) >= 6 and unique_ratio < 0.3:
+            return True
+
+        # Check dominant character — real words rarely have one letter at 40%+
+        if len(letters) >= 5:
+            from collections import Counter
+            freq = Counter(letters.lower())
+            max_freq = max(freq.values())
+            if max_freq / len(letters) > 0.4:
+                return True
+
+        return False
+
     def _is_emote_only(self, message: str) -> bool:
 
         # Remove common emote patterns
         text = re.sub(r':\w+:', '', message)  # :emoji:
         text = re.sub(r'[^\w\s]', '', text)  # Remove special chars
         text = text.strip()
-        
+
         # If nothing left, it's emote-only
         return len(text) < 2
 

@@ -28,6 +28,10 @@ class VisionHeartbeat:
         self._vision_lock = asyncio.Lock()  # Prevent concurrent vision cycles
         self._last_tool_execution_time = 0  # Cooldown after tool calls
         self._vision_processing = False  # Flag to track active vision processing
+
+        # Per-page reaction tracking (prevents premature transition on short pages)
+        self._page_reaction_count = {}  # normalized URL -> number of vision reactions
+        self.MIN_REACTIONS_BEFORE_TRANSITION = 1
         
         logging.info("[VisionHeartbeat] Initialized with CooldownManager")
 
@@ -274,7 +278,36 @@ class VisionHeartbeat:
                 # 2. Check Triggers (Scroll-based or Click-based)
                 pos = await self.browser_controller.get_scroll_position()
                 at_bottom = pos.get("atBottom", False)
-                
+
+                # Guard: on short pages, don't allow transition until enough reactions
+                if at_bottom:
+                    current_url = await self.browser_controller.get_current_url()
+                    url_key = current_url.rstrip("/") if current_url else ""
+                    reactions_on_page = self._page_reaction_count.get(url_key, 0)
+                    if reactions_on_page < self.MIN_REACTIONS_BEFORE_TRANSITION:
+                        logging.info(
+                            f"[Action Loop] At bottom but only {reactions_on_page}/{self.MIN_REACTIONS_BEFORE_TRANSITION} "
+                            f"reactions on this page. Scrolling to top and forcing reaction."
+                        )
+                        # Scroll to top so VLM sees "At Top" → explains content
+                        # instead of "At Bottom" → which would trigger navigation
+                        frame = self.browser_controller._get_content_frame()
+                        if frame:
+                            try:
+                                await frame.evaluate("window.scrollTo(0, 0)")
+                                await asyncio.sleep(0.5)
+                            except Exception:
+                                pass
+
+                        # Force a vision reaction with whatever screenshots we have
+                        current_screenshot_compressed = compress_image_for_vlm(screenshot)
+                        analysis_images = self.screenshot_buffer if self.screenshot_buffer else current_screenshot_compressed
+                        await self._process_vision_cycle(images=analysis_images)
+                        self.screenshot_buffer = []
+                        self._last_analysis_time = asyncio.get_event_loop().time()
+                        self._page_reaction_count[url_key] = reactions_on_page + 1
+                        continue
+
                 is_scroll = (action == "scroll_down")
                 is_click = (action == "click_product")
                 
@@ -318,6 +351,11 @@ class VisionHeartbeat:
                         await self._process_vision_cycle(images=analysis_images)
                         self.screenshot_buffer = [] # Reset buffer
                         self._last_analysis_time = asyncio.get_event_loop().time()
+
+                        # Track reaction count per page for short-page guard
+                        reaction_url = await self.browser_controller.get_current_url()
+                        reaction_url_key = reaction_url.rstrip("/") if reaction_url else ""
+                        self._page_reaction_count[reaction_url_key] = self._page_reaction_count.get(reaction_url_key, 0) + 1
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps
