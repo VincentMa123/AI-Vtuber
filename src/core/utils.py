@@ -54,7 +54,7 @@ def get_system_prompt(user_message: str = "", **kwargs):
                     
                     sitemap_str = "Available New Sections (Priority):\n"
                     if unvisited:
-                        sitemap_str += "\n".join([f"- {item['name']}: {item['url']}" for item in unvisited[:20]])
+                        sitemap_str += "\n".join([f"- {item['name']}: {item['url']}" for item in unvisited[:10]])
                         # Suggest the very first unvisited one as recommendation
                         recommendation = unvisited[0]['url']
                         kwargs["next_recommendation"] = recommendation

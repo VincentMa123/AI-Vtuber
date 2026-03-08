@@ -5,7 +5,7 @@ from openai import AsyncOpenAI, APIError
 import core.config as config
 import core.utils as utils
 from .base import BaseLLMProvider, sanitize_history, build_user_content, strip_leaked_tool_calls
-from rag.tools import ALL_TOOLS, execute_tool_call
+from rag.tools import ALL_TOOLS, CHAT_TOOLS, execute_tool_call
 
 
 class DeepSeekProvider(BaseLLMProvider):
@@ -62,7 +62,7 @@ class DeepSeekProvider(BaseLLMProvider):
         messages.append({"role": "user", "content": user_content})
         
         max_tokens = kwargs.get("max_tokens", 512)
-        tools = kwargs.get("tools", ALL_TOOLS)
+        tools = kwargs.get("tools", CHAT_TOOLS)
 
         try:
             # First call: non-streaming with tools to check for tool calls

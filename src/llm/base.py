@@ -42,7 +42,7 @@ def sanitize_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         clean_history.append(clean_msg)
     
-    return clean_history[-10:]
+    return clean_history
 
 
 class BaseLLMProvider(ABC):
