@@ -200,7 +200,12 @@ class BrowserController:
                             await frame.add_style_tag(content="* { cursor: none !important; }")
                         except:
                             pass
-                self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
+
+                def _on_frame_navigated_shell(frame):
+                    task = asyncio.create_task(_hide_cursor_on_frame_nav(frame))
+                    task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+
+                self.page.on("framenavigated", _on_frame_navigated_shell)
             else:
                 # Non-shell mode (direct navigation)
                 async def _hide_cursor_on_frame_nav(frame):
@@ -209,7 +214,12 @@ class BrowserController:
                             await frame.add_style_tag(content="* { cursor: none !important; }")
                         except:
                             pass
-                self.page.on("framenavigated", lambda frame: asyncio.create_task(_hide_cursor_on_frame_nav(frame)))
+
+                def _on_frame_navigated(frame):
+                    task = asyncio.create_task(_hide_cursor_on_frame_nav(frame))
+                    task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+
+                self.page.on("framenavigated", _on_frame_navigated)
 
                 title = await self.page.title()
                 if "Verify you are human" in title or "Just a moment" in title:
@@ -281,6 +291,7 @@ class BrowserController:
         except Exception as e:
             logging.error(f"[Browser] Failed to start: {e}")
             traceback.print_exc()
+            await self.stop()
             return False
 
     async def stop(self):
@@ -445,7 +456,8 @@ class BrowserController:
                     await frame.add_style_tag(content="* { cursor: none !important; }")
                 except:
                     pass
-            asyncio.create_task(_apply_style())
+            task = asyncio.create_task(_apply_style())
+            task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             return True
         except Exception as e:
             logging.error(f"[Browser] Failed to navigate to {url}: {e}")

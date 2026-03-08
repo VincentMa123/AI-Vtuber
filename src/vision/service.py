@@ -70,6 +70,9 @@ class VisionHeartbeat:
         if current_url != "Unknown":
             norm_url = current_url.rstrip("/")
             self.visited_urls.add(norm_url)
+            # Cap to last 50 URLs to prevent unbounded prompt growth
+            if len(self.visited_urls) > 50:
+                self.visited_urls = set(list(self.visited_urls)[-50:])
 
         # Get the full persona prompt with dynamic context
         vision_task = utils.load_prompt_file("vision_reaction.md")
@@ -151,6 +154,11 @@ class VisionHeartbeat:
         self._browser_loop_running = False
         if self._browser_loop_task:
             self._browser_loop_task.cancel()
+            try:
+                await self._browser_loop_task
+            except asyncio.CancelledError:
+                pass
+        self.screenshot_buffer = []
         if self.browser_controller:
             await self.browser_controller.stop()
         logging.info("[VisionHeartbeat] Browser stopped")
@@ -377,6 +385,11 @@ class VisionHeartbeat:
                         reaction_url = await self.browser_controller.get_current_url()
                         reaction_url_key = reaction_url.rstrip("/") if reaction_url else ""
                         self._page_reaction_count[reaction_url_key] = self._page_reaction_count.get(reaction_url_key, 0) + 1
+                        # Prune to prevent unbounded growth
+                        if len(self._page_reaction_count) > 100:
+                            keys = list(self._page_reaction_count)
+                            for k in keys[:50]:
+                                del self._page_reaction_count[k]
                     
                 else:
                     # Natural variable delay between actions - use guarded sleep to prevent website JS jumps

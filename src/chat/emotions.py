@@ -20,6 +20,11 @@ def preload():
     _get_emotion_embeddings()
     logging.info("[Emotions] Model and embeddings preloaded")
 
+def shutdown():
+    """Shut down the thread pool executor on app exit."""
+    _executor.shutdown(wait=False)
+    logging.info("[Emotions] Executor shut down")
+
 def _get_model():
 
     global _model

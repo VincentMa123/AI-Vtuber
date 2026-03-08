@@ -17,7 +17,7 @@ from llm import OpenRouterProvider, DeepSeekProvider, RemoteVLLMProvider, QwenPr
 from tts import TTSManager
 from vision import VisionHeartbeat
 from chat.aggregator import ChatAggregator
-from chat.emotions import preload as preload_emotions
+from chat.emotions import preload as preload_emotions, shutdown as shutdown_emotions
 from chat.models import AggregationConfig
 from chat.response_handler import handle_aggregated_response
 from ws.manager import ws_manager
@@ -138,6 +138,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logging.warning(f"[Shutdown] Error stopping YouTube task: {e}")
 
+    shutdown_emotions()
     logging.info("[Shutdown] Shutdown complete")
 
 
@@ -234,6 +235,9 @@ async def _init_services():
     )
     await state.vision_heartbeat.start_browser_loop(on_update=broadcast_browser_update)
     logging.info("[Startup] Vision heartbeat & browser loop started")
+
+    ws_manager.start_ping_loop()
+    logging.info("[Startup] WebSocket ping loop started")
 
 @app.get("/shell")
 async def get_shell():

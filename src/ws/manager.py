@@ -10,8 +10,20 @@ def _timestamp() -> float:
 class WebSocketManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
-        self.shutting_down = False  # Add shutdown flag
-        
+        self.shutting_down = False
+        self._ping_task: asyncio.Task = None
+
+    def start_ping_loop(self):
+        """Start a background task that evicts dead connections every 30s."""
+        if self._ping_task is None or self._ping_task.done():
+            self._ping_task = asyncio.create_task(self._ping_loop())
+
+    async def _ping_loop(self):
+        while not self.shutting_down:
+            await asyncio.sleep(30)
+            if self.active_connections:
+                await self.broadcast({"type": "ping"})
+
     async def connect(self, websocket: WebSocket):
 
         await websocket.accept()
@@ -114,7 +126,13 @@ class WebSocketManager:
     
     async def close_all(self):
         """Close all active WebSocket connections gracefully during shutdown."""
-        self.shutting_down = True  # Signal shutdown first
+        self.shutting_down = True
+        if self._ping_task and not self._ping_task.done():
+            self._ping_task.cancel()
+            try:
+                await self._ping_task
+            except asyncio.CancelledError:
+                pass
         connections_to_close = self.active_connections.copy()
         for connection in connections_to_close:
             try:
