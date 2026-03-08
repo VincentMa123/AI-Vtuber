@@ -12,7 +12,6 @@ class ChatMessage:
     timestamp: float = field(default_factory=time.time)
     image_base64: Optional[str] = None
     priority_score: float = 0.0
-    platform: str = "twitch"  # "twitch", "youtube", etc. Defaults to twitch for backward compatibility
 
 @dataclass
 class AggregationConfig:

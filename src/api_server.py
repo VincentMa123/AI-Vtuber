@@ -44,7 +44,7 @@ vllm_providers = {
 }
 
 
-async def _aggregation_callback(message: str, dominant_emotion: str = None, platform: str = "twitch"):
+async def _aggregation_callback(message: str, dominant_emotion: str = None):
     if dominant_emotion:
         logging.info(f"[ChatAggregator] Emotion: {dominant_emotion}")
     await handle_aggregated_response(

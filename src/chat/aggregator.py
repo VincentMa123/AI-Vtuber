@@ -118,23 +118,15 @@ class ChatAggregator:
             if emotions:
                 dominant_emotion = Counter(emotions).most_common(1)[0][0]
             
-            # Get platform from first message in batch (they should be same platform mostly)
-            platform = batch[0].platform if batch else "twitch"
-                           
             logging.info(f"[ChatAggregator] Generating AI response for: {formatted_message[:100]}... (Emotion: {dominant_emotion})")
-            
+
             start_time = time.time()
             if self.response_callback:
                 if asyncio.iscoroutinefunction(self.response_callback):
                     try:
-                        # Try passing emotion and platform if supported
-                        await self.response_callback(formatted_message, dominant_emotion, platform)
+                        await self.response_callback(formatted_message, dominant_emotion)
                     except TypeError:
-                        # Fallback for callbacks that don't accept emotion/platform yet
-                        try:
-                            await self.response_callback(formatted_message, dominant_emotion)
-                        except TypeError:
-                            await self.response_callback(formatted_message)
+                        await self.response_callback(formatted_message)
                 else:
                     self.response_callback(formatted_message)
                 end_time = time.time()

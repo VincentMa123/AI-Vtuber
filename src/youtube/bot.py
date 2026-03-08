@@ -154,7 +154,6 @@ class YouTubeBot:
                 user_id="yt_0",
                 username=author,
                 timestamp=time.time(),
-                platform="youtube",
             )
             await self.aggregator.submit_message(chat_msg)
         else:
