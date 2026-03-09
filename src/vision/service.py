@@ -248,6 +248,11 @@ class VisionHeartbeat:
 
                     logging.info(f"[Vision Cycle] Text length: {len(captured_text)} chars")
 
+                    # Add vision response to chat history so the LLM remembers
+                    # what it already said and avoids repeating itself
+                    if captured_text.strip():
+                        state.add_to_history("assistant", captured_text.strip())
+
                     # Fallback: if the VLM leaked a navigate_to_page tool call as text
                     # instead of a structured tool call, parse and execute it
                     if captured_text:
