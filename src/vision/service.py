@@ -299,7 +299,10 @@ class VisionHeartbeat:
                 
                 # Send updated screenshot after each action for the frontend background
                 screenshot = await self.browser_controller.get_screenshot()
-                if screenshot and self._on_browser_update:
+                if not screenshot:
+                    logging.warning("[Action Loop] Screenshot failed, skipping this cycle")
+                    continue
+                if self._on_browser_update:
                     await self._on_browser_update({
                         "type": "browser_screenshot",
                         "image_base64": screenshot

@@ -322,7 +322,10 @@ class BrowserController:
         if not self.page or not self.is_running:
             return None
         try:
-            screenshot_bytes = await self.page.screenshot(type='jpeg', quality=80)
+            screenshot_bytes = await self.page.screenshot(
+                type='jpeg', quality=80, timeout=10000,
+                animations='disabled'
+            )
             return base64.b64encode(screenshot_bytes).decode('utf-8')
         except Exception as e:
             logging.error(f"[Browser] Screenshot failed: {e}")
