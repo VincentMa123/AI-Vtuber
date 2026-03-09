@@ -12,6 +12,14 @@ import core.config as config
 from core.utils import get_flaresolverr_cookies
 from rag.klikindomaret_service import get_waf_token, set_waf_token
 
+def _safe_task_callback(task: asyncio.Task) -> None:
+    """Log exception from a fire-and-forget task without re-raising."""
+    if not task.cancelled():
+        exc = task.exception()
+        if exc:
+            logging.warning(f"[Browser] Background task failed: {exc}")
+
+
 BROWSER_SELECTORS = {
     "load_more": [
         'button:has-text("Muat Lebih Banyak")',
@@ -192,34 +200,26 @@ class BrowserController:
 
                 logging.info(f"[Browser] Content loaded in shell: {title}")
 
-                # Hide cursor on content frame navigations
-                async def _hide_cursor_on_frame_nav(frame):
+            # Hide cursor on frame navigations (unified for shell and non-shell modes)
+            async def _hide_cursor_on_frame_nav(frame):
+                if config.SHELL_ENABLED:
                     cf = self._get_content_frame()
-                    if cf and frame == cf:
-                        try:
-                            await frame.add_style_tag(content="* { cursor: none !important; }")
-                        except:
-                            pass
+                    matches = cf is not None and frame == cf
+                else:
+                    matches = frame == self.page.main_frame
+                if matches:
+                    try:
+                        await frame.add_style_tag(content="* { cursor: none !important; }")
+                    except:
+                        pass
 
-                def _on_frame_navigated_shell(frame):
-                    task = asyncio.create_task(_hide_cursor_on_frame_nav(frame))
-                    task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+            def _on_frame_navigated(frame):
+                task = asyncio.create_task(_hide_cursor_on_frame_nav(frame))
+                task.add_done_callback(_safe_task_callback)
 
-                self.page.on("framenavigated", _on_frame_navigated_shell)
-            else:
-                # Non-shell mode (direct navigation)
-                async def _hide_cursor_on_frame_nav(frame):
-                    if frame == self.page.main_frame:
-                        try:
-                            await frame.add_style_tag(content="* { cursor: none !important; }")
-                        except:
-                            pass
+            self.page.on("framenavigated", _on_frame_navigated)
 
-                def _on_frame_navigated(frame):
-                    task = asyncio.create_task(_hide_cursor_on_frame_nav(frame))
-                    task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
-
-                self.page.on("framenavigated", _on_frame_navigated)
+            if not config.SHELL_ENABLED:
 
                 title = await self.page.title()
                 if "Verify you are human" in title or "Just a moment" in title:
@@ -457,7 +457,7 @@ class BrowserController:
                 except:
                     pass
             task = asyncio.create_task(_apply_style())
-            task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+            task.add_done_callback(_safe_task_callback)
             return True
         except Exception as e:
             logging.error(f"[Browser] Failed to navigate to {url}: {e}")

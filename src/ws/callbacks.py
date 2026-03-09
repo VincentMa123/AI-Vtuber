@@ -4,7 +4,7 @@ import core.utils as utils
 from ws.manager import ws_manager
 
 async def broadcast_browser_update(data):
-    # Don't broadcast if shutting down
+
     if ws_manager.shutting_down:
         return
 

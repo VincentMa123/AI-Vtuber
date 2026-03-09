@@ -29,7 +29,7 @@ class VisionHeartbeat:
         self._browser_loop_running = False
         self._on_browser_update: Optional[Callable] = None  # Callback for WS updates
         self._last_analysis_time = 0
-        self.visited_urls = set()
+        self.visited_urls: dict = {}  # ordered set via dict keys (insertion order = visit order)
         self.screenshot_buffer = []  # Buffer for multi-image vision
         
         # Vision processing synchronization
@@ -69,10 +69,11 @@ class VisionHeartbeat:
         # Track current URL in history (normalize to avoid trailing slash issues)
         if current_url != "Unknown":
             norm_url = current_url.rstrip("/")
-            self.visited_urls.add(norm_url)
+            self.visited_urls[norm_url] = None  # dedup + insertion order preserved
             # Cap to last 50 URLs to prevent unbounded prompt growth
             if len(self.visited_urls) > 50:
-                self.visited_urls = set(list(self.visited_urls)[-50:])
+                oldest = next(iter(self.visited_urls))
+                del self.visited_urls[oldest]
 
         # Get the full persona prompt with dynamic context
         vision_task = utils.load_prompt_file("vision_reaction.md")

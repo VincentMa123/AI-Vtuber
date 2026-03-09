@@ -14,7 +14,7 @@ class WebSocketManager:
         self._ping_task: asyncio.Task = None
 
     def start_ping_loop(self):
-        """Start a background task that evicts dead connections every 30s."""
+    
         if self._ping_task is None or self._ping_task.done():
             self._ping_task = asyncio.create_task(self._ping_loop())
 
