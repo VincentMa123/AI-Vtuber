@@ -7,7 +7,7 @@ from types import SimpleNamespace
 # Configuration defaults (simulating args)
 # You can move these to config.py if you prefer global configuration
 DEFAULT_LOG_LEVEL = "INFO"
-DEFAULT_LOG_DIR = "logs"
+DEFAULT_LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "logs")
 DEFAULT_SILENT = False
 
 # Mock args to match user's snippet structure, or just use these directly

@@ -130,7 +130,7 @@ ffmpeg \
     -f s16le -ar 48000 -ac 1 -i "$AUDIO_PIPE" \
     -map 0:v -map 1:a \
     -c:v libx264 -preset veryfast -tune zerolatency \
-    -b:v 6800k -maxrate 6800k -bufsize 13600k \
+    -b:v 3000k -maxrate 3000k -bufsize 6000k \
     -pix_fmt yuv420p \
     -g $(($FPS * 2)) \
     -c:a aac -b:a 128k -ar 48000 \

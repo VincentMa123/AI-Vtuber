@@ -29,7 +29,7 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 ELEVENLABS_VOICE_ID = "jqPbtJasUGU5J3qH8a14"  
 
 QWEN_TTS_MODEL = "qwen3-tts-vc-realtime-2025-11-27"
-QWEN_TTS_VOICE_FILE = "voice.mp3"  
+QWEN_TTS_VOICE_FILE = os.path.join(os.path.dirname(__file__), "..", "tts", "data", "voice.mp3")
 
 
 CHAT_AGGREGATION_ENABLED = True
