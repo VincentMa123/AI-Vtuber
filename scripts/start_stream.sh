@@ -14,7 +14,7 @@ fi
 DISPLAY_NUM=55
 RESOLUTION="1920x1080"
 FPS=30
-BITRATE="1500k"
+BITRATE="1200k"
 TWITCH_URL="rtmps://live.twitch.tv:443/app"
 YOUTUBE_URL="rtmps://a.rtmp.youtube.com:443/live2"
 
@@ -130,7 +130,7 @@ ffmpeg \
     -f s16le -ar 48000 -ac 1 -i "$AUDIO_PIPE" \
     -map 0:v -map 1:a \
     -c:v libx264 -preset veryfast -tune zerolatency \
-    -b:v 3000k -maxrate 3000k -bufsize 6000k \
+    -b:v $BITRATE -maxrate $BITRATE -bufsize $((${BITRATE%k} * 2))k \
     -pix_fmt yuv420p \
     -g $(($FPS * 2)) \
     -c:a aac -b:a 128k -ar 48000 \
